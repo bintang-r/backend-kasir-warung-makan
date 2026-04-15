@@ -3,7 +3,7 @@ export declare class GuestController {
     private guestService;
     constructor(guestService: GuestService);
     createSession(body: {
-        tableId: string;
+        tableId?: string;
     }): Promise<{
         guest_token: string;
         table_id: string | null;

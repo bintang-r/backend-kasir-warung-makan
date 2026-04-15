@@ -6,8 +6,9 @@ export class GuestController {
   constructor(private guestService: GuestService) {}
 
   @Post('session')
-  async createSession(@Body() body: { tableId: string }) {
-    return this.guestService.createSession(BigInt(body.tableId));
+  async createSession(@Body() body: { tableId?: string }) {
+    const tableId = body.tableId ? BigInt(body.tableId) : undefined;
+    return this.guestService.createSession(tableId);
   }
 
   @Get('session/:id')

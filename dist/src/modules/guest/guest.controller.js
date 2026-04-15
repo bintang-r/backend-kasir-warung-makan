@@ -21,7 +21,8 @@ let GuestController = class GuestController {
         this.guestService = guestService;
     }
     async createSession(body) {
-        return this.guestService.createSession(BigInt(body.tableId));
+        const tableId = body.tableId ? BigInt(body.tableId) : undefined;
+        return this.guestService.createSession(tableId);
     }
     async getSession(id) {
         return this.guestService.getSession(BigInt(id));
