@@ -12,10 +12,12 @@ export class GuestService {
     private jwtService: JwtService,
   ) {}
 
-  async createSession(tableId: bigint) {
-    const table = await this.tablesService.findOne(tableId);
-    if (!table) {
-      throw new NotFoundException('Table not found');
+  async createSession(tableId?: bigint) {
+    if (tableId) {
+      const table = await this.tablesService.findOne(tableId);
+      if (!table) {
+        throw new NotFoundException('Table not found');
+      }
     }
 
     const token = uuidv4();
@@ -24,7 +26,7 @@ export class GuestService {
 
     const session = await this.prisma.guestSession.create({
       data: {
-        tableId,
+        tableId: tableId || null,
         token,
         expiresAt,
       },
@@ -32,13 +34,13 @@ export class GuestService {
 
     const jwtPayload = { 
       sub: session.id.toString(), 
-      tableId: tableId.toString(), 
+      tableId: tableId ? tableId.toString() : null, 
       role: 'GUEST' 
     };
 
     return {
       guest_token: this.jwtService.sign(jwtPayload),
-      table_id: tableId.toString(),
+      table_id: tableId ? tableId.toString() : null,
       session_id: session.id.toString(),
     };
   }

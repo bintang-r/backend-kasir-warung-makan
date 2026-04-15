@@ -25,28 +25,30 @@ let GuestService = class GuestService {
         this.jwtService = jwtService;
     }
     async createSession(tableId) {
-        const table = await this.tablesService.findOne(tableId);
-        if (!table) {
-            throw new common_1.NotFoundException('Table not found');
+        if (tableId) {
+            const table = await this.tablesService.findOne(tableId);
+            if (!table) {
+                throw new common_1.NotFoundException('Table not found');
+            }
         }
         const token = (0, uuid_1.v4)();
         const expiresAt = new Date();
         expiresAt.setHours(expiresAt.getHours() + 6);
         const session = await this.prisma.guestSession.create({
             data: {
-                tableId,
+                tableId: tableId || null,
                 token,
                 expiresAt,
             },
         });
         const jwtPayload = {
             sub: session.id.toString(),
-            tableId: tableId.toString(),
+            tableId: tableId ? tableId.toString() : null,
             role: 'GUEST'
         };
         return {
             guest_token: this.jwtService.sign(jwtPayload),
-            table_id: tableId.toString(),
+            table_id: tableId ? tableId.toString() : null,
             session_id: session.id.toString(),
         };
     }

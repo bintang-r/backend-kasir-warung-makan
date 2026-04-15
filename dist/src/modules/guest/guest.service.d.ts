@@ -6,9 +6,9 @@ export declare class GuestService {
     private tablesService;
     private jwtService;
     constructor(prisma: PrismaService, tablesService: TablesService, jwtService: JwtService);
-    createSession(tableId: bigint): Promise<{
+    createSession(tableId?: bigint): Promise<{
         guest_token: string;
-        table_id: string;
+        table_id: string | null;
         session_id: string;
     }>;
     getSession(id: bigint): Promise<({
@@ -17,12 +17,12 @@ export declare class GuestService {
             name: string;
             qrCode: string | null;
             status: import("@prisma/client").$Enums.TableStatus;
-        };
+        } | null;
     } & {
         id: bigint;
-        createdAt: Date;
         token: string;
+        createdAt: Date;
         expiresAt: Date;
-        tableId: bigint;
+        tableId: bigint | null;
     }) | null>;
 }
