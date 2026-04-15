@@ -20,7 +20,7 @@ export class CartsController {
     const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : undefined;
     const guestSessionId = req.user.role === 'GUEST' ? BigInt(req.user.id) : undefined;
     const cart = await this.cartsService.getCart(userId, guestSessionId);
-    return this.cartsService.addItem(cart.id, BigInt(body.menuId), body.qty);
+    return this.cartsService.addItem(cart!.id, BigInt(body.menuId), body.qty);
   }
 
   @Delete('remove/:itemId')
