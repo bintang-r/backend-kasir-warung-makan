@@ -73,6 +73,27 @@ let UsersService = class UsersService {
     async findAll() {
         return this.prisma.user.findMany();
     }
+    async updateUser(id, data) {
+        const updateData = { ...data };
+        if (updateData.password) {
+            updateData.password = await bcrypt.hash(updateData.password, 10);
+        }
+        else {
+            delete updateData.password;
+        }
+        return this.prisma.user.update({
+            where: { id },
+            data: updateData,
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                createdAt: true,
+                updatedAt: true,
+            }
+        });
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

@@ -58,6 +58,13 @@ export class CartsService {
     });
   }
 
+  async updateQuantity(cartItemId: bigint, qty: number) {
+    return this.prisma.cartItem.update({
+      where: { id: cartItemId },
+      data: { qty },
+    });
+  }
+
   async removeItem(cartItemId: bigint) {
     return this.prisma.cartItem.delete({
       where: { id: cartItemId },

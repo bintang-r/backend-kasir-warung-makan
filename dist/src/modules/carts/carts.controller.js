@@ -35,6 +35,9 @@ let CartsController = class CartsController {
     async removeItem(itemId) {
         return this.cartsService.removeItem(BigInt(itemId));
     }
+    async updateQuantity(itemId, body) {
+        return this.cartsService.updateQuantity(BigInt(itemId), body.qty);
+    }
 };
 exports.CartsController = CartsController;
 __decorate([
@@ -62,6 +65,15 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], CartsController.prototype, "removeItem", null);
+__decorate([
+    (0, common_1.Post)('update/:itemId'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Param)('itemId')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], CartsController.prototype, "updateQuantity", null);
 exports.CartsController = CartsController = __decorate([
     (0, common_1.Controller)('cart'),
     __metadata("design:paramtypes", [carts_service_1.CartsService])

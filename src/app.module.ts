@@ -14,6 +14,7 @@ import { OrdersModule } from './modules/orders/orders.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { DeliveriesModule } from './modules/deliveries/deliveries.module';
 import { ChatbotModule } from './modules/chatbot/chatbot.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ChatbotModule } from './modules/chatbot/chatbot.module';
     PaymentsModule,
     DeliveriesModule,
     ChatbotModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

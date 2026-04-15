@@ -13,18 +13,26 @@ exports.OrdersService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../prisma/prisma.service");
 const carts_service_1 = require("../carts/carts.service");
+const notifications_service_1 = require("../notifications/notifications.service");
 const client_1 = require("@prisma/client");
 let OrdersService = class OrdersService {
     prisma;
     cartsService;
-    constructor(prisma, cartsService) {
+    notificationsService;
+    constructor(prisma, cartsService, notificationsService) {
         this.prisma = prisma;
         this.cartsService = cartsService;
+        this.notificationsService = notificationsService;
     }
-    async createOrder(userId, guestSessionId, tableId, source = client_1.OrderSource.APP) {
-        const cart = await this.cartsService.getCart(userId, guestSessionId);
+    async createOrder(cartId, userId, guestSessionId, tableId, source = client_1.OrderSource.APP, orderType = client_1.OrderType.DINE_IN, address) {
+        const cart = await this.prisma.cart.findUnique({
+            where: { id: cartId },
+            include: {
+                items: { include: { menu: true } }
+            }
+        });
         if (!cart || cart.items.length === 0) {
-            throw new common_1.BadRequestException('Cart is empty');
+            throw new common_1.BadRequestException('Cart is empty or not found');
         }
         let totalPrice = 0;
         const orderItemsData = cart.items.map((item) => {
@@ -38,45 +46,133 @@ let OrdersService = class OrdersService {
         });
         const order = await this.prisma.order.create({
             data: {
-                userId,
-                guestSessionId,
-                tableId,
+                userId: userId || null,
+                guestSessionId: guestSessionId || null,
+                tableId: tableId || null,
                 orderSource: source,
-                totalPrice,
+                orderType,
+                address: address || null,
+                totalPrice: totalPrice.toFixed(2),
                 status: client_1.OrderStatus.PENDING,
                 items: {
                     create: orderItemsData,
                 },
+                payments: {
+                    create: {
+                        amount: totalPrice.toFixed(2),
+                        method: 'CASH',
+                        status: 'UNPAID',
+                    }
+                }
             },
             include: {
                 items: {
                     include: { menu: true },
                 },
+                payments: true
             },
         });
         await this.cartsService.clearCart(cart.id);
+        await this.notificationsService.create({
+            userId: userId || undefined,
+            guestSessionId: guestSessionId || undefined,
+            title: 'Pesanan Dikirim! 🚀',
+            message: `Pesanan dunsanak #${order.id.toString()} alah kami tarimo dan sadang manunggu konfirmasi.`,
+        });
         return order;
     }
     async getOrders(userId, guestSessionId) {
+        const orConditions = [];
+        if (userId)
+            orConditions.push({ userId });
+        if (guestSessionId)
+            orConditions.push({ guestSessionId });
+        if (orConditions.length === 0)
+            return [];
         return this.prisma.order.findMany({
             where: {
-                OR: [
-                    { userId: userId || undefined },
-                    { guestSessionId: guestSessionId || undefined },
-                ],
+                OR: orConditions,
             },
             include: {
                 items: {
                     include: { menu: true },
                 },
+                payments: true,
+            },
+            orderBy: { createdAt: 'desc' },
+        });
+    }
+    async getAllOrders() {
+        return this.prisma.order.findMany({
+            include: {
+                items: {
+                    include: { menu: true },
+                },
+                user: { select: { name: true } },
+                table: true,
             },
             orderBy: { createdAt: 'desc' },
         });
     }
     async updateStatus(orderId, status) {
-        return this.prisma.order.update({
+        const order = await this.prisma.order.update({
             where: { id: orderId },
             data: { status },
+        });
+        let title = 'Update Pesanan 🔔';
+        let message = `Status pesanan #${orderId.toString()} kini barubah jadi ${status}.`;
+        if (status === client_1.OrderStatus.CONFIRMED) {
+            title = 'Pesanan Dikonfirmasi ✅';
+            message = `Pesanan dunsanak #${orderId.toString()} alah dikonfirmasi.`;
+        }
+        else if (status === client_1.OrderStatus.COOKING) {
+            title = 'Sadang Dimasak 👨‍🍳';
+            message = `Siap-siap! Pesanan dunsanak #${orderId.toString()} sadang dimasak di dapua.`;
+        }
+        else if (status === client_1.OrderStatus.READY) {
+            title = 'Pesanan Siap! 🍽️';
+            message = `Pesanan dunsanak #${orderId.toString()} alah masak dan siap dihidangkan.`;
+        }
+        else if (status === client_1.OrderStatus.DELIVERING) {
+            title = 'Sadang Dianta 🛵';
+            message = `Pembalap kami sadang mangantaan pesanan #${orderId.toString()} ka tampek dunsanak.`;
+        }
+        await this.notificationsService.create({
+            userId: order.userId || undefined,
+            guestSessionId: order.guestSessionId || undefined,
+            title,
+            message,
+        });
+        return order;
+    }
+    async confirmReceived(orderId) {
+        const order = await this.prisma.order.update({
+            where: { id: orderId },
+            data: {
+                isReceived: true,
+                status: client_1.OrderStatus.COMPLETED
+            },
+        });
+        await this.notificationsService.create({
+            userId: order.userId || undefined,
+            guestSessionId: order.guestSessionId || undefined,
+            title: 'Pesanan Salasai! ✨',
+            message: `Tarimo kasih dunsanak! Pesanan #${orderId.toString()} alah ditarimo. Silekan agiah ulasan untuak kami.`,
+        });
+        return order;
+    }
+    async addReview(orderId, userId, rating, comment) {
+        const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+        if (!order || order.status !== client_1.OrderStatus.COMPLETED) {
+            throw new common_1.BadRequestException('Order must be completed before leaving a review');
+        }
+        return this.prisma.review.create({
+            data: {
+                orderId,
+                userId,
+                rating,
+                comment,
+            },
         });
     }
 };
@@ -84,6 +180,7 @@ exports.OrdersService = OrdersService;
 exports.OrdersService = OrdersService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        carts_service_1.CartsService])
+        carts_service_1.CartsService,
+        notifications_service_1.NotificationsService])
 ], OrdersService);
 //# sourceMappingURL=orders.service.js.map

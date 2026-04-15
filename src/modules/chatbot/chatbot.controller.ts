@@ -9,10 +9,8 @@ export class ChatbotController {
   @Post('message')
   @UseGuards(JwtAuthGuard)
   async handleMessage(@Request() req: any, @Body() body: { message: string }) {
-    // Basic implementation as requested (logic last)
-    // Just logs the message for now
     const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : null;
-    const response = "Thank you for your message. Our agent will respond shortly.";
+    const response = await this.chatbotService.processMessage(body.message);
     await this.chatbotService.logMessage(userId, body.message, response);
     return { response };
   }

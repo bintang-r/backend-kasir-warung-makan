@@ -12,8 +12,14 @@ export class PaymentsController {
   @Post()
   @Roles(Role.ADMIN, Role.KASIR)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async create(@Body() body: { orderId: string; method: PaymentMethod; amount: number }) {
-    return this.paymentsService.createPayment(BigInt(body.orderId), body.method, body.amount);
+  async createAdmin(@Body() body: { orderId: string; method: PaymentMethod; amount: number }) {
+    return this.paymentsService.processPayment(BigInt(body.orderId), body.method, body.amount);
+  }
+
+  @Post('process')
+  @UseGuards(JwtAuthGuard)
+  async process(@Body() body: { orderId: string; method: PaymentMethod; amount: number }) {
+    return this.paymentsService.processPayment(BigInt(body.orderId), body.method, body.amount);
   }
 
   @Get(':orderId')

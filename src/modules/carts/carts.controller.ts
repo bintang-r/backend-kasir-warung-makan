@@ -28,4 +28,10 @@ export class CartsController {
   async removeItem(@Param('itemId') itemId: string) {
     return this.cartsService.removeItem(BigInt(itemId));
   }
+
+  @Post('update/:itemId') // Or Patch
+  @UseGuards(JwtAuthGuard)
+  async updateQuantity(@Param('itemId') itemId: string, @Body() body: { qty: number }) {
+    return this.cartsService.updateQuantity(BigInt(itemId), body.qty);
+  }
 }

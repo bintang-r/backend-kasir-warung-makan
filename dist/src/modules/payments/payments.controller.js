@@ -24,8 +24,11 @@ let PaymentsController = class PaymentsController {
     constructor(paymentsService) {
         this.paymentsService = paymentsService;
     }
-    async create(body) {
-        return this.paymentsService.createPayment(BigInt(body.orderId), body.method, body.amount);
+    async createAdmin(body) {
+        return this.paymentsService.processPayment(BigInt(body.orderId), body.method, body.amount);
+    }
+    async process(body) {
+        return this.paymentsService.processPayment(BigInt(body.orderId), body.method, body.amount);
     }
     async findByOrder(orderId) {
         return this.paymentsService.getPaymentByOrder(BigInt(orderId));
@@ -40,7 +43,15 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], PaymentsController.prototype, "create", null);
+], PaymentsController.prototype, "createAdmin", null);
+__decorate([
+    (0, common_1.Post)('process'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], PaymentsController.prototype, "process", null);
 __decorate([
     (0, common_1.Get)(':orderId'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

@@ -64,6 +64,12 @@ let CartsService = class CartsService {
             },
         });
     }
+    async updateQuantity(cartItemId, qty) {
+        return this.prisma.cartItem.update({
+            where: { id: cartItemId },
+            data: { qty },
+        });
+    }
     async removeItem(cartItemId) {
         return this.prisma.cartItem.delete({
             where: { id: cartItemId },

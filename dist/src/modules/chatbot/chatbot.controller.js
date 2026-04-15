@@ -23,7 +23,7 @@ let ChatbotController = class ChatbotController {
     }
     async handleMessage(req, body) {
         const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : null;
-        const response = "Thank you for your message. Our agent will respond shortly.";
+        const response = await this.chatbotService.processMessage(body.message);
         await this.chatbotService.logMessage(userId, body.message, response);
         return { response };
     }

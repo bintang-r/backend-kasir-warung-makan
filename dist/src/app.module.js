@@ -23,6 +23,7 @@ const orders_module_1 = require("./modules/orders/orders.module");
 const payments_module_1 = require("./modules/payments/payments.module");
 const deliveries_module_1 = require("./modules/deliveries/deliveries.module");
 const chatbot_module_1 = require("./modules/chatbot/chatbot.module");
+const notifications_module_1 = require("./modules/notifications/notifications.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -42,6 +43,7 @@ exports.AppModule = AppModule = __decorate([
             payments_module_1.PaymentsModule,
             deliveries_module_1.DeliveriesModule,
             chatbot_module_1.ChatbotModule,
+            notifications_module_1.NotificationsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

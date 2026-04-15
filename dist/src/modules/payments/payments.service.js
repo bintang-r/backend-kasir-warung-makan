@@ -18,14 +18,26 @@ let PaymentsService = class PaymentsService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async createPayment(orderId, method, amount) {
+    async processPayment(orderId, method, amount) {
         const order = await this.prisma.order.findUnique({
             where: { id: orderId },
+            include: { payments: true }
         });
         if (!order) {
             throw new common_1.NotFoundException('Order not found');
         }
-        const payment = await this.prisma.payment.create({
+        const existingPayment = order.payments.find(p => p.status === client_1.PaymentStatus.UNPAID);
+        if (existingPayment) {
+            return this.prisma.payment.update({
+                where: { id: existingPayment.id },
+                data: {
+                    method,
+                    status: client_1.PaymentStatus.PAID,
+                    paidAt: new Date(),
+                },
+            });
+        }
+        return this.prisma.payment.create({
             data: {
                 orderId,
                 method,
@@ -34,11 +46,11 @@ let PaymentsService = class PaymentsService {
                 paidAt: new Date(),
             },
         });
-        return payment;
     }
     async getPaymentByOrder(orderId) {
         return this.prisma.payment.findFirst({
             where: { orderId },
+            include: { order: true }
         });
     }
 };

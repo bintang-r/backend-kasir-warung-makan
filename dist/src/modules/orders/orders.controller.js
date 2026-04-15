@@ -24,18 +24,31 @@ let OrdersController = class OrdersController {
     constructor(ordersService) {
         this.ordersService = ordersService;
     }
-    async create(req) {
+    async create(req, body) {
         const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : undefined;
         const guestSessionId = req.user.role === 'GUEST' ? BigInt(req.user.id) : undefined;
-        return this.ordersService.createOrder(userId, guestSessionId, undefined, req.user.role === 'GUEST' ? client_1.OrderSource.QR : client_1.OrderSource.APP);
+        const { cartId, orderType, address, tableId } = body;
+        const parsedCartId = BigInt(cartId);
+        const parsedTableId = tableId ? BigInt(tableId) : undefined;
+        return this.ordersService.createOrder(parsedCartId, userId, guestSessionId, parsedTableId, req.user.role === 'GUEST' ? client_1.OrderSource.QR : client_1.OrderSource.APP, orderType, address);
     }
     async findAll(req) {
         const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : undefined;
         const guestSessionId = req.user.role === 'GUEST' ? BigInt(req.user.id) : undefined;
         return this.ordersService.getOrders(userId, guestSessionId);
     }
+    async findAllStaff() {
+        return this.ordersService.getAllOrders();
+    }
     async updateStatus(id, status) {
         return this.ordersService.updateStatus(BigInt(id), status);
+    }
+    async confirmReceived(id) {
+        return this.ordersService.confirmReceived(BigInt(id));
+    }
+    async submitReview(id, req, rating, comment) {
+        const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : null;
+        return this.ordersService.addReview(BigInt(id), userId, rating, comment);
     }
 };
 exports.OrdersController = OrdersController;
@@ -43,8 +56,9 @@ __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "create", null);
 __decorate([
@@ -56,6 +70,14 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.Get)('all'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.KITCHEN, client_1.Role.KASIR),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "findAllStaff", null);
+__decorate([
     (0, common_1.Put)(':id/status'),
     (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.KITCHEN, client_1.Role.KASIR),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
@@ -65,6 +87,25 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "updateStatus", null);
+__decorate([
+    (0, common_1.Put)(':id/received'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "confirmReceived", null);
+__decorate([
+    (0, common_1.Post)(':id/review'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
+    __param(2, (0, common_1.Body)('rating')),
+    __param(3, (0, common_1.Body)('comment')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, Number, String]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "submitReview", null);
 exports.OrdersController = OrdersController = __decorate([
     (0, common_1.Controller)('orders'),
     __metadata("design:paramtypes", [orders_service_1.OrdersService])

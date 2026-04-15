@@ -11,13 +11,23 @@ export class OrdersController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  async create(@Request() req: any) {
+  async create(@Request() req: any, @Body() body: any) {
     const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : undefined;
     const guestSessionId = req.user.role === 'GUEST' ? BigInt(req.user.id) : undefined;
     
-    // For guests, we should ideally fetch the table_id from their session
-    // For now, we'll assume it's passed or derived.
-    return this.ordersService.createOrder(userId, guestSessionId, undefined, req.user.role === 'GUEST' ? OrderSource.QR : OrderSource.APP);
+    const { cartId, orderType, address, tableId } = body;
+    const parsedCartId = BigInt(cartId);
+    const parsedTableId = tableId ? BigInt(tableId) : undefined;
+
+    return this.ordersService.createOrder(
+      parsedCartId,
+      userId, 
+      guestSessionId, 
+      parsedTableId, 
+      req.user.role === 'GUEST' ? OrderSource.QR : OrderSource.APP,
+      orderType,
+      address
+    );
   }
 
   @Get()
@@ -28,10 +38,35 @@ export class OrdersController {
     return this.ordersService.getOrders(userId, guestSessionId);
   }
 
+  @Get('all')
+  @Roles(Role.ADMIN, Role.KITCHEN, Role.KASIR)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async findAllStaff() {
+    return this.ordersService.getAllOrders();
+  }
+
   @Put(':id/status')
   @Roles(Role.ADMIN, Role.KITCHEN, Role.KASIR)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateStatus(@Param('id') id: string, @Body('status') status: OrderStatus) {
     return this.ordersService.updateStatus(BigInt(id), status);
+  }
+
+  @Put(':id/received')
+  @UseGuards(JwtAuthGuard)
+  async confirmReceived(@Param('id') id: string) {
+    return this.ordersService.confirmReceived(BigInt(id));
+  }
+
+  @Post(':id/review')
+  @UseGuards(JwtAuthGuard)
+  async submitReview(
+    @Param('id') id: string, 
+    @Request() req: any, 
+    @Body('rating') rating: number, 
+    @Body('comment') comment: string
+  ) {
+    const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : null;
+    return this.ordersService.addReview(BigInt(id), userId, rating, comment);
   }
 }

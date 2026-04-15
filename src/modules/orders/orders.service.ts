@@ -1,20 +1,35 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CartsService } from '../carts/carts.service';
-import { OrderSource, OrderStatus } from '@prisma/client';
+import { NotificationsService } from '../notifications/notifications.service';
+import { OrderSource, OrderStatus, OrderType } from '@prisma/client';
 
 @Injectable()
 export class OrdersService {
   constructor(
     private prisma: PrismaService,
     private cartsService: CartsService,
+    private notificationsService: NotificationsService,
   ) {}
 
-  async createOrder(userId?: bigint, guestSessionId?: bigint, tableId?: bigint, source: OrderSource = OrderSource.APP) {
-    const cart = await this.cartsService.getCart(userId, guestSessionId);
+  async createOrder(
+    cartId: bigint,
+    userId?: bigint, 
+    guestSessionId?: bigint, 
+    tableId?: bigint, 
+    source: OrderSource = OrderSource.APP,
+    orderType: OrderType = OrderType.DINE_IN,
+    address?: string
+  ) {
+    const cart = await this.prisma.cart.findUnique({
+      where: { id: cartId },
+      include: {
+        items: { include: { menu: true } }
+      }
+    });
     
     if (!cart || cart.items.length === 0) {
-      throw new BadRequestException('Cart is empty');
+      throw new BadRequestException('Cart is empty or not found');
     }
 
     let totalPrice = 0;
@@ -28,52 +43,151 @@ export class OrdersService {
       };
     });
 
+    // Create Order and initial Payment in a transaction
     const order = await this.prisma.order.create({
       data: {
-        userId,
-        guestSessionId,
-        tableId,
+        userId: userId || null,
+        guestSessionId: guestSessionId || null,
+        tableId: tableId || null,
         orderSource: source,
-        totalPrice,
+        orderType,
+        address: address || null,
+        totalPrice: totalPrice.toFixed(2),
         status: OrderStatus.PENDING,
         items: {
           create: orderItemsData,
         },
+        payments: {
+          create: {
+            amount: totalPrice.toFixed(2),
+            method: 'CASH', // Default, will be updated during payment flow
+            status: 'UNPAID',
+          }
+        }
       },
       include: {
         items: {
           include: { menu: true },
         },
+        payments: true
       },
     });
 
     // Clear cart after successful order creation
     await this.cartsService.clearCart(cart.id);
 
+    // Create Notification
+    await this.notificationsService.create({
+      userId: userId || undefined,
+      guestSessionId: guestSessionId || undefined,
+      title: 'Pesanan Dikirim! 🚀',
+      message: `Pesanan dunsanak #${order.id.toString()} alah kami tarimo dan sadang manunggu konfirmasi.`,
+    });
+
     return order;
   }
 
   async getOrders(userId?: bigint, guestSessionId?: bigint) {
+    const orConditions: any[] = [];
+    if (userId) orConditions.push({ userId });
+    if (guestSessionId) orConditions.push({ guestSessionId });
+
+    if (orConditions.length === 0) return [];
+
     return this.prisma.order.findMany({
       where: {
-        OR: [
-          { userId: userId || undefined },
-          { guestSessionId: guestSessionId || undefined },
-        ],
+        OR: orConditions,
       },
       include: {
         items: {
           include: { menu: true },
         },
+        payments: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async getAllOrders() {
+    return this.prisma.order.findMany({
+      include: {
+        items: {
+          include: { menu: true },
+        },
+        user: { select: { name: true } },
+        table: true,
       },
       orderBy: { createdAt: 'desc' },
     });
   }
 
   async updateStatus(orderId: bigint, status: OrderStatus) {
-    return this.prisma.order.update({
+    const order = await this.prisma.order.update({
       where: { id: orderId },
       data: { status },
+    });
+
+    // Create Notification based on status
+    let title = 'Update Pesanan 🔔';
+    let message = `Status pesanan #${orderId.toString()} kini barubah jadi ${status}.`;
+
+    if (status === OrderStatus.CONFIRMED) {
+      title = 'Pesanan Dikonfirmasi ✅';
+      message = `Pesanan dunsanak #${orderId.toString()} alah dikonfirmasi.`;
+    } else if (status === OrderStatus.COOKING) {
+      title = 'Sadang Dimasak 👨‍🍳';
+      message = `Siap-siap! Pesanan dunsanak #${orderId.toString()} sadang dimasak di dapua.`;
+    } else if (status === OrderStatus.READY) {
+      title = 'Pesanan Siap! 🍽️';
+      message = `Pesanan dunsanak #${orderId.toString()} alah masak dan siap dihidangkan.`;
+    } else if (status === OrderStatus.DELIVERING) {
+      title = 'Sadang Dianta 🛵';
+      message = `Pembalap kami sadang mangantaan pesanan #${orderId.toString()} ka tampek dunsanak.`;
+    }
+
+    await this.notificationsService.create({
+      userId: order.userId || undefined,
+      guestSessionId: order.guestSessionId || undefined,
+      title,
+      message,
+    });
+
+    return order;
+  }
+
+  async confirmReceived(orderId: bigint) {
+    const order = await this.prisma.order.update({
+      where: { id: orderId },
+      data: { 
+        isReceived: true,
+        status: OrderStatus.COMPLETED
+      },
+    });
+
+    await this.notificationsService.create({
+      userId: order.userId || undefined,
+      guestSessionId: order.guestSessionId || undefined,
+      title: 'Pesanan Salasai! ✨',
+      message: `Tarimo kasih dunsanak! Pesanan #${orderId.toString()} alah ditarimo. Silekan agiah ulasan untuak kami.`,
+    });
+
+    return order;
+  }
+
+  async addReview(orderId: bigint, userId: bigint | null, rating: number, comment: string) {
+    // Check if order is completed
+    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
+    if (!order || order.status !== OrderStatus.COMPLETED) {
+      throw new BadRequestException('Order must be completed before leaving a review');
+    }
+
+    return this.prisma.review.create({
+      data: {
+        orderId,
+        userId,
+        rating,
+        comment,
+      },
     });
   }
 }

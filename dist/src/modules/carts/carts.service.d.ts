@@ -9,10 +9,12 @@ export declare class CartsService {
                 name: string;
                 createdAt: Date;
                 updatedAt: Date;
+                isPopular: boolean;
                 categoryId: bigint;
                 price: import("@prisma/client-runtime-utils").Decimal;
                 description: string | null;
                 image: string | null;
+                isAvailable: boolean;
             };
         } & {
             id: bigint;
@@ -28,6 +30,12 @@ export declare class CartsService {
         guestSessionId: bigint | null;
     }) | null>;
     addItem(cartId: bigint, menuId: bigint, qty: number): Promise<{
+        id: bigint;
+        cartId: bigint;
+        menuId: bigint;
+        qty: number;
+    }>;
+    updateQuantity(cartItemId: bigint, qty: number): Promise<{
         id: bigint;
         cartId: bigint;
         menuId: bigint;

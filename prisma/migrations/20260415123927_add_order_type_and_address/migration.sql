@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `orders` ADD COLUMN `address` TEXT NULL,
+    ADD COLUMN `order_type` ENUM('DINE_IN', 'TAKEAWAY', 'DELIVERY') NOT NULL DEFAULT 'DINE_IN';
