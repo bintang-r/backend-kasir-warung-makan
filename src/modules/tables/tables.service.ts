@@ -1,0 +1,39 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+import * as QRCode from 'qrcode';
+
+@Injectable()
+export class TablesService {
+  constructor(private prisma: PrismaService) {}
+
+  async findAll() {
+    return this.prisma.table.findMany();
+  }
+
+  async findOne(id: bigint) {
+    return this.prisma.table.findUnique({
+      where: { id },
+    });
+  }
+
+  async create(data: { name: string }) {
+    const table = await this.prisma.table.create({
+      data,
+    });
+    
+    // Generate QR code for the table
+    // URL format: /qr/:table_id
+    const qrUrl = `/qr/${table.id}`;
+    const qrCodeData = await QRCode.toDataURL(qrUrl);
+    
+    return this.prisma.table.update({
+      where: { id: table.id },
+      data: { qrCode: qrCodeData },
+    });
+  }
+
+  async generateQr(id: bigint) {
+    const qrUrl = `/qr/${id}`;
+    return QRCode.toDataURL(qrUrl);
+  }
+}
