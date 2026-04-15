@@ -18,8 +18,8 @@ export declare class GuestController {
         } | null;
     } & {
         id: bigint;
-        token: string;
         createdAt: Date;
+        token: string;
         expiresAt: Date;
         tableId: bigint | null;
     }) | null>;

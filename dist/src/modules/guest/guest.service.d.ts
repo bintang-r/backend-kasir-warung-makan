@@ -20,8 +20,8 @@ export declare class GuestService {
         } | null;
     } & {
         id: bigint;
-        token: string;
         createdAt: Date;
+        token: string;
         expiresAt: Date;
         tableId: bigint | null;
     }) | null>;
