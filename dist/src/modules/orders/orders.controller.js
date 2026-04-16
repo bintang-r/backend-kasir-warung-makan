@@ -37,14 +37,25 @@ let OrdersController = class OrdersController {
         const guestSessionId = req.user.role === 'GUEST' ? BigInt(req.user.id) : undefined;
         return this.ordersService.getOrders(userId, guestSessionId);
     }
+    async findOne(id, req) {
+        const order = await this.ordersService.getOrderById(BigInt(id));
+        if (!order)
+            throw new common_1.NotFoundException('Order not found');
+        const isStaff = [client_1.Role.ADMIN, client_1.Role.KITCHEN, client_1.Role.KASIR].includes(req.user.role);
+        const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : null;
+        const guestSessionId = req.user.role === 'GUEST' ? BigInt(req.user.id) : null;
+        const isOwner = (userId && order.userId === userId) ||
+            (guestSessionId && order.guestSessionId === guestSessionId);
+        if (!isStaff && !isOwner) {
+            throw new common_1.ForbiddenException('You do not have permission to view this order');
+        }
+        return order;
+    }
     async findAllStaff() {
         return this.ordersService.getAllOrders();
     }
     async updateStatus(id, status) {
         return this.ordersService.updateStatus(BigInt(id), status);
-    }
-    async confirmReceived(id) {
-        return this.ordersService.confirmReceived(BigInt(id));
     }
     async submitReview(id, req, rating, comment) {
         const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : null;
@@ -70,6 +81,15 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.Get)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "findOne", null);
+__decorate([
     (0, common_1.Get)('all'),
     (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.KITCHEN, client_1.Role.KASIR),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
@@ -87,14 +107,6 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "updateStatus", null);
-__decorate([
-    (0, common_1.Put)(':id/received'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], OrdersController.prototype, "confirmReceived", null);
 __decorate([
     (0, common_1.Post)(':id/review'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
