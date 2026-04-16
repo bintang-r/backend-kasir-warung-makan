@@ -81,7 +81,7 @@ export class OrdersService {
       userId: userId || undefined,
       guestSessionId: guestSessionId || undefined,
       title: 'Pesanan Dikirim! 🚀',
-      message: `Pesanan dunsanak #${order.id.toString()} alah kami tarimo dan sadang manunggu konfirmasi.`,
+      message: `Pesanan Anda #${order.id.toString()} sudah kami terima dan sedang menunggu konfirmasi.`,
     });
 
     return order;
@@ -141,17 +141,17 @@ export class OrdersService {
 
     // Create Notification based on status
     let title = 'Update Pesanan 🔔';
-    let message = `Status pesanan #${orderId.toString()} kini barubah jadi ${status}.`;
+    let message = `Status pesanan #${orderId.toString()} kini berubah menjadi ${status}.`;
 
     if (status === OrderStatus.CONFIRMED) {
       title = 'Pesanan Dikonfirmasi ✅';
-      message = `Pesanan dunsanak #${orderId.toString()} alah dikonfirmasi dan masuak antrian dapua.`;
+      message = `Pesanan Anda #${orderId.toString()} telah dikonfirmasi dan masuk antrean dapur.`;
     } else if (status === OrderStatus.COOKING) {
       title = 'Sedang Dimasak 👨‍🍳';
-      message = `Siap-siap! Koki kami sadang mamasak pesanan dunsanak #${orderId.toString()}.`;
+      message = `Siap-siap! Koki kami sedang memasak pesanan Anda #${orderId.toString()}.`;
     } else if (status === OrderStatus.READY) {
       title = 'Hore, Pesanan Siap! 🍽️';
-      message = `Pesanan dunsanak #${orderId.toString()} alah masak dan siap dihidangkan. Silekan dinikmati!`;
+      message = `Pesanan Anda #${orderId.toString()} telah matang dan siap dihidangkan. Silakan dinikmati!`;
     }
 
     await this.notificationsService.create({
