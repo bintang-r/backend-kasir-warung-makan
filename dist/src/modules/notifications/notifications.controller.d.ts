@@ -5,19 +5,19 @@ export declare class NotificationsController {
     getNotifications(req: any): Promise<{
         id: bigint;
         createdAt: Date;
+        title: string;
         userId: bigint | null;
         guestSessionId: bigint | null;
         message: string;
-        title: string;
         isRead: boolean;
     }[]>;
     markAsRead(id: string): Promise<{
         id: bigint;
         createdAt: Date;
+        title: string;
         userId: bigint | null;
         guestSessionId: bigint | null;
         message: string;
-        title: string;
         isRead: boolean;
     }>;
     markAllAsRead(req: any): Promise<import("@prisma/client").Prisma.BatchPayload>;
@@ -36,8 +36,8 @@ export declare class NotificationsController {
             expiresAt: Date;
         } | null;
         createdAt: Date;
-        message: string;
         title: string;
+        message: string;
         isRead: boolean;
     }[]>;
 }

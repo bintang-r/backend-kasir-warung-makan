@@ -16,12 +16,12 @@ export declare class DashboardController {
                     name: string;
                     createdAt: Date;
                     updatedAt: Date;
-                    isPopular: boolean;
-                    categoryId: bigint;
                     price: import("@prisma/client-runtime-utils").Decimal;
                     description: string | null;
                     image: string | null;
+                    isPopular: boolean;
                     isAvailable: boolean;
+                    categoryId: bigint;
                 };
                 price: import("@prisma/client-runtime-utils").Decimal;
                 qty: number;
@@ -29,15 +29,15 @@ export declare class DashboardController {
             user: {
                 name: string;
             } | null;
+            status: import("@prisma/client").$Enums.OrderStatus;
             createdAt: Date;
             updatedAt: Date;
-            status: import("@prisma/client").$Enums.OrderStatus;
+            guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
             orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
             isReceived: boolean;
-            guestSessionId: bigint | null;
         }[];
         revenueByDay: {
             date: string;

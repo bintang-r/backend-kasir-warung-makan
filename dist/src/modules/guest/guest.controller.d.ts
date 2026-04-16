@@ -8,17 +8,17 @@ export declare class GuestController {
         ordersCount: number;
         orders: {
             id: bigint;
+            status: import("@prisma/client").$Enums.OrderStatus;
             createdAt: Date;
             updatedAt: Date;
-            status: import("@prisma/client").$Enums.OrderStatus;
             userId: bigint | null;
+            guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
             orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
             isReceived: boolean;
             tableId: bigint | null;
-            guestSessionId: bigint | null;
         }[];
         table: {
             id: bigint;

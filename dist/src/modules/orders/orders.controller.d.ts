@@ -10,41 +10,41 @@ export declare class OrdersController {
                 name: string;
                 createdAt: Date;
                 updatedAt: Date;
-                isPopular: boolean;
-                categoryId: bigint;
                 price: import("@prisma/client-runtime-utils").Decimal;
                 description: string | null;
                 image: string | null;
+                isPopular: boolean;
                 isAvailable: boolean;
+                categoryId: bigint;
             };
         } & {
             id: bigint;
             price: import("@prisma/client-runtime-utils").Decimal;
-            orderId: bigint;
-            menuId: bigint;
             qty: number;
+            menuId: bigint;
+            orderId: bigint;
         })[];
         payments: {
             id: bigint;
             status: import("@prisma/client").$Enums.PaymentStatus;
-            orderId: bigint;
             method: import("@prisma/client").$Enums.PaymentMethod;
             amount: import("@prisma/client-runtime-utils").Decimal;
             paidAt: Date | null;
+            orderId: bigint;
         }[];
     } & {
         id: bigint;
+        status: import("@prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
-        status: import("@prisma/client").$Enums.OrderStatus;
         userId: bigint | null;
+        guestSessionId: bigint | null;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
         tableId: bigint | null;
-        guestSessionId: bigint | null;
     }>;
     findAll(req: any): Promise<({
         items: ({
@@ -53,41 +53,41 @@ export declare class OrdersController {
                 name: string;
                 createdAt: Date;
                 updatedAt: Date;
-                isPopular: boolean;
-                categoryId: bigint;
                 price: import("@prisma/client-runtime-utils").Decimal;
                 description: string | null;
                 image: string | null;
+                isPopular: boolean;
                 isAvailable: boolean;
+                categoryId: bigint;
             };
         } & {
             id: bigint;
             price: import("@prisma/client-runtime-utils").Decimal;
-            orderId: bigint;
-            menuId: bigint;
             qty: number;
+            menuId: bigint;
+            orderId: bigint;
         })[];
         payments: {
             id: bigint;
             status: import("@prisma/client").$Enums.PaymentStatus;
-            orderId: bigint;
             method: import("@prisma/client").$Enums.PaymentMethod;
             amount: import("@prisma/client-runtime-utils").Decimal;
             paidAt: Date | null;
+            orderId: bigint;
         }[];
     } & {
         id: bigint;
+        status: import("@prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
-        status: import("@prisma/client").$Enums.OrderStatus;
         userId: bigint | null;
+        guestSessionId: bigint | null;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
         tableId: bigint | null;
-        guestSessionId: bigint | null;
     })[]>;
     findAllStaff(): Promise<{
         id: string;
@@ -101,31 +101,39 @@ export declare class OrdersController {
             menuId: string;
             price: number;
             menu: {
+                category: {
+                    id: bigint;
+                    name: string;
+                };
+            } & {
                 id: bigint;
                 name: string;
                 createdAt: Date;
                 updatedAt: Date;
-                isPopular: boolean;
-                categoryId: bigint;
                 price: import("@prisma/client-runtime-utils").Decimal;
                 description: string | null;
                 image: string | null;
+                isPopular: boolean;
                 isAvailable: boolean;
+                categoryId: bigint;
             };
             qty: number;
         }[];
-        user: {
-            name: string;
-        } | null;
+        payments: any;
         table: {
             id: bigint;
             name: string;
             qrCode: string | null;
             status: import("@prisma/client").$Enums.TableStatus;
         } | null;
+        user: {
+            id: bigint;
+            name: string;
+            email: string;
+        } | null;
+        status: import("@prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
-        status: import("@prisma/client").$Enums.OrderStatus;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         address: string | null;
@@ -147,12 +155,12 @@ export declare class OrdersController {
                 name: string;
                 createdAt: Date;
                 updatedAt: Date;
-                isPopular: boolean;
-                categoryId: bigint;
                 price: import("@prisma/client-runtime-utils").Decimal;
                 description: string | null;
                 image: string | null;
+                isPopular: boolean;
                 isAvailable: boolean;
+                categoryId: bigint;
             };
             qty: number;
         }[];
@@ -164,9 +172,9 @@ export declare class OrdersController {
             method: import("@prisma/client").$Enums.PaymentMethod;
             paidAt: Date | null;
         }[];
+        status: import("@prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
-        status: import("@prisma/client").$Enums.OrderStatus;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         address: string | null;
@@ -174,31 +182,31 @@ export declare class OrdersController {
     }>;
     remove(id: string): Promise<{
         id: bigint;
+        status: import("@prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
-        status: import("@prisma/client").$Enums.OrderStatus;
         userId: bigint | null;
+        guestSessionId: bigint | null;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
         tableId: bigint | null;
-        guestSessionId: bigint | null;
     }>;
     updateStatus(id: string, status: OrderStatus): Promise<{
         id: bigint;
+        status: import("@prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;
-        status: import("@prisma/client").$Enums.OrderStatus;
         userId: bigint | null;
+        guestSessionId: bigint | null;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
         tableId: bigint | null;
-        guestSessionId: bigint | null;
     }>;
     submitReview(id: string, req: any, rating: number, comment: string): Promise<{
         id: bigint;

@@ -12,12 +12,12 @@ export declare class MenusController {
         name: string;
         createdAt: Date;
         updatedAt: Date;
-        isPopular: boolean;
-        categoryId: bigint;
         price: import("@prisma/client-runtime-utils").Decimal;
         description: string | null;
         image: string | null;
+        isPopular: boolean;
         isAvailable: boolean;
+        categoryId: bigint;
     })[]>;
     findOne(id: string): Promise<({
         category: {
@@ -29,47 +29,47 @@ export declare class MenusController {
         name: string;
         createdAt: Date;
         updatedAt: Date;
-        isPopular: boolean;
-        categoryId: bigint;
         price: import("@prisma/client-runtime-utils").Decimal;
         description: string | null;
         image: string | null;
+        isPopular: boolean;
         isAvailable: boolean;
+        categoryId: bigint;
     }) | null>;
     create(file: Express.Multer.File, body: any): Promise<{
         id: bigint;
         name: string;
         createdAt: Date;
         updatedAt: Date;
-        isPopular: boolean;
-        categoryId: bigint;
         price: import("@prisma/client-runtime-utils").Decimal;
         description: string | null;
         image: string | null;
+        isPopular: boolean;
         isAvailable: boolean;
+        categoryId: bigint;
     }>;
     update(id: string, file: Express.Multer.File, body: any): Promise<{
         id: bigint;
         name: string;
         createdAt: Date;
         updatedAt: Date;
-        isPopular: boolean;
-        categoryId: bigint;
         price: import("@prisma/client-runtime-utils").Decimal;
         description: string | null;
         image: string | null;
+        isPopular: boolean;
         isAvailable: boolean;
+        categoryId: bigint;
     }>;
     remove(id: string): Promise<{
         id: bigint;
         name: string;
         createdAt: Date;
         updatedAt: Date;
-        isPopular: boolean;
-        categoryId: bigint;
         price: import("@prisma/client-runtime-utils").Decimal;
         description: string | null;
         image: string | null;
+        isPopular: boolean;
         isAvailable: boolean;
+        categoryId: bigint;
     }>;
 }

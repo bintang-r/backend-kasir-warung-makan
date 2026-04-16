@@ -10,28 +10,28 @@ export declare class NotificationsService {
     }): Promise<{
         id: bigint;
         createdAt: Date;
+        title: string;
         userId: bigint | null;
         guestSessionId: bigint | null;
         message: string;
-        title: string;
         isRead: boolean;
     }>;
     findAll(userId?: bigint, guestSessionId?: bigint): Promise<{
         id: bigint;
         createdAt: Date;
+        title: string;
         userId: bigint | null;
         guestSessionId: bigint | null;
         message: string;
-        title: string;
         isRead: boolean;
     }[]>;
     markAsRead(id: bigint): Promise<{
         id: bigint;
         createdAt: Date;
+        title: string;
         userId: bigint | null;
         guestSessionId: bigint | null;
         message: string;
-        title: string;
         isRead: boolean;
     }>;
     markAllAsRead(userId?: bigint, guestSessionId?: bigint): Promise<import("@prisma/client").Prisma.BatchPayload>;
@@ -49,10 +49,10 @@ export declare class NotificationsService {
     } & {
         id: bigint;
         createdAt: Date;
+        title: string;
         userId: bigint | null;
         guestSessionId: bigint | null;
         message: string;
-        title: string;
         isRead: boolean;
     })[]>;
 }

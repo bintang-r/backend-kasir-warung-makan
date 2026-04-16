@@ -52,7 +52,13 @@ let OrdersController = class OrdersController {
                 orderId: i.orderId.toString(),
                 menuId: i.menuId.toString(),
                 price: Number(i.price)
-            }))
+            })),
+            payments: order.payments?.map(p => ({
+                ...p,
+                id: p.id.toString(),
+                orderId: p.orderId.toString(),
+                amount: Number(p.amount),
+            })) || [],
         }));
     }
     async findOne(id, req) {

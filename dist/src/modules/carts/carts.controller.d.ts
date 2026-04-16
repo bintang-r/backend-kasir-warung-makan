@@ -9,18 +9,18 @@ export declare class CartsController {
                 name: string;
                 createdAt: Date;
                 updatedAt: Date;
-                isPopular: boolean;
-                categoryId: bigint;
                 price: import("@prisma/client-runtime-utils").Decimal;
                 description: string | null;
                 image: string | null;
+                isPopular: boolean;
                 isAvailable: boolean;
+                categoryId: bigint;
             };
         } & {
             id: bigint;
-            menuId: bigint;
-            cartId: bigint;
             qty: number;
+            cartId: bigint;
+            menuId: bigint;
         })[];
     } & {
         id: bigint;
@@ -34,22 +34,22 @@ export declare class CartsController {
         qty: number;
     }): Promise<{
         id: bigint;
-        menuId: bigint;
-        cartId: bigint;
         qty: number;
+        cartId: bigint;
+        menuId: bigint;
     }>;
     removeItem(itemId: string): Promise<{
         id: bigint;
-        menuId: bigint;
-        cartId: bigint;
         qty: number;
+        cartId: bigint;
+        menuId: bigint;
     }>;
     updateQuantity(itemId: string, body: {
         qty: number;
     }): Promise<{
         id: bigint;
-        menuId: bigint;
-        cartId: bigint;
         qty: number;
+        cartId: bigint;
+        menuId: bigint;
     }>;
 }

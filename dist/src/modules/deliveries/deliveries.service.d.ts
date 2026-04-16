@@ -4,41 +4,41 @@ export declare class DeliveriesService {
     constructor(prisma: PrismaService);
     assignDriver(orderId: bigint, driverId: bigint): Promise<{
         id: bigint;
+        status: string;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
-        driverId: bigint | null;
         orderId: bigint;
+        driverId: bigint | null;
     }>;
     updateStatus(deliveryId: bigint, status: string): Promise<{
         id: bigint;
+        status: string;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
-        driverId: bigint | null;
         orderId: bigint;
+        driverId: bigint | null;
     }>;
     getDeliveriesByDriver(driverId: bigint): Promise<({
         order: {
             id: bigint;
+            status: import("@prisma/client").$Enums.OrderStatus;
             createdAt: Date;
             updatedAt: Date;
-            status: import("@prisma/client").$Enums.OrderStatus;
             userId: bigint | null;
+            guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
             orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
             isReceived: boolean;
             tableId: bigint | null;
-            guestSessionId: bigint | null;
         };
     } & {
         id: bigint;
+        status: string;
         createdAt: Date;
         updatedAt: Date;
-        status: string;
-        driverId: bigint | null;
         orderId: bigint;
+        driverId: bigint | null;
     })[]>;
 }

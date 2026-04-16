@@ -9,18 +9,18 @@ export declare class CartsService {
                 name: string;
                 createdAt: Date;
                 updatedAt: Date;
-                isPopular: boolean;
-                categoryId: bigint;
                 price: import("@prisma/client-runtime-utils").Decimal;
                 description: string | null;
                 image: string | null;
+                isPopular: boolean;
                 isAvailable: boolean;
+                categoryId: bigint;
             };
         } & {
             id: bigint;
-            menuId: bigint;
-            cartId: bigint;
             qty: number;
+            cartId: bigint;
+            menuId: bigint;
         })[];
     } & {
         id: bigint;
@@ -31,21 +31,21 @@ export declare class CartsService {
     }) | null>;
     addItem(cartId: bigint, menuId: bigint, qty: number): Promise<{
         id: bigint;
-        menuId: bigint;
-        cartId: bigint;
         qty: number;
+        cartId: bigint;
+        menuId: bigint;
     }>;
     updateQuantity(cartItemId: bigint, qty: number): Promise<{
         id: bigint;
-        menuId: bigint;
-        cartId: bigint;
         qty: number;
+        cartId: bigint;
+        menuId: bigint;
     }>;
     removeItem(cartItemId: bigint): Promise<{
         id: bigint;
-        menuId: bigint;
-        cartId: bigint;
         qty: number;
+        cartId: bigint;
+        menuId: bigint;
     }>;
     clearCart(cartId: bigint): Promise<import("@prisma/client").Prisma.BatchPayload>;
 }
