@@ -89,47 +89,6 @@ export declare class OrdersController {
         address: string | null;
         isReceived: boolean;
     })[]>;
-    findOne(id: string, req: any): Promise<{
-        id: string;
-        userId: string | undefined;
-        tableId: string | undefined;
-        guestSessionId: string | undefined;
-        totalPrice: number;
-        items: {
-            id: string;
-            orderId: string;
-            menuId: string;
-            price: number;
-            menu: {
-                id: bigint;
-                name: string;
-                createdAt: Date;
-                updatedAt: Date;
-                isPopular: boolean;
-                categoryId: bigint;
-                price: import("@prisma/client-runtime-utils").Decimal;
-                description: string | null;
-                image: string | null;
-                isAvailable: boolean;
-            };
-            qty: number;
-        }[];
-        payments: {
-            id: string;
-            orderId: string;
-            amount: number;
-            status: import("@prisma/client").$Enums.PaymentStatus;
-            method: import("@prisma/client").$Enums.PaymentMethod;
-            paidAt: Date | null;
-        }[];
-        createdAt: Date;
-        updatedAt: Date;
-        status: import("@prisma/client").$Enums.OrderStatus;
-        orderSource: import("@prisma/client").$Enums.OrderSource;
-        orderType: import("@prisma/client").$Enums.OrderType;
-        address: string | null;
-        isReceived: boolean;
-    }>;
     findAllStaff(): Promise<{
         id: string;
         userId: string | undefined;
@@ -172,6 +131,47 @@ export declare class OrdersController {
         address: string | null;
         isReceived: boolean;
     }[]>;
+    findOne(id: string, req: any): Promise<{
+        id: string;
+        userId: string | undefined;
+        tableId: string | undefined;
+        guestSessionId: string | undefined;
+        totalPrice: number;
+        items: {
+            id: string;
+            orderId: string;
+            menuId: string;
+            price: number;
+            menu: {
+                id: bigint;
+                name: string;
+                createdAt: Date;
+                updatedAt: Date;
+                isPopular: boolean;
+                categoryId: bigint;
+                price: import("@prisma/client-runtime-utils").Decimal;
+                description: string | null;
+                image: string | null;
+                isAvailable: boolean;
+            };
+            qty: number;
+        }[];
+        payments: {
+            id: string;
+            orderId: string;
+            amount: number;
+            status: import("@prisma/client").$Enums.PaymentStatus;
+            method: import("@prisma/client").$Enums.PaymentMethod;
+            paidAt: Date | null;
+        }[];
+        createdAt: Date;
+        updatedAt: Date;
+        status: import("@prisma/client").$Enums.OrderStatus;
+        orderSource: import("@prisma/client").$Enums.OrderSource;
+        orderType: import("@prisma/client").$Enums.OrderType;
+        address: string | null;
+        isReceived: boolean;
+    }>;
     remove(id: string): Promise<{
         id: bigint;
         createdAt: Date;

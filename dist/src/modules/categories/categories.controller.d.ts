@@ -6,9 +6,7 @@ export declare class CategoriesController {
         id: bigint;
         name: string;
     }[]>;
-    create(body: {
-        name: string;
-    }): Promise<{
+    create(body: any): Promise<{
         id: bigint;
         name: string;
     }>;

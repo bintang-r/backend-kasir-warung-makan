@@ -28,7 +28,7 @@ let CategoriesController = class CategoriesController {
         return this.categoriesService.findAll();
     }
     async create(body) {
-        return this.categoriesService.create(body);
+        return this.categoriesService.create({ name: body.name });
     }
 };
 exports.CategoriesController = CategoriesController;

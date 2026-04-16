@@ -37,6 +37,24 @@ let OrdersController = class OrdersController {
         const guestSessionId = req.user.role === 'GUEST' ? BigInt(req.user.id) : undefined;
         return this.ordersService.getOrders(userId, guestSessionId);
     }
+    async findAllStaff() {
+        const orders = await this.ordersService.getAllOrders();
+        return orders.map(order => ({
+            ...order,
+            id: order.id.toString(),
+            userId: order.userId?.toString(),
+            tableId: order.tableId?.toString(),
+            guestSessionId: order.guestSessionId?.toString(),
+            totalPrice: Number(order.totalPrice),
+            items: order.items.map(i => ({
+                ...i,
+                id: i.id.toString(),
+                orderId: i.orderId.toString(),
+                menuId: i.menuId.toString(),
+                price: Number(i.price)
+            }))
+        }));
+    }
     async findOne(id, req) {
         const order = await this.ordersService.getOrderById(BigInt(id));
         if (!order)
@@ -71,24 +89,6 @@ let OrdersController = class OrdersController {
             }))
         };
     }
-    async findAllStaff() {
-        const orders = await this.ordersService.getAllOrders();
-        return orders.map(order => ({
-            ...order,
-            id: order.id.toString(),
-            userId: order.userId?.toString(),
-            tableId: order.tableId?.toString(),
-            guestSessionId: order.guestSessionId?.toString(),
-            totalPrice: Number(order.totalPrice),
-            items: order.items.map(i => ({
-                ...i,
-                id: i.id.toString(),
-                orderId: i.orderId.toString(),
-                menuId: i.menuId.toString(),
-                price: Number(i.price)
-            }))
-        }));
-    }
     async remove(id) {
         return this.ordersService.deleteOrder(BigInt(id));
     }
@@ -119,6 +119,14 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.Get)('all'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.KITCHEN, client_1.Role.KASIR),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "findAllStaff", null);
+__decorate([
     (0, common_1.Get)(':id'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     __param(0, (0, common_1.Param)('id')),
@@ -127,14 +135,6 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "findOne", null);
-__decorate([
-    (0, common_1.Get)('all'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.KITCHEN, client_1.Role.KASIR),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], OrdersController.prototype, "findAllStaff", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),

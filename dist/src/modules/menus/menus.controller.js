@@ -31,15 +31,17 @@ let MenusController = class MenusController {
         return this.menusService.findOne(BigInt(id));
     }
     async create(body) {
+        const { id, ...rest } = body;
         return this.menusService.create({
-            ...body,
-            categoryId: BigInt(body.categoryId),
+            ...rest,
+            categoryId: BigInt(rest.categoryId),
         });
     }
     async update(id, body) {
+        const { id: _id, ...rest } = body;
         return this.menusService.update(BigInt(id), {
-            ...body,
-            categoryId: body.categoryId ? BigInt(body.categoryId) : undefined,
+            ...rest,
+            categoryId: rest.categoryId ? BigInt(rest.categoryId) : undefined,
         });
     }
     async remove(id) {

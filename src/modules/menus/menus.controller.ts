@@ -23,9 +23,10 @@ export class MenusController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async create(@Body() body: any) {
+    const { id, ...rest } = body;
     return this.menusService.create({
-      ...body,
-      categoryId: BigInt(body.categoryId),
+      ...rest,
+      categoryId: BigInt(rest.categoryId),
     });
   }
 
@@ -33,9 +34,10 @@ export class MenusController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async update(@Param('id') id: string, @Body() body: any) {
+    const { id: _id, ...rest } = body;
     return this.menusService.update(BigInt(id), {
-      ...body,
-      categoryId: body.categoryId ? BigInt(body.categoryId) : undefined,
+      ...rest,
+      categoryId: rest.categoryId ? BigInt(rest.categoryId) : undefined,
     });
   }
 

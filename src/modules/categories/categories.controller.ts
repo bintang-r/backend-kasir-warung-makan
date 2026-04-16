@@ -17,7 +17,7 @@ export class CategoriesController {
   @Post()
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async create(@Body() body: { name: string }) {
-    return this.categoriesService.create(body);
+  async create(@Body() body: any) {
+    return this.categoriesService.create({ name: body.name });
   }
 }

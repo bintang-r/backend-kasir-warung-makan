@@ -38,6 +38,28 @@ export class OrdersController {
     return this.ordersService.getOrders(userId, guestSessionId);
   }
 
+  @Get('all')
+  @Roles(Role.ADMIN, Role.KITCHEN, Role.KASIR)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async findAllStaff() {
+    const orders = await this.ordersService.getAllOrders();
+    return orders.map(order => ({
+      ...order,
+      id: order.id.toString(),
+      userId: order.userId?.toString(),
+      tableId: order.tableId?.toString(),
+      guestSessionId: order.guestSessionId?.toString(),
+      totalPrice: Number(order.totalPrice),
+      items: order.items.map(i => ({
+        ...i,
+        id: i.id.toString(),
+        orderId: i.orderId.toString(),
+        menuId: i.menuId.toString(),
+        price: Number(i.price)
+      }))
+    }));
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: string, @Request() req: any) {
@@ -77,28 +99,6 @@ export class OrdersController {
         amount: Number(p.amount)
       }))
     };
-  }
-
-  @Get('all')
-  @Roles(Role.ADMIN, Role.KITCHEN, Role.KASIR)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  async findAllStaff() {
-    const orders = await this.ordersService.getAllOrders();
-    return orders.map(order => ({
-      ...order,
-      id: order.id.toString(),
-      userId: order.userId?.toString(),
-      tableId: order.tableId?.toString(),
-      guestSessionId: order.guestSessionId?.toString(),
-      totalPrice: Number(order.totalPrice),
-      items: order.items.map(i => ({
-        ...i,
-        id: i.id.toString(),
-        orderId: i.orderId.toString(),
-        menuId: i.menuId.toString(),
-        price: Number(i.price)
-      }))
-    }));
   }
 
   @Delete(':id')
