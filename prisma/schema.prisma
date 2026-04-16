@@ -14,7 +14,6 @@ enum Role {
   CUSTOMER
   KASIR
   KITCHEN
-  DRIVER
 }
 
 enum OrderStatus {
@@ -22,7 +21,6 @@ enum OrderStatus {
   CONFIRMED
   COOKING
   READY
-  DELIVERING
   COMPLETED
   CANCELLED
 }
@@ -30,7 +28,6 @@ enum OrderStatus {
 enum OrderType {
   DINE_IN
   TAKEAWAY
-  DELIVERY
 }
 
 enum OrderSource {
@@ -41,7 +38,6 @@ enum OrderSource {
 
 enum PaymentMethod {
   CASH
-  TRANSFER
   EWALLET
 }
 
@@ -67,7 +63,6 @@ model User {
 
   carts            Cart[]
   orders           Order[]
-  deliveries       Delivery[]
   chatbotLogs      ChatbotLog[]
   chatbotSessions  ChatbotSession[]
   reviews          Review[]
@@ -163,7 +158,6 @@ model Order {
   guestSession  GuestSession? @relation(fields: [guestSessionId], references: [id])
   items         OrderItem[]
   payments      Payment[]
-  deliveries    Delivery[]
   reviews       Review[]
 
   @@map("orders")
@@ -209,17 +203,7 @@ model Payment {
   @@map("payments")
 }
 
-model Delivery {
-  id       BigInt @id @default(autoincrement())
-  orderId  BigInt @map("order_id")
-  driverId BigInt @map("driver_id")
-  status   String @db.VarChar(50) // e.g., delivering, done
 
-  order    Order @relation(fields: [orderId], references: [id])
-  driver   User  @relation(fields: [driverId], references: [id])
-
-  @@map("deliveries")
-}
 
 model Table {
   id      BigInt      @id @default(autoincrement())
