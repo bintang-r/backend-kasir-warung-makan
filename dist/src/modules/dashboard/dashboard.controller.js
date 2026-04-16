@@ -22,7 +22,22 @@ let DashboardController = class DashboardController {
         this.dashboardService = dashboardService;
     }
     async getStats() {
-        return this.dashboardService.getStats();
+        const stats = await this.dashboardService.getStats();
+        return {
+            ...stats,
+            recentOrders: stats.recentOrders.map(o => ({
+                ...o,
+                id: o.id.toString(),
+                userId: o.userId?.toString(),
+                tableId: o.tableId?.toString(),
+                items: o.items.map(i => ({
+                    ...i,
+                    id: i.id.toString(),
+                    orderId: i.orderId.toString(),
+                    menuId: i.menuId.toString()
+                }))
+            }))
+        };
     }
 };
 exports.DashboardController = DashboardController;

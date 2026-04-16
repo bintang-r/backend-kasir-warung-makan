@@ -15,10 +15,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GuestController = void 0;
 const common_1 = require("@nestjs/common");
 const guest_service_1 = require("./guest.service");
+const roles_guard_1 = require("../../common/guards/roles.guard");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
+const client_1 = require("@prisma/client");
+const jwt_auth_guard_1 = require("../../auth/guards/jwt-auth.guard");
 let GuestController = class GuestController {
     guestService;
     constructor(guestService) {
         this.guestService = guestService;
+    }
+    async findAll() {
+        const sessions = await this.guestService.findAll();
+        return sessions.map(s => ({
+            ...s,
+            id: s.id.toString(),
+            tableId: s.tableId?.toString(),
+            ordersCount: s.orders.length
+        }));
     }
     async createSession(body) {
         const tableId = body.tableId ? BigInt(body.tableId) : undefined;
@@ -32,6 +45,14 @@ let GuestController = class GuestController {
     }
 };
 exports.GuestController = GuestController;
+__decorate([
+    (0, common_1.Get)('admin'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], GuestController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Post)('session'),
     __param(0, (0, common_1.Body)()),

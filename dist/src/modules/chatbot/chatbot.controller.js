@@ -31,6 +31,14 @@ let ChatbotController = class ChatbotController {
         const userId = BigInt(req.user.id);
         return this.chatbotService.getHistory(userId);
     }
+    async getAllLogs() {
+        const logs = await this.chatbotService.getAllLogs();
+        return logs.map(l => ({ ...l, id: l.id.toString(), userId: l.userId?.toString() }));
+    }
+    async getAllSessions() {
+        const sessions = await this.chatbotService.getAllSessions();
+        return sessions.map(s => ({ ...s, id: s.id.toString(), userId: s.userId?.toString() }));
+    }
 };
 exports.ChatbotController = ChatbotController;
 __decorate([
@@ -50,6 +58,22 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], ChatbotController.prototype, "getHistory", null);
+__decorate([
+    (0, common_1.Get)('logs'),
+    Roles(Role.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, RolesGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], ChatbotController.prototype, "getAllLogs", null);
+__decorate([
+    (0, common_1.Get)('sessions'),
+    Roles(Role.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, RolesGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], ChatbotController.prototype, "getAllSessions", null);
 exports.ChatbotController = ChatbotController = __decorate([
     (0, common_1.Controller)('chatbot'),
     __metadata("design:paramtypes", [chatbot_service_1.ChatbotService])

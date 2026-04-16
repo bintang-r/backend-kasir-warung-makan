@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentsController = void 0;
 const common_1 = require("@nestjs/common");
@@ -31,7 +32,27 @@ let PaymentsController = class PaymentsController {
         return this.paymentsService.processPayment(BigInt(body.orderId), body.method, body.amount);
     }
     async findByOrder(orderId) {
-        return this.paymentsService.getPaymentByOrder(BigInt(orderId));
+        const payment = await this.paymentsService.getPaymentByOrder(BigInt(orderId));
+        if (!payment)
+            return null;
+        return { ...payment, id: payment.id.toString(), orderId: payment.orderId.toString() };
+    }
+    async findAll() {
+        const payments = await this.paymentsService.findAll();
+        return payments.map(p => ({
+            ...p,
+            id: p.id.toString(),
+            orderId: p.orderId.toString(),
+            order: {
+                ...p.order,
+                id: p.order.id.toString(),
+                userId: p.order.userId?.toString(),
+                tableId: p.order.tableId?.toString()
+            }
+        }));
+    }
+    async updateStatus(id, status) {
+        return this.paymentsService.updateStatus(BigInt(id), status);
     }
 };
 exports.PaymentsController = PaymentsController;
@@ -60,6 +81,24 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], PaymentsController.prototype, "findByOrder", null);
+__decorate([
+    (0, common_1.Get)(),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.KASIR),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], PaymentsController.prototype, "findAll", null);
+__decorate([
+    Patch(':id/status'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.KASIR),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('status')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, typeof (_a = typeof PaymentStatus !== "undefined" && PaymentStatus) === "function" ? _a : Object]),
+    __metadata("design:returntype", Promise)
+], PaymentsController.prototype, "updateStatus", null);
 exports.PaymentsController = PaymentsController = __decorate([
     (0, common_1.Controller)('payments'),
     __metadata("design:paramtypes", [payments_service_1.PaymentsService])

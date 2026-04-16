@@ -25,25 +25,40 @@ let UsersController = class UsersController {
         this.usersService = usersService;
     }
     async findAll() {
-        return this.usersService.findAll();
+        const users = await this.usersService.findAll();
+        return users.map(u => ({ ...u, id: u.id.toString() }));
+    }
+    async getMe(req) {
+        const user = await this.usersService.findById(BigInt(req.user.id));
+        if (!user)
+            return null;
+        return { ...user, id: user.id.toString() };
     }
     async updateMe(req, body) {
         const userId = BigInt(req.user.id);
-        return this.usersService.updateUser(userId, body);
+        const updated = await this.usersService.updateUser(userId, body);
+        return { ...updated, id: updated.id.toString() };
     }
     async update(id, body) {
-        return this.usersService.updateUser(BigInt(id), body);
+        const updated = await this.usersService.updateUser(BigInt(id), body);
+        return { ...updated, id: updated.id.toString() };
     }
 };
 exports.UsersController = UsersController;
 __decorate([
-    (0, common_1.Get)(),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('me'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getMe", null);
 __decorate([
     (0, common_1.Patch)('me'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

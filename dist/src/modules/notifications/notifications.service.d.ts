@@ -35,4 +35,24 @@ export declare class NotificationsService {
         isRead: boolean;
     }>;
     markAllAsRead(userId?: bigint, guestSessionId?: bigint): Promise<import("@prisma/client").Prisma.BatchPayload>;
+    findAllAdmin(): Promise<({
+        user: {
+            name: string;
+        } | null;
+        guestSession: {
+            id: bigint;
+            createdAt: Date;
+            token: string;
+            expiresAt: Date;
+            tableId: bigint | null;
+        } | null;
+    } & {
+        id: bigint;
+        createdAt: Date;
+        message: string;
+        userId: bigint | null;
+        guestSessionId: bigint | null;
+        title: string;
+        isRead: boolean;
+    })[]>;
 }

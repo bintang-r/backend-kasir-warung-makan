@@ -49,10 +49,43 @@ let OrdersController = class OrdersController {
         if (!isStaff && !isOwner) {
             throw new common_1.ForbiddenException('You do not have permission to view this order');
         }
-        return order;
+        return {
+            ...order,
+            id: order.id.toString(),
+            userId: order.userId?.toString(),
+            tableId: order.tableId?.toString(),
+            guestSessionId: order.guestSessionId?.toString(),
+            items: order.items.map(i => ({
+                ...i,
+                id: i.id.toString(),
+                orderId: i.orderId.toString(),
+                menuId: i.menuId.toString()
+            })),
+            payments: order.payments.map(p => ({
+                ...p,
+                id: p.id.toString(),
+                orderId: p.orderId.toString()
+            }))
+        };
     }
     async findAllStaff() {
-        return this.ordersService.getAllOrders();
+        const orders = await this.ordersService.getAllOrders();
+        return orders.map(order => ({
+            ...order,
+            id: order.id.toString(),
+            userId: order.userId?.toString(),
+            tableId: order.tableId?.toString(),
+            guestSessionId: order.guestSessionId?.toString(),
+            items: order.items.map(i => ({
+                ...i,
+                id: i.id.toString(),
+                orderId: i.orderId.toString(),
+                menuId: i.menuId.toString()
+            }))
+        }));
+    }
+    async remove(id) {
+        return this.ordersService.deleteOrder(BigInt(id));
     }
     async updateStatus(id, status) {
         return this.ordersService.updateStatus(BigInt(id), status);
@@ -97,6 +130,15 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "findAllStaff", null);
+__decorate([
+    Delete(':id'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "remove", null);
 __decorate([
     (0, common_1.Put)(':id/status'),
     (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.KITCHEN, client_1.Role.KASIR),

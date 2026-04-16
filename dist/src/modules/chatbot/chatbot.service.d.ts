@@ -16,11 +16,25 @@ export declare class ChatbotService {
         userId: bigint | null;
         response: string;
     }[]>;
-    createSession(userId: bigint, sessionId: string): Promise<{
+    getAllLogs(): Promise<({
+        user: {
+            name: string;
+        } | null;
+    } & {
+        id: bigint;
+        createdAt: Date;
+        message: string;
+        userId: bigint | null;
+        response: string;
+    })[]>;
+    getAllSessions(): Promise<({
+        user: {
+            name: string;
+        } | null;
+    } & {
         id: bigint;
         createdAt: Date;
         userId: bigint | null;
         sessionId: string;
-    }>;
-    processMessage(message: string): Promise<string>;
+    })[]>;
 }

@@ -58,6 +58,12 @@ let GuestService = class GuestService {
             include: { table: true },
         });
     }
+    async findAll() {
+        return this.prisma.guestSession.findMany({
+            include: { table: true, orders: true },
+            orderBy: { createdAt: 'desc' },
+        });
+    }
 };
 exports.GuestService = GuestService;
 exports.GuestService = GuestService = __decorate([

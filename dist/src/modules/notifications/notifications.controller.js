@@ -16,6 +16,9 @@ exports.NotificationsController = void 0;
 const common_1 = require("@nestjs/common");
 const notifications_service_1 = require("./notifications.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const roles_guard_1 = require("../../common/guards/roles.guard");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
+const client_1 = require("@prisma/client");
 let NotificationsController = class NotificationsController {
     notificationsService;
     constructor(notificationsService) {
@@ -33,6 +36,15 @@ let NotificationsController = class NotificationsController {
         const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : undefined;
         const guestSessionId = req.user.role === 'GUEST' ? BigInt(req.user.id) : undefined;
         return this.notificationsService.markAllAsRead(userId, guestSessionId);
+    }
+    async getAllForAdmin() {
+        const notifications = await this.notificationsService.findAllAdmin();
+        return notifications.map(n => ({
+            ...n,
+            id: n.id.toString(),
+            userId: n.userId?.toString(),
+            guestSessionId: n.guestSessionId?.toString()
+        }));
     }
 };
 exports.NotificationsController = NotificationsController;
@@ -60,6 +72,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], NotificationsController.prototype, "markAllAsRead", null);
+__decorate([
+    (0, common_1.Get)('admin'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], NotificationsController.prototype, "getAllForAdmin", null);
 exports.NotificationsController = NotificationsController = __decorate([
     (0, common_1.Controller)('notifications'),
     __metadata("design:paramtypes", [notifications_service_1.NotificationsService])

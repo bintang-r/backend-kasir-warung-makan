@@ -53,6 +53,28 @@ let PaymentsService = class PaymentsService {
             include: { order: true }
         });
     }
+    async findAll() {
+        return this.prisma.payment.findMany({
+            include: {
+                order: {
+                    include: {
+                        user: { select: { name: true } },
+                        table: true
+                    }
+                }
+            },
+            orderBy: { paidAt: 'desc' },
+        });
+    }
+    async updateStatus(id, status) {
+        return this.prisma.payment.update({
+            where: { id },
+            data: {
+                status,
+                paidAt: status === client_1.PaymentStatus.PAID ? new Date() : null
+            },
+        });
+    }
 };
 exports.PaymentsService = PaymentsService;
 exports.PaymentsService = PaymentsService = __decorate([

@@ -21,4 +21,23 @@ export declare class NotificationsController {
         isRead: boolean;
     }>;
     markAllAsRead(req: any): Promise<import("@prisma/client").Prisma.BatchPayload>;
+    getAllForAdmin(): Promise<{
+        id: string;
+        userId: string | undefined;
+        guestSessionId: string | undefined;
+        user: {
+            name: string;
+        } | null;
+        guestSession: {
+            id: bigint;
+            createdAt: Date;
+            token: string;
+            expiresAt: Date;
+            tableId: bigint | null;
+        } | null;
+        createdAt: Date;
+        message: string;
+        title: string;
+        isRead: boolean;
+    }[]>;
 }

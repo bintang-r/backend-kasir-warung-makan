@@ -5,7 +5,7 @@ export declare class ChatbotController {
     handleMessage(req: any, body: {
         message: string;
     }): Promise<{
-        response: string;
+        response: any;
     }>;
     getHistory(req: any): Promise<{
         id: bigint;
@@ -13,5 +13,24 @@ export declare class ChatbotController {
         message: string;
         userId: bigint | null;
         response: string;
+    }[]>;
+    getAllLogs(): Promise<{
+        id: string;
+        userId: string | undefined;
+        user: {
+            name: string;
+        } | null;
+        createdAt: Date;
+        message: string;
+        response: string;
+    }[]>;
+    getAllSessions(): Promise<{
+        id: string;
+        userId: string | undefined;
+        user: {
+            name: string;
+        } | null;
+        createdAt: Date;
+        sessionId: string;
     }[]>;
 }

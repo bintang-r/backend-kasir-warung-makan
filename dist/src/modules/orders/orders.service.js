@@ -166,6 +166,12 @@ let OrdersService = class OrdersService {
             },
         });
     }
+    async deleteOrder(id) {
+        await this.prisma.orderItem.deleteMany({ where: { orderId: id } });
+        await this.prisma.payment.deleteMany({ where: { orderId: id } });
+        await this.prisma.review.deleteMany({ where: { orderId: id } });
+        return this.prisma.order.delete({ where: { id } });
+    }
 };
 exports.OrdersService = OrdersService;
 exports.OrdersService = OrdersService = __decorate([

@@ -1,16 +1,16 @@
-import { DashboardService } from './dashboard.service';
-export declare class DashboardController {
-    private dashboardService;
-    constructor(dashboardService: DashboardService);
-    getStats(): Promise<{
-        recentOrders: {
-            id: string;
-            userId: string | undefined;
-            tableId: string | undefined;
-            items: {
-                id: string;
-                orderId: string;
-                menuId: string;
+import { ReviewsService } from './reviews.service';
+export declare class ReviewsController {
+    private readonly reviewsService;
+    constructor(reviewsService: ReviewsService);
+    findAll(): Promise<{
+        id: string;
+        orderId: string;
+        userId: string | undefined;
+        user: {
+            name: string;
+        } | null;
+        order: {
+            items: ({
                 menu: {
                     id: bigint;
                     name: string;
@@ -23,34 +23,37 @@ export declare class DashboardController {
                     image: string | null;
                     isAvailable: boolean;
                 };
+            } & {
+                id: bigint;
                 price: import("@prisma/client-runtime-utils").Decimal;
+                menuId: bigint;
                 qty: number;
-            }[];
-            user: {
-                name: string;
-            } | null;
+                orderId: bigint;
+            })[];
+        } & {
+            id: bigint;
             createdAt: Date;
             updatedAt: Date;
             status: import("@prisma/client").$Enums.OrderStatus;
+            tableId: bigint | null;
+            userId: bigint | null;
             guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
             orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
             isReceived: boolean;
-        }[];
-        revenueByDay: {
-            date: string;
-            amount: any;
-        }[];
-        orderStatusCount: (import("@prisma/client").Prisma.PickEnumerable<import("@prisma/client").Prisma.OrderGroupByOutputType, "status"[]> & {
-            _count: {
-                status: number;
-            };
-        })[];
-        topMenus: {
-            name: string;
-            qty: number | null;
-        }[];
+        };
+        createdAt: Date;
+        rating: number;
+        comment: string | null;
+    }[]>;
+    remove(id: string): Promise<{
+        id: bigint;
+        createdAt: Date;
+        userId: bigint | null;
+        rating: number;
+        comment: string | null;
+        orderId: bigint;
     }>;
 }
