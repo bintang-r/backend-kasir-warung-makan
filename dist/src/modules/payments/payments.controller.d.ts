@@ -1,5 +1,5 @@
 import { PaymentsService } from './payments.service';
-import { PaymentMethod } from '@prisma/client';
+import { PaymentMethod, PaymentStatus } from '@prisma/client';
 export declare class PaymentsController {
     private paymentsService;
     constructor(paymentsService: PaymentsService);

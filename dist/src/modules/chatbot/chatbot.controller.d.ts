@@ -5,7 +5,7 @@ export declare class ChatbotController {
     handleMessage(req: any, body: {
         message: string;
     }): Promise<{
-        response: any;
+        response: string;
     }>;
     getHistory(req: any): Promise<{
         id: bigint;

@@ -55,16 +55,19 @@ let OrdersController = class OrdersController {
             userId: order.userId?.toString(),
             tableId: order.tableId?.toString(),
             guestSessionId: order.guestSessionId?.toString(),
+            totalPrice: Number(order.totalPrice),
             items: order.items.map(i => ({
                 ...i,
                 id: i.id.toString(),
                 orderId: i.orderId.toString(),
-                menuId: i.menuId.toString()
+                menuId: i.menuId.toString(),
+                price: Number(i.price)
             })),
             payments: order.payments.map(p => ({
                 ...p,
                 id: p.id.toString(),
-                orderId: p.orderId.toString()
+                orderId: p.orderId.toString(),
+                amount: Number(p.amount)
             }))
         };
     }
@@ -76,11 +79,13 @@ let OrdersController = class OrdersController {
             userId: order.userId?.toString(),
             tableId: order.tableId?.toString(),
             guestSessionId: order.guestSessionId?.toString(),
+            totalPrice: Number(order.totalPrice),
             items: order.items.map(i => ({
                 ...i,
                 id: i.id.toString(),
                 orderId: i.orderId.toString(),
-                menuId: i.menuId.toString()
+                menuId: i.menuId.toString(),
+                price: Number(i.price)
             }))
         }));
     }
@@ -131,7 +136,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "findAllStaff", null);
 __decorate([
-    Delete(':id'),
+    (0, common_1.Delete)(':id'),
     (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __param(0, (0, common_1.Param)('id')),

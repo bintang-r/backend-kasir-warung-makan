@@ -35,13 +35,6 @@ export class ChatbotService {
       orderBy: { createdAt: 'desc' },
     });
   }
-    return this.prisma.chatbotSession.create({
-      data: {
-        userId,
-        sessionId,
-      },
-    });
-  }
 
   async processMessage(message: string): Promise<string> {
     const input = message.toLowerCase();

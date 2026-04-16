@@ -11,7 +11,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentsController = void 0;
 const common_1 = require("@nestjs/common");
@@ -90,13 +89,13 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], PaymentsController.prototype, "findAll", null);
 __decorate([
-    Patch(':id/status'),
+    (0, common_1.Patch)(':id/status'),
     (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.KASIR),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('status')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, typeof (_a = typeof PaymentStatus !== "undefined" && PaymentStatus) === "function" ? _a : Object]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], PaymentsController.prototype, "updateStatus", null);
 exports.PaymentsController = PaymentsController = __decorate([

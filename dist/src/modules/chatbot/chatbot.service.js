@@ -44,57 +44,48 @@ let ChatbotService = class ChatbotService {
             orderBy: { createdAt: 'desc' },
         });
     }
+    async processMessage(message) {
+        const input = message.toLowerCase();
+        if (input.includes('halo') || input.includes('assalamualaikum') || input.includes('pagi') || input.includes('siang')) {
+            return "Halo! Senang bertemu dengan Anda. Ada yang bisa saya bantu untuk memilih menu hari ini?";
+        }
+        if (input.includes('rekomendasi') || input.includes('enak') || input.includes('favorit') || input.includes('populer')) {
+            const items = await this.prisma.menu.findMany({
+                where: { isPopular: true, isAvailable: true },
+                take: 3,
+            });
+            if (items.length > 0) {
+                const list = items.map(i => `- ${i.name} (Rp ${Number(i.price).toLocaleString('id-ID')})`).join('\n');
+                return `Ini menu yang paling banyak dicari pelanggan lain:\n${list}\n\nSilakan dicoba, rasanya benar-benar enak!`;
+            }
+        }
+        if (input.includes('menu') || input.includes('makan') || input.includes('list')) {
+            const categories = await this.prisma.category.findMany({ include: { _count: { select: { menus: true } } } });
+            const list = categories.map(c => `- ${c.name} (${c._count.menus} macam)`).join('\n');
+            return `Kami punya bermacam-macam kategori menu:\n${list}\n\nAnda ingin melihat yang mana? Tanyakan saja nanti.`;
+        }
+        if (input.length > 3) {
+            const items = await this.prisma.menu.findMany({
+                where: {
+                    OR: [
+                        { name: { contains: input } },
+                        { description: { contains: input } }
+                    ],
+                    isAvailable: true
+                },
+                take: 2
+            });
+            if (items.length > 0) {
+                const i = items[0];
+                return `${i.name} ada! Harganya Rp ${Number(i.price).toLocaleString('id-ID')}. ${i.description || ''}. Ingin dimasukkan ke keranjang?`;
+            }
+        }
+        return "Maaf, saya belum paham apa maksud Anda. Coba tanya soal menu, rekomendasi, atau harga makanan.";
+    }
 };
 exports.ChatbotService = ChatbotService;
 exports.ChatbotService = ChatbotService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], ChatbotService);
-return this.prisma.chatbotSession.create({
-    data: {
-        userId,
-        sessionId,
-    },
-});
-async;
-processMessage(message, string);
-Promise < string > {
-    const: input = message.toLowerCase(),
-    if(input) { }, : .includes('halo') || input.includes('assalamualaikum') || input.includes('pagi') || input.includes('siang')
-};
-{
-    return "Halo! Senang bertemu dengan Anda. Ada yang bisa saya bantu untuk memilih menu hari ini?";
-}
-if (input.includes('rekomendasi') || input.includes('enak') || input.includes('favorit') || input.includes('populer')) {
-    const items = await this.prisma.menu.findMany({
-        where: { isPopular: true, isAvailable: true },
-        take: 3,
-    });
-    if (items.length > 0) {
-        const list = items.map(i => `- ${i.name} (Rp ${Number(i.price).toLocaleString('id-ID')})`).join('\n');
-        return `Ini menu yang paling banyak dicari pelanggan lain:\n${list}\n\nSilakan dicoba, rasanya benar-benar enak!`;
-    }
-}
-if (input.includes('menu') || input.includes('makan') || input.includes('list')) {
-    const categories = await this.prisma.category.findMany({ include: { _count: { select: { menus: true } } } });
-    const list = categories.map(c => `- ${c.name} (${c._count.menus} macam)`).join('\n');
-    return `Kami punya bermacam-macam kategori menu:\n${list}\n\nAnda ingin melihat yang mana? Tanyakan saja nanti.`;
-}
-if (input.length > 3) {
-    const items = await this.prisma.menu.findMany({
-        where: {
-            OR: [
-                { name: { contains: input } },
-                { description: { contains: input } }
-            ],
-            isAvailable: true
-        },
-        take: 2
-    });
-    if (items.length > 0) {
-        const i = items[0];
-        return `${i.name} ada! Harganya Rp ${Number(i.price).toLocaleString('id-ID')}. ${i.description || ''}. Ingin dimasukkan ke keranjang?`;
-    }
-}
-return "Maaf, saya belum paham apa maksud Anda. Coba tanya soal menu, rekomendasi, atau harga makanan.";
 //# sourceMappingURL=chatbot.service.js.map

@@ -37,4 +37,5 @@ export declare class ChatbotService {
         userId: bigint | null;
         sessionId: string;
     })[]>;
+    processMessage(message: string): Promise<string>;
 }

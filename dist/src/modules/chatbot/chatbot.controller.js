@@ -16,6 +16,9 @@ exports.ChatbotController = void 0;
 const common_1 = require("@nestjs/common");
 const chatbot_service_1 = require("./chatbot.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const roles_guard_1 = require("../../common/guards/roles.guard");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
+const client_1 = require("@prisma/client");
 let ChatbotController = class ChatbotController {
     chatbotService;
     constructor(chatbotService) {
@@ -60,16 +63,16 @@ __decorate([
 ], ChatbotController.prototype, "getHistory", null);
 __decorate([
     (0, common_1.Get)('logs'),
-    Roles(Role.ADMIN),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ChatbotController.prototype, "getAllLogs", null);
 __decorate([
     (0, common_1.Get)('sessions'),
-    Roles(Role.ADMIN),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)

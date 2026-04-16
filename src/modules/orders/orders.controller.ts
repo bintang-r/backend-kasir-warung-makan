@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Request, UseGuards, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, Request, UseGuards, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -62,16 +62,19 @@ export class OrdersController {
       userId: order.userId?.toString(),
       tableId: order.tableId?.toString(),
       guestSessionId: order.guestSessionId?.toString(),
+      totalPrice: Number(order.totalPrice),
       items: order.items.map(i => ({
         ...i,
         id: i.id.toString(),
         orderId: i.orderId.toString(),
-        menuId: i.menuId.toString()
+        menuId: i.menuId.toString(),
+        price: Number(i.price)
       })),
       payments: order.payments.map(p => ({
         ...p,
         id: p.id.toString(),
-        orderId: p.orderId.toString()
+        orderId: p.orderId.toString(),
+        amount: Number(p.amount)
       }))
     };
   }
@@ -87,11 +90,13 @@ export class OrdersController {
       userId: order.userId?.toString(),
       tableId: order.tableId?.toString(),
       guestSessionId: order.guestSessionId?.toString(),
+      totalPrice: Number(order.totalPrice),
       items: order.items.map(i => ({
         ...i,
         id: i.id.toString(),
         orderId: i.orderId.toString(),
-        menuId: i.menuId.toString()
+        menuId: i.menuId.toString(),
+        price: Number(i.price)
       }))
     }));
   }

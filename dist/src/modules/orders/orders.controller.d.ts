@@ -94,10 +94,12 @@ export declare class OrdersController {
         userId: string | undefined;
         tableId: string | undefined;
         guestSessionId: string | undefined;
+        totalPrice: number;
         items: {
             id: string;
             orderId: string;
             menuId: string;
+            price: number;
             menu: {
                 id: bigint;
                 name: string;
@@ -110,15 +112,14 @@ export declare class OrdersController {
                 image: string | null;
                 isAvailable: boolean;
             };
-            price: import("@prisma/client-runtime-utils").Decimal;
             qty: number;
         }[];
         payments: {
             id: string;
             orderId: string;
+            amount: number;
             status: import("@prisma/client").$Enums.PaymentStatus;
             method: import("@prisma/client").$Enums.PaymentMethod;
-            amount: import("@prisma/client-runtime-utils").Decimal;
             paidAt: Date | null;
         }[];
         createdAt: Date;
@@ -126,7 +127,6 @@ export declare class OrdersController {
         status: import("@prisma/client").$Enums.OrderStatus;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
-        totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
     }>;
@@ -135,10 +135,12 @@ export declare class OrdersController {
         userId: string | undefined;
         tableId: string | undefined;
         guestSessionId: string | undefined;
+        totalPrice: number;
         items: {
             id: string;
             orderId: string;
             menuId: string;
+            price: number;
             menu: {
                 id: bigint;
                 name: string;
@@ -151,7 +153,6 @@ export declare class OrdersController {
                 image: string | null;
                 isAvailable: boolean;
             };
-            price: import("@prisma/client-runtime-utils").Decimal;
             qty: number;
         }[];
         user: {
@@ -168,7 +169,6 @@ export declare class OrdersController {
         status: import("@prisma/client").$Enums.OrderStatus;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
-        totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
     }[]>;

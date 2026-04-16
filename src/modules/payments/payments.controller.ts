@@ -1,9 +1,9 @@
-import { Controller, Post, Get, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, Param, Patch, UseGuards } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
-import { Role, PaymentMethod } from '@prisma/client';
+import { Role, PaymentMethod, PaymentStatus } from '@prisma/client';
 
 @Controller('payments')
 export class PaymentsController {

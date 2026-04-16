@@ -18,7 +18,7 @@ const guest_service_1 = require("./guest.service");
 const roles_guard_1 = require("../../common/guards/roles.guard");
 const roles_decorator_1 = require("../../common/decorators/roles.decorator");
 const client_1 = require("@prisma/client");
-const jwt_auth_guard_1 = require("../../auth/guards/jwt-auth.guard");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 let GuestController = class GuestController {
     guestService;
     constructor(guestService) {
