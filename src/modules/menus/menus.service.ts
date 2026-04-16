@@ -32,7 +32,17 @@ export class MenusService {
   }
 
   async remove(id: bigint) {
-    return this.prisma.menu.delete({
+    // Menghapus dari keranjang terlebih dahulu (karena keranjang sifatnya sementara)
+    await this.prisma.cartItem.deleteMany({
+      where: { menuId: id },
+    });
+
+    // Menghapus dari order items agar bisa dihapus walau sudah ada pesanan berjalan/historis
+    await this.prisma.orderItem.deleteMany({
+      where: { menuId: id },
+    });
+
+    return await this.prisma.menu.delete({
       where: { id },
     });
   }
