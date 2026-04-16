@@ -36,7 +36,7 @@ export class ChatbotService {
     
     // Greeting
     if (input.includes('halo') || input.includes('assalamualaikum') || input.includes('pagi') || input.includes('siang')) {
-      return "Halo dunsanak! Sanang basuo jo sanak. Ado nan bisa ambo bantu untuak mamiliah menu hari ko?";
+      return "Halo! Senang bertemu dengan Anda. Ada yang bisa saya bantu untuk memilih menu hari ini?";
     }
 
     // Recommendation
@@ -47,7 +47,7 @@ export class ChatbotService {
       });
       if (items.length > 0) {
         const list = items.map(i => `- ${i.name} (Rp ${Number(i.price).toLocaleString('id-ID')})`).join('\n');
-        return `Iko menu nan paling banyak dicari dunsanak lain:\n${list}\n\nSilekan dicubo, rasonyo sabana lamak!`;
+        return `Ini menu yang paling banyak dicari pelanggan lain:\n${list}\n\nSilakan dicoba, rasanya benar-benar enak!`;
       }
     }
 
@@ -55,7 +55,7 @@ export class ChatbotService {
     if (input.includes('menu') || input.includes('makan') || input.includes('list')) {
       const categories = await this.prisma.category.findMany({ include: { _count: { select: { menus: true } } } });
       const list = categories.map(c => `- ${c.name} (${c._count.menus} macam)`).join('\n');
-      return `Kami punyo bamacam-macam kategori menu:\n${list}\n\nSanak nio caliak nan ma? Tanyoan se nantin.`;
+      return `Kami punya bermacam-macam kategori menu:\n${list}\n\nAnda ingin melihat yang mana? Tanyakan saja nanti.`;
     }
 
     // Generic search for menu items
@@ -73,10 +73,10 @@ export class ChatbotService {
 
       if (items.length > 0) {
         const i = items[0];
-        return `${i.name} ado dunsanak! Haragonyo Rp ${Number(i.price).toLocaleString('id-ID')}. ${i.description || ''}. Nio dimasuakan ka keranjang?`;
+        return `${i.name} ada! Harganya Rp ${Number(i.price).toLocaleString('id-ID')}. ${i.description || ''}. Ingin dimasukkan ke keranjang?`;
       }
     }
 
-    return "Maaf dunsanak, ambo alun paham apo nan sanak mukasuik. Cubo tanyo soal menu, rekomendasi, atau haraga makanan.";
+    return "Maaf, saya belum paham apa maksud Anda. Coba tanya soal menu, rekomendasi, atau harga makanan.";
   }
 }
