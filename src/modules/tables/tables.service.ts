@@ -36,4 +36,22 @@ export class TablesService {
     const qrUrl = `/qr/${id}`;
     return QRCode.toDataURL(qrUrl);
   }
+
+  async remove(id: bigint) {
+    // Unlink orders
+    await this.prisma.order.updateMany({
+      where: { tableId: id },
+      data: { tableId: null },
+    });
+
+    // Unlink guest sessions
+    await this.prisma.guestSession.updateMany({
+      where: { tableId: id },
+      data: { tableId: null },
+    });
+
+    return this.prisma.table.delete({
+      where: { id },
+    });
+  }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UseGuards } from '@nestjs/common';
 import { TablesService } from './tables.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -24,5 +24,12 @@ export class TablesController {
   @Get(':id/qr')
   async getQr(@Param('id') id: string) {
     return { qr: await this.tablesService.generateQr(BigInt(id)) };
+  }
+
+  @Delete(':id')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async remove(@Param('id') id: string) {
+    return this.tablesService.remove(BigInt(id));
   }
 }
