@@ -1,147 +1,63 @@
-import { PrismaClient, Role, TableStatus } from '@prisma/client';
-import * as bcrypt from 'bcryptjs';
+import { PrismaClient } from '@prisma/client';
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import 'dotenv/config';
+
+import { seedCategories } from './seeders/CategorySeeder';
+import { seedTables } from './seeders/TableSeeder';
+import { seedUsers } from './seeders/UserSeeder';
+import { seedMenus } from './seeders/MenuSeeder';
+import { seedPromos } from './seeders/PromoSeeder';
+import { seedActiveData } from './seeders/ActiveDataSeeder';
 
 const adapter = new PrismaMariaDb(process.env.DATABASE_URL as string);
 const prisma = new PrismaClient({ adapter });
 
-async function main() {
-  console.log('Start seeding...');
-
-  // 1. Create Admin
-  const adminPassword = await bcrypt.hash('admin123', 10);
-  await prisma.user.upsert({
-    where: { email: 'admin@rmsiantar.com' },
-    update: {},
-    create: {
-      email: 'admin@rmsiantar.com',
-      password: adminPassword,
-      name: 'Admin RM Siantar',
-      role: Role.ADMIN,
-    },
-  });
-  console.log('Admin user seeded.');
+async function cleanDatabase() {
+  console.log('🗑️ Cleaning database...');
   
-  // 1.1 Create Kitchen
-  const kitchenPassword = await bcrypt.hash('kitchen123', 10);
-  await prisma.user.upsert({
-    where: { email: 'kitchen@rmsiantar.com' },
-    update: {},
-    create: {
-      email: 'kitchen@rmsiantar.com',
-      password: kitchenPassword,
-      name: 'Kitchen Staff',
-      role: Role.KITCHEN,
-    },
-  });
-  console.log('Kitchen user seeded.');
+  // Delete in reverse order of dependencies
+  await prisma.delivery.deleteMany();
+  await prisma.payment.deleteMany();
+  await prisma.review.deleteMany();
+  await prisma.notification.deleteMany();
+  await prisma.cartItem.deleteMany();
+  await prisma.orderItem.deleteMany();
+  await prisma.cart.deleteMany();
+  await prisma.order.deleteMany();
+  await prisma.menu.deleteMany();
+  await prisma.category.deleteMany();
+  await prisma.table.deleteMany();
+  await prisma.voucher.deleteMany();
+  await prisma.promo.deleteMany();
+  await prisma.chatbotLog.deleteMany();
+  await prisma.chatbotSession.deleteMany();
+  await prisma.guestSession.deleteMany();
+  await prisma.user.deleteMany();
 
-  // 1.2 Create Kasir
-  const cashierPassword = await bcrypt.hash('kasir123', 10);
-  await prisma.user.upsert({
-    where: { email: 'kasir@rmsiantar.com' },
-    update: {},
-    create: {
-      email: 'kasir@rmsiantar.com',
-      password: cashierPassword,
-      name: 'Kasir Staff',
-      role: Role.KASIR,
-    },
-  });
-  console.log('Kasir user seeded.');
-
-  // 2. Create Categories
-  const createOrGetCategory = async (name: string) => {
-    let cat = await prisma.category.findFirst({ where: { name } });
-    if (!cat) {
-      cat = await prisma.category.create({ data: { name } });
-    }
-    return cat;
-  };
-
-  const catMakanan = await createOrGetCategory('Makanan Utama');
-  const catMinuman = await createOrGetCategory('Minuman');
-  const catLauk = await createOrGetCategory('Lauk Tambahan');
-  const catDessert = await createOrGetCategory('Pencuci Mulut');
-  console.log('Categories seeded.');
-
-  // 3. Create Menus
-  const menus = [
-    // Makanan Utama
-    { name: 'Nasi Padang Rendang', description: 'Nasi hangat dengan bumbu kuah kental dan rendang daging sapi empuk khas Minang.', price: 25000, categoryId: catMakanan.id, isPopular: true, isAvailable: true, image: 'https://images.unsplash.com/photo-1575037614876-c38f4e3dda0a?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Sate Padang Pariaman', description: 'Sate daging sapi lidah dengan kuah kacang kuning kental yang kaya rempah.', price: 28000, categoryId: catMakanan.id, isPopular: true, isAvailable: true, image: 'https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Nasi Ayam Batokok', description: 'Ayam goreng yang dipukul (batokok) dengan sambal ijo melimpah.', price: 24000, categoryId: catMakanan.id, isAvailable: true, image: 'https://images.unsplash.com/photo-1626082928549-b00685e135ee?auto=format&fit=crop&q=80&w=400' },
-    
-    // Lauk Tambahan
-    { name: 'Rendang Daging', description: 'Sepotong daging sapi legendaris Minang dengan bumbu karamelisasi.', price: 18000, categoryId: catLauk.id, isPopular: true, isAvailable: true, image: 'https://images.unsplash.com/photo-1575037614876-c38f4e3dda0a?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Ayam Pop', description: 'Ayam rebus bumbu putih gurih khas Bukittinggi tanpa kulit.', price: 18000, categoryId: catLauk.id, isPopular: true, isAvailable: true, image: 'https://images.unplash.com/photo-1626082928549-b00685e135ee?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Dendeng Balado', description: 'Dendeng sapi garing dengan sambal merah yang pedas nikmat.', price: 20000, categoryId: catLauk.id, isPopular: true, isAvailable: true, image: 'https://images.unsplash.com/photo-1605335158652-9f3b146ab6fb?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Gulai Tunjang', description: 'Gulai kikil sapi yang super kenyal dan kaya akan bumbu rempah.', price: 20000, categoryId: catLauk.id, isAvailable: true, image: 'https://images.unsplash.com/photo-1627308595229-7830f5c92f44?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Telur Dadar Barendo', description: 'Telur dadar goreng garing dan berenda khas rumah makan Padang.', price: 12000, categoryId: catLauk.id, isPopular: true, isAvailable: true, image: 'https://images.unsplash.com/photo-1522244459664-2f277e50fff2?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Perkedel Kentang', description: 'Kentang tumbuk goreng dengan campuran daging dan bumbu.', price: 5000, categoryId: catLauk.id, isAvailable: true, image: 'https://images.unsplash.com/photo-1627308595229-7830f5c92f44?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Sambal Ijo Special', description: 'Pelengkap wajib nasi padang dengan cabai hijau besar dan tomat hijau.', price: 3000, categoryId: catLauk.id, isAvailable: true, image: 'https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Ikan Asam Padeh', description: 'Gulai ikan laut dengan kuah merah pedas dan asam tanpa santan.', price: 18000, categoryId: catLauk.id, isAvailable: true, image: 'https://images.unsplash.com/photo-1627308595229-7830f5c92f44?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Kerupuk Jangek', description: 'Kerupuk kulit sapi premium yang gurih dan renyah.', price: 10000, categoryId: catLauk.id, isPopular: true, isAvailable: true, image: 'https://images.unsplash.com/photo-1605335158652-9f3b146ab6fb?auto=format&fit=crop&q=80&w=400' },
-    
-    // Minuman
-    { name: 'Teh Talua', description: 'Minuman teh telur legendaris dengan lima gradasi warna.', price: 15000, categoryId: catMinuman.id, isPopular: true, isAvailable: true, image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Es Teh Manis', description: 'Teh manis dingin menyegarkan pelepas dahaga.', price: 5000, categoryId: catMinuman.id, isAvailable: true, image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Jus Alpukat', description: 'Jus alpukat mentega kental dengan topping coklat.', price: 15000, categoryId: catMinuman.id, isPopular: true, isAvailable: true, image: 'https://images.unsplash.com/photo-1605335158652-9f3b146ab6fb?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Es Jeruk Nipis', description: 'Perasan jeruk nipis asli menyegarkan.', price: 10000, categoryId: catMinuman.id, isAvailable: true, image: 'https://images.unsplash.com/photo-1605335158652-9f3b146ab6fb?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Es Teh Telur Kocok', description: 'Varian teh telur dingin yang kental dan gurih.', price: 16000, categoryId: catMinuman.id, isAvailable: true, image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Air Mineral Dingin', description: 'Air mineral kemasan 600ml.', price: 5000, categoryId: catMinuman.id, isAvailable: true, image: 'https://images.unsplash.com/photo-1605335158652-9f3b146ab6fb?auto=format&fit=crop&q=80&w=400' },
-
-    // Dessert
-    { name: 'Bubur Kampiun', description: 'Campuran bubur sumsum, ketan hitam, dan kolak pisang.', price: 15000, categoryId: catDessert.id, isAvailable: true, image: 'https://images.unsplash.com/photo-1627308595229-7830f5c92f44?auto=format&fit=crop&q=80&w=400' },
-    { name: 'Es Tebak', description: 'Es campur khas Minang dengan isian tebak, cincau, dan roti.', price: 15000, categoryId: catDessert.id, isAvailable: true, image: 'https://images.unsplash.com/photo-1605335158652-9f3b146ab6fb?auto=format&fit=crop&q=80&w=400' }
-  ];
-
-  for (const menu of menus) {
-    const existing = await prisma.menu.findFirst({ where: { name: menu.name } });
-    
-    // Prepare data without the categoryId scalar to use connection instead
-    const { categoryId, ...menuData } = menu;
-    const finalData = {
-        ...menuData,
-        category: { connect: { id: categoryId } }
-    };
-
-    if (existing) {
-      await prisma.menu.update({
-        where: { id: existing.id },
-        data: finalData,
-      });
-    } else {
-      await prisma.menu.create({ data: finalData });
-    }
-  }
-  console.log('20+ Menu items seeded/updated.');
-
-  // 4. Set up Tables
-  for (let i = 1; i <= 10; i++) {
-    const tableName = `Meja ${i}`;
-    const existingTable = await prisma.table.findFirst({ where: { name: tableName } });
-    if (!existingTable) {
-        await prisma.table.create({
-            data: {
-                name: tableName,
-                qrCode: `/qr?table_id=${i}`,
-                status: TableStatus.AKTIF
-            }
-        });
-    }
-  }
-  console.log('10 Tables initialized.');
-
-  console.log('Seeding completed successfully!');
+  console.log('✨ Database cleaned');
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
+async function main() {
+  try {
+    console.log('🚀 Start seeding...');
+    
+    await cleanDatabase();
+
+    // Run seeders in order
+    await seedCategories(prisma);
+    await seedTables(prisma);
+    await seedUsers(prisma);
+    await seedMenus(prisma);
+    await seedPromos(prisma);
+    await seedActiveData(prisma);
+
+    console.log('🏁 Seeding completed successfully!');
+  } catch (error) {
+    console.error('❌ Seeding failed:', error);
     process.exit(1);
-  })
-  .finally(async () => {
+  } finally {
     await prisma.$disconnect();
-  });
+  }
+}
+
+main();
