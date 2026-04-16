@@ -7,14 +7,18 @@ export declare class DeliveriesController {
         driverId: string;
     }): Promise<{
         id: bigint;
+        createdAt: Date;
+        updatedAt: Date;
         status: string;
-        driverId: bigint;
+        driverId: bigint | null;
         orderId: bigint;
     }>;
     updateStatus(id: string, status: string): Promise<{
         id: bigint;
+        createdAt: Date;
+        updatedAt: Date;
         status: string;
-        driverId: bigint;
+        driverId: bigint | null;
         orderId: bigint;
     }>;
     getMyDeliveries(req: any): Promise<({
@@ -34,8 +38,10 @@ export declare class DeliveriesController {
         };
     } & {
         id: bigint;
+        createdAt: Date;
+        updatedAt: Date;
         status: string;
-        driverId: bigint;
+        driverId: bigint | null;
         orderId: bigint;
     })[]>;
 }

@@ -4,14 +4,18 @@ export declare class DeliveriesService {
     constructor(prisma: PrismaService);
     assignDriver(orderId: bigint, driverId: bigint): Promise<{
         id: bigint;
+        createdAt: Date;
+        updatedAt: Date;
         status: string;
-        driverId: bigint;
+        driverId: bigint | null;
         orderId: bigint;
     }>;
     updateStatus(deliveryId: bigint, status: string): Promise<{
         id: bigint;
+        createdAt: Date;
+        updatedAt: Date;
         status: string;
-        driverId: bigint;
+        driverId: bigint | null;
         orderId: bigint;
     }>;
     getDeliveriesByDriver(driverId: bigint): Promise<({
@@ -31,8 +35,10 @@ export declare class DeliveriesService {
         };
     } & {
         id: bigint;
+        createdAt: Date;
+        updatedAt: Date;
         status: string;
-        driverId: bigint;
+        driverId: bigint | null;
         orderId: bigint;
     })[]>;
 }
