@@ -10,8 +10,8 @@ export declare class ChatbotController {
     getHistory(req: any): Promise<{
         id: bigint;
         createdAt: Date;
-        message: string;
         userId: bigint | null;
+        message: string;
         response: string;
     }[]>;
     getAllLogs(): Promise<{
@@ -33,4 +33,18 @@ export declare class ChatbotController {
         createdAt: Date;
         sessionId: string;
     }[]>;
+    removeLog(id: string): Promise<{
+        id: bigint;
+        createdAt: Date;
+        userId: bigint | null;
+        message: string;
+        response: string;
+    }>;
+    clearAllLogs(): Promise<import("@prisma/client").Prisma.BatchPayload>;
+    removeSession(id: string): Promise<{
+        id: bigint;
+        createdAt: Date;
+        userId: bigint | null;
+        sessionId: string;
+    }>;
 }

@@ -6,10 +6,10 @@ export declare class PaymentsService {
     processPayment(orderId: bigint, method: PaymentMethod, amount: number): Promise<{
         id: bigint;
         status: import("@prisma/client").$Enums.PaymentStatus;
+        orderId: bigint;
         method: import("@prisma/client").$Enums.PaymentMethod;
         amount: import("@prisma/client-runtime-utils").Decimal;
         paidAt: Date | null;
-        orderId: bigint;
     }>;
     getPaymentByOrder(orderId: bigint): Promise<({
         order: {
@@ -17,22 +17,22 @@ export declare class PaymentsService {
             createdAt: Date;
             updatedAt: Date;
             status: import("@prisma/client").$Enums.OrderStatus;
-            tableId: bigint | null;
             userId: bigint | null;
-            guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
             orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
             isReceived: boolean;
+            tableId: bigint | null;
+            guestSessionId: bigint | null;
         };
     } & {
         id: bigint;
         status: import("@prisma/client").$Enums.PaymentStatus;
+        orderId: bigint;
         method: import("@prisma/client").$Enums.PaymentMethod;
         amount: import("@prisma/client-runtime-utils").Decimal;
         paidAt: Date | null;
-        orderId: bigint;
     }) | null>;
     findAll(): Promise<({
         order: {
@@ -50,29 +50,29 @@ export declare class PaymentsService {
             createdAt: Date;
             updatedAt: Date;
             status: import("@prisma/client").$Enums.OrderStatus;
-            tableId: bigint | null;
             userId: bigint | null;
-            guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
             orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
             isReceived: boolean;
+            tableId: bigint | null;
+            guestSessionId: bigint | null;
         };
     } & {
         id: bigint;
         status: import("@prisma/client").$Enums.PaymentStatus;
+        orderId: bigint;
         method: import("@prisma/client").$Enums.PaymentMethod;
         amount: import("@prisma/client-runtime-utils").Decimal;
         paidAt: Date | null;
-        orderId: bigint;
     })[]>;
     updateStatus(id: bigint, status: PaymentStatus): Promise<{
         id: bigint;
         status: import("@prisma/client").$Enums.PaymentStatus;
+        orderId: bigint;
         method: import("@prisma/client").$Enums.PaymentMethod;
         amount: import("@prisma/client-runtime-utils").Decimal;
         paidAt: Date | null;
-        orderId: bigint;
     }>;
 }

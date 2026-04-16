@@ -32,12 +32,12 @@ export declare class DashboardController {
             createdAt: Date;
             updatedAt: Date;
             status: import("@prisma/client").$Enums.OrderStatus;
-            guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
             orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
             isReceived: boolean;
+            guestSessionId: bigint | null;
         }[];
         revenueByDay: {
             date: string;

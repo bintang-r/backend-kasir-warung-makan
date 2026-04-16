@@ -42,6 +42,15 @@ let ChatbotController = class ChatbotController {
         const sessions = await this.chatbotService.getAllSessions();
         return sessions.map(s => ({ ...s, id: s.id.toString(), userId: s.userId?.toString() }));
     }
+    async removeLog(id) {
+        return this.chatbotService.removeLog(BigInt(id));
+    }
+    async clearAllLogs() {
+        return this.chatbotService.clearAllLogs();
+    }
+    async removeSession(id) {
+        return this.chatbotService.removeSession(BigInt(id));
+    }
 };
 exports.ChatbotController = ChatbotController;
 __decorate([
@@ -77,6 +86,32 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], ChatbotController.prototype, "getAllSessions", null);
+__decorate([
+    (0, common_1.Delete)('logs/:id'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ChatbotController.prototype, "removeLog", null);
+__decorate([
+    (0, common_1.Delete)('logs'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], ChatbotController.prototype, "clearAllLogs", null);
+__decorate([
+    (0, common_1.Delete)('sessions/:id'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ChatbotController.prototype, "removeSession", null);
 exports.ChatbotController = ChatbotController = __decorate([
     (0, common_1.Controller)('chatbot'),
     __metadata("design:paramtypes", [chatbot_service_1.ChatbotService])

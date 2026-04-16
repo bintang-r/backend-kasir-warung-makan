@@ -36,23 +36,23 @@ export declare class DashboardService {
             } & {
                 id: bigint;
                 price: import("@prisma/client-runtime-utils").Decimal;
+                orderId: bigint;
                 menuId: bigint;
                 qty: number;
-                orderId: bigint;
             })[];
         } & {
             id: bigint;
             createdAt: Date;
             updatedAt: Date;
             status: import("@prisma/client").$Enums.OrderStatus;
-            tableId: bigint | null;
             userId: bigint | null;
-            guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
             orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
             isReceived: boolean;
+            tableId: bigint | null;
+            guestSessionId: bigint | null;
         })[];
     }>;
     private formatRevenueByDay;

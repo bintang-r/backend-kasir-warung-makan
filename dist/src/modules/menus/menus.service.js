@@ -40,7 +40,13 @@ let MenusService = class MenusService {
         });
     }
     async remove(id) {
-        return this.prisma.menu.delete({
+        await this.prisma.cartItem.deleteMany({
+            where: { menuId: id },
+        });
+        await this.prisma.orderItem.deleteMany({
+            where: { menuId: id },
+        });
+        return await this.prisma.menu.delete({
             where: { id },
         });
     }

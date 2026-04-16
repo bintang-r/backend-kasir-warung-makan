@@ -5,15 +5,15 @@ export declare class ChatbotService {
     logMessage(userId: bigint | null, message: string, response: string): Promise<{
         id: bigint;
         createdAt: Date;
-        message: string;
         userId: bigint | null;
+        message: string;
         response: string;
     }>;
     getHistory(userId: bigint): Promise<{
         id: bigint;
         createdAt: Date;
-        message: string;
         userId: bigint | null;
+        message: string;
         response: string;
     }[]>;
     getAllLogs(): Promise<({
@@ -23,8 +23,8 @@ export declare class ChatbotService {
     } & {
         id: bigint;
         createdAt: Date;
-        message: string;
         userId: bigint | null;
+        message: string;
         response: string;
     })[]>;
     getAllSessions(): Promise<({
@@ -38,4 +38,18 @@ export declare class ChatbotService {
         sessionId: string;
     })[]>;
     processMessage(message: string): Promise<string>;
+    removeLog(id: bigint): Promise<{
+        id: bigint;
+        createdAt: Date;
+        userId: bigint | null;
+        message: string;
+        response: string;
+    }>;
+    removeSession(id: bigint): Promise<{
+        id: bigint;
+        createdAt: Date;
+        userId: bigint | null;
+        sessionId: string;
+    }>;
+    clearAllLogs(): Promise<import("@prisma/client").Prisma.BatchPayload>;
 }

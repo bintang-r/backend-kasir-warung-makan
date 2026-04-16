@@ -16,4 +16,8 @@ export declare class CategoriesService {
         id: bigint;
         name: string;
     }>;
+    remove(id: bigint): Promise<{
+        id: bigint;
+        name: string;
+    }>;
 }

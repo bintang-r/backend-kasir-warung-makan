@@ -74,6 +74,19 @@ let TablesService = class TablesService {
         const qrUrl = `/qr/${id}`;
         return QRCode.toDataURL(qrUrl);
     }
+    async remove(id) {
+        await this.prisma.order.updateMany({
+            where: { tableId: id },
+            data: { tableId: null },
+        });
+        await this.prisma.guestSession.updateMany({
+            where: { tableId: id },
+            data: { tableId: null },
+        });
+        return this.prisma.table.delete({
+            where: { id },
+        });
+    }
 };
 exports.TablesService = TablesService;
 exports.TablesService = TablesService = __decorate([

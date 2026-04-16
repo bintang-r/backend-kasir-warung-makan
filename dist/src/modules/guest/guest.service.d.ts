@@ -21,9 +21,9 @@ export declare class GuestService {
     } & {
         id: bigint;
         createdAt: Date;
+        tableId: bigint | null;
         token: string;
         expiresAt: Date;
-        tableId: bigint | null;
     }) | null>;
     findAll(): Promise<({
         orders: {
@@ -31,14 +31,14 @@ export declare class GuestService {
             createdAt: Date;
             updatedAt: Date;
             status: import("@prisma/client").$Enums.OrderStatus;
-            tableId: bigint | null;
             userId: bigint | null;
-            guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
             orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
             isReceived: boolean;
+            tableId: bigint | null;
+            guestSessionId: bigint | null;
         }[];
         table: {
             id: bigint;
@@ -49,8 +49,15 @@ export declare class GuestService {
     } & {
         id: bigint;
         createdAt: Date;
+        tableId: bigint | null;
         token: string;
         expiresAt: Date;
-        tableId: bigint | null;
     })[]>;
+    remove(id: bigint): Promise<{
+        id: bigint;
+        createdAt: Date;
+        tableId: bigint | null;
+        token: string;
+        expiresAt: Date;
+    }>;
 }

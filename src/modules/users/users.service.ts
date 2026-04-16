@@ -54,4 +54,34 @@ export class UsersService {
       }
     });
   }
+
+  async remove(id: bigint) {
+    // Unlink records to preserve financial/business history
+    await this.prisma.order.updateMany({
+      where: { userId: id },
+      data: { userId: null },
+    });
+
+    await this.prisma.delivery.updateMany({
+      where: { driverId: id },
+      data: { driverId: null },
+    });
+
+    // Delete temporary/personal data
+    await this.prisma.notification.deleteMany({ where: { userId: id } });
+    await this.prisma.review.deleteMany({ where: { userId: id } });
+    await this.prisma.chatbotLog.deleteMany({ where: { userId: id } });
+    await this.prisma.chatbotSession.deleteMany({ where: { userId: id } });
+
+    const carts = await this.prisma.cart.findMany({ where: { userId: id } });
+    const cartIds = carts.map(c => c.id);
+    if (cartIds.length > 0) {
+      await this.prisma.cartItem.deleteMany({ where: { cartId: { in: cartIds } } });
+      await this.prisma.cart.deleteMany({ where: { userId: id } });
+    }
+
+    return this.prisma.user.delete({
+      where: { id },
+    });
+  }
 }

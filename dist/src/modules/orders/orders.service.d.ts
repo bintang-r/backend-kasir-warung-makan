@@ -24,31 +24,31 @@ export declare class OrdersService {
         } & {
             id: bigint;
             price: import("@prisma/client-runtime-utils").Decimal;
+            orderId: bigint;
             menuId: bigint;
             qty: number;
-            orderId: bigint;
         })[];
         payments: {
             id: bigint;
             status: import("@prisma/client").$Enums.PaymentStatus;
+            orderId: bigint;
             method: import("@prisma/client").$Enums.PaymentMethod;
             amount: import("@prisma/client-runtime-utils").Decimal;
             paidAt: Date | null;
-            orderId: bigint;
         }[];
     } & {
         id: bigint;
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        tableId: bigint | null;
         userId: bigint | null;
-        guestSessionId: bigint | null;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
+        tableId: bigint | null;
+        guestSessionId: bigint | null;
     }>;
     getOrders(userId?: bigint, guestSessionId?: bigint): Promise<({
         items: ({
@@ -67,31 +67,31 @@ export declare class OrdersService {
         } & {
             id: bigint;
             price: import("@prisma/client-runtime-utils").Decimal;
+            orderId: bigint;
             menuId: bigint;
             qty: number;
-            orderId: bigint;
         })[];
         payments: {
             id: bigint;
             status: import("@prisma/client").$Enums.PaymentStatus;
+            orderId: bigint;
             method: import("@prisma/client").$Enums.PaymentMethod;
             amount: import("@prisma/client-runtime-utils").Decimal;
             paidAt: Date | null;
-            orderId: bigint;
         }[];
     } & {
         id: bigint;
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        tableId: bigint | null;
         userId: bigint | null;
-        guestSessionId: bigint | null;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
+        tableId: bigint | null;
+        guestSessionId: bigint | null;
     })[]>;
     getOrderById(id: bigint): Promise<({
         items: ({
@@ -110,31 +110,31 @@ export declare class OrdersService {
         } & {
             id: bigint;
             price: import("@prisma/client-runtime-utils").Decimal;
+            orderId: bigint;
             menuId: bigint;
             qty: number;
-            orderId: bigint;
         })[];
         payments: {
             id: bigint;
             status: import("@prisma/client").$Enums.PaymentStatus;
+            orderId: bigint;
             method: import("@prisma/client").$Enums.PaymentMethod;
             amount: import("@prisma/client-runtime-utils").Decimal;
             paidAt: Date | null;
-            orderId: bigint;
         }[];
     } & {
         id: bigint;
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        tableId: bigint | null;
         userId: bigint | null;
-        guestSessionId: bigint | null;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
+        tableId: bigint | null;
+        guestSessionId: bigint | null;
     }) | null>;
     getAllOrders(): Promise<({
         user: {
@@ -162,58 +162,58 @@ export declare class OrdersService {
         } & {
             id: bigint;
             price: import("@prisma/client-runtime-utils").Decimal;
+            orderId: bigint;
             menuId: bigint;
             qty: number;
-            orderId: bigint;
         })[];
     } & {
         id: bigint;
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        tableId: bigint | null;
         userId: bigint | null;
-        guestSessionId: bigint | null;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
+        tableId: bigint | null;
+        guestSessionId: bigint | null;
     })[]>;
     updateStatus(orderId: bigint, status: OrderStatus): Promise<{
         id: bigint;
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        tableId: bigint | null;
         userId: bigint | null;
-        guestSessionId: bigint | null;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
+        tableId: bigint | null;
+        guestSessionId: bigint | null;
     }>;
     addReview(orderId: bigint, userId: bigint | null, rating: number, comment: string): Promise<{
         id: bigint;
         createdAt: Date;
         userId: bigint | null;
+        orderId: bigint;
         rating: number;
         comment: string | null;
-        orderId: bigint;
     }>;
     deleteOrder(id: bigint): Promise<{
         id: bigint;
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        tableId: bigint | null;
         userId: bigint | null;
-        guestSessionId: bigint | null;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
+        tableId: bigint | null;
+        guestSessionId: bigint | null;
     }>;
 }

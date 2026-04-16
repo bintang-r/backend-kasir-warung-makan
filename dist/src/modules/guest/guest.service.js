@@ -64,6 +64,21 @@ let GuestService = class GuestService {
             orderBy: { createdAt: 'desc' },
         });
     }
+    async remove(id) {
+        await this.prisma.order.updateMany({
+            where: { guestSessionId: id },
+            data: { guestSessionId: null },
+        });
+        await this.prisma.notification.deleteMany({
+            where: { guestSessionId: id },
+        });
+        await this.prisma.cart.deleteMany({
+            where: { guestSessionId: id },
+        });
+        return this.prisma.guestSession.delete({
+            where: { id },
+        });
+    }
 };
 exports.GuestService = GuestService;
 exports.GuestService = GuestService = __decorate([

@@ -82,6 +82,18 @@ let ChatbotService = class ChatbotService {
         }
         return "Maaf, saya belum paham apa maksud Anda. Coba tanya soal menu, rekomendasi, atau harga makanan.";
     }
+    async removeLog(id) {
+        return this.prisma.chatbotLog.delete({ where: { id } });
+    }
+    async removeSession(id) {
+        const session = await this.prisma.chatbotSession.findUnique({ where: { id } });
+        if (session) {
+        }
+        return this.prisma.chatbotSession.delete({ where: { id } });
+    }
+    async clearAllLogs() {
+        return this.prisma.chatbotLog.deleteMany({});
+    }
 };
 exports.ChatbotService = ChatbotService;
 exports.ChatbotService = ChatbotService = __decorate([

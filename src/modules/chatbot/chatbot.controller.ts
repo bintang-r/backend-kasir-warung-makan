@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, Request, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, Request, UseGuards, Param, Delete } from '@nestjs/common';
 import { ChatbotService } from './chatbot.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -39,5 +39,26 @@ export class ChatbotController {
   async getAllSessions() {
     const sessions = await this.chatbotService.getAllSessions();
     return sessions.map(s => ({ ...s, id: s.id.toString(), userId: s.userId?.toString() }));
+  }
+
+  @Delete('logs/:id')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async removeLog(@Param('id') id: string) {
+    return this.chatbotService.removeLog(BigInt(id));
+  }
+
+  @Delete('logs')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async clearAllLogs() {
+    return this.chatbotService.clearAllLogs();
+  }
+
+  @Delete('sessions/:id')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async removeSession(@Param('id') id: string) {
+    return this.chatbotService.removeSession(BigInt(id));
   }
 }

@@ -23,31 +23,31 @@ export declare class ReviewsService {
             } & {
                 id: bigint;
                 price: import("@prisma/client-runtime-utils").Decimal;
+                orderId: bigint;
                 menuId: bigint;
                 qty: number;
-                orderId: bigint;
             })[];
         } & {
             id: bigint;
             createdAt: Date;
             updatedAt: Date;
             status: import("@prisma/client").$Enums.OrderStatus;
-            tableId: bigint | null;
             userId: bigint | null;
-            guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
             orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
             isReceived: boolean;
+            tableId: bigint | null;
+            guestSessionId: bigint | null;
         };
     } & {
         id: bigint;
         createdAt: Date;
         userId: bigint | null;
+        orderId: bigint;
         rating: number;
         comment: string | null;
-        orderId: bigint;
     })[]>;
     findOne(id: bigint): Promise<({
         user: {
@@ -58,29 +58,29 @@ export declare class ReviewsService {
             createdAt: Date;
             updatedAt: Date;
             status: import("@prisma/client").$Enums.OrderStatus;
-            tableId: bigint | null;
             userId: bigint | null;
-            guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
             orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
             isReceived: boolean;
+            tableId: bigint | null;
+            guestSessionId: bigint | null;
         };
     } & {
         id: bigint;
         createdAt: Date;
         userId: bigint | null;
+        orderId: bigint;
         rating: number;
         comment: string | null;
-        orderId: bigint;
     }) | null>;
     delete(id: bigint): Promise<{
         id: bigint;
         createdAt: Date;
         userId: bigint | null;
+        orderId: bigint;
         rating: number;
         comment: string | null;
-        orderId: bigint;
     }>;
 }

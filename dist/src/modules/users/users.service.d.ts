@@ -46,4 +46,13 @@ export declare class UsersService {
         createdAt: Date;
         updatedAt: Date;
     }>;
+    remove(id: bigint): Promise<{
+        id: bigint;
+        email: string;
+        name: string;
+        password: string;
+        role: import("@prisma/client").$Enums.Role;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
 }

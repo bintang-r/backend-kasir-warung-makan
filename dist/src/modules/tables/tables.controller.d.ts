@@ -19,4 +19,10 @@ export declare class TablesController {
     getQr(id: string): Promise<{
         qr: any;
     }>;
+    remove(id: string): Promise<{
+        id: bigint;
+        name: string;
+        qrCode: string | null;
+        status: import("@prisma/client").$Enums.TableStatus;
+    }>;
 }

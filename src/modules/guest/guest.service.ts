@@ -58,4 +58,24 @@ export class GuestService {
       orderBy: { createdAt: 'desc' },
     });
   }
+
+  async remove(id: bigint) {
+    // Unlink records to preserve order history but allow session to be deleted
+    await this.prisma.order.updateMany({
+      where: { guestSessionId: id },
+      data: { guestSessionId: null },
+    });
+
+    await this.prisma.notification.deleteMany({
+      where: { guestSessionId: id },
+    });
+
+    await this.prisma.cart.deleteMany({
+      where: { guestSessionId: id },
+    });
+
+    return this.prisma.guestSession.delete({
+      where: { id },
+    });
+  }
 }

@@ -8,14 +8,14 @@ export declare class DeliveriesController {
     }): Promise<{
         id: bigint;
         status: string;
-        orderId: bigint;
         driverId: bigint;
+        orderId: bigint;
     }>;
     updateStatus(id: string, status: string): Promise<{
         id: bigint;
         status: string;
-        orderId: bigint;
         driverId: bigint;
+        orderId: bigint;
     }>;
     getMyDeliveries(req: any): Promise<({
         order: {
@@ -23,19 +23,19 @@ export declare class DeliveriesController {
             createdAt: Date;
             updatedAt: Date;
             status: import("@prisma/client").$Enums.OrderStatus;
-            tableId: bigint | null;
             userId: bigint | null;
-            guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
             orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
             isReceived: boolean;
+            tableId: bigint | null;
+            guestSessionId: bigint | null;
         };
     } & {
         id: bigint;
         status: string;
-        orderId: bigint;
         driverId: bigint;
+        orderId: bigint;
     })[]>;
 }

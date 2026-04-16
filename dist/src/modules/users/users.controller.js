@@ -43,6 +43,9 @@ let UsersController = class UsersController {
         const updated = await this.usersService.updateUser(BigInt(id), body);
         return { ...updated, id: updated.id.toString() };
     }
+    async remove(id) {
+        return this.usersService.remove(BigInt(id));
+    }
 };
 exports.UsersController = UsersController;
 __decorate([
@@ -78,6 +81,15 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "remove", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])

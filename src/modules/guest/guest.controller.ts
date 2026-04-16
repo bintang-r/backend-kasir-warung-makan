@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Param, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, UseGuards, Delete } from '@nestjs/common';
 import { GuestService } from './guest.service';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -36,5 +36,12 @@ export class GuestController {
   @Get('qr/:table_id')
   async handleQrScan(@Param('table_id') tableId: string) {
     return this.guestService.createSession(BigInt(tableId));
+  }
+
+  @Delete('session/:id')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async remove(@Param('id') id: string) {
+    return this.guestService.remove(BigInt(id));
   }
 }

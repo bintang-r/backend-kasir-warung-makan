@@ -30,6 +30,18 @@ let CategoriesService = class CategoriesService {
             data,
         });
     }
+    async remove(id) {
+        const menus = await this.prisma.menu.findMany({ where: { categoryId: id }, select: { id: true } });
+        const menuIds = menus.map(m => m.id);
+        if (menuIds.length > 0) {
+            await this.prisma.cartItem.deleteMany({ where: { menuId: { in: menuIds } } });
+            await this.prisma.orderItem.deleteMany({ where: { menuId: { in: menuIds } } });
+            await this.prisma.menu.deleteMany({ where: { categoryId: id } });
+        }
+        return this.prisma.category.delete({
+            where: { id },
+        });
+    }
 };
 exports.CategoriesService = CategoriesService;
 exports.CategoriesService = CategoriesService = __decorate([

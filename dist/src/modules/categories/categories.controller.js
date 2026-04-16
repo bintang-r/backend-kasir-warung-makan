@@ -30,6 +30,9 @@ let CategoriesController = class CategoriesController {
     async create(body) {
         return this.categoriesService.create({ name: body.name });
     }
+    async remove(id) {
+        return this.categoriesService.remove(BigInt(id));
+    }
 };
 exports.CategoriesController = CategoriesController;
 __decorate([
@@ -47,6 +50,15 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], CategoriesController.prototype, "create", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], CategoriesController.prototype, "remove", null);
 exports.CategoriesController = CategoriesController = __decorate([
     (0, common_1.Controller)('categories'),
     __metadata("design:paramtypes", [categories_service_1.CategoriesService])

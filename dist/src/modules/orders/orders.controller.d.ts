@@ -20,31 +20,31 @@ export declare class OrdersController {
         } & {
             id: bigint;
             price: import("@prisma/client-runtime-utils").Decimal;
+            orderId: bigint;
             menuId: bigint;
             qty: number;
-            orderId: bigint;
         })[];
         payments: {
             id: bigint;
             status: import("@prisma/client").$Enums.PaymentStatus;
+            orderId: bigint;
             method: import("@prisma/client").$Enums.PaymentMethod;
             amount: import("@prisma/client-runtime-utils").Decimal;
             paidAt: Date | null;
-            orderId: bigint;
         }[];
     } & {
         id: bigint;
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        tableId: bigint | null;
         userId: bigint | null;
-        guestSessionId: bigint | null;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
+        tableId: bigint | null;
+        guestSessionId: bigint | null;
     }>;
     findAll(req: any): Promise<({
         items: ({
@@ -63,31 +63,31 @@ export declare class OrdersController {
         } & {
             id: bigint;
             price: import("@prisma/client-runtime-utils").Decimal;
+            orderId: bigint;
             menuId: bigint;
             qty: number;
-            orderId: bigint;
         })[];
         payments: {
             id: bigint;
             status: import("@prisma/client").$Enums.PaymentStatus;
+            orderId: bigint;
             method: import("@prisma/client").$Enums.PaymentMethod;
             amount: import("@prisma/client-runtime-utils").Decimal;
             paidAt: Date | null;
-            orderId: bigint;
         }[];
     } & {
         id: bigint;
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        tableId: bigint | null;
         userId: bigint | null;
-        guestSessionId: bigint | null;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
+        tableId: bigint | null;
+        guestSessionId: bigint | null;
     })[]>;
     findAllStaff(): Promise<{
         id: string;
@@ -177,35 +177,35 @@ export declare class OrdersController {
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        tableId: bigint | null;
         userId: bigint | null;
-        guestSessionId: bigint | null;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
+        tableId: bigint | null;
+        guestSessionId: bigint | null;
     }>;
     updateStatus(id: string, status: OrderStatus): Promise<{
         id: bigint;
         createdAt: Date;
         updatedAt: Date;
         status: import("@prisma/client").$Enums.OrderStatus;
-        tableId: bigint | null;
         userId: bigint | null;
-        guestSessionId: bigint | null;
         orderSource: import("@prisma/client").$Enums.OrderSource;
         orderType: import("@prisma/client").$Enums.OrderType;
         totalPrice: import("@prisma/client-runtime-utils").Decimal;
         address: string | null;
         isReceived: boolean;
+        tableId: bigint | null;
+        guestSessionId: bigint | null;
     }>;
     submitReview(id: string, req: any, rating: number, comment: string): Promise<{
         id: bigint;
         createdAt: Date;
         userId: bigint | null;
+        orderId: bigint;
         rating: number;
         comment: string | null;
-        orderId: bigint;
     }>;
 }

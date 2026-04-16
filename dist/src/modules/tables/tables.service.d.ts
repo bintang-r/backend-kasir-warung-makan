@@ -23,4 +23,10 @@ export declare class TablesService {
         status: import("@prisma/client").$Enums.TableStatus;
     }>;
     generateQr(id: bigint): Promise<any>;
+    remove(id: bigint): Promise<{
+        id: bigint;
+        name: string;
+        qrCode: string | null;
+        status: import("@prisma/client").$Enums.TableStatus;
+    }>;
 }

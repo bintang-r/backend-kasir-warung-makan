@@ -10,10 +10,10 @@ export declare class PaymentsController {
     }): Promise<{
         id: bigint;
         status: import("@prisma/client").$Enums.PaymentStatus;
+        orderId: bigint;
         method: import("@prisma/client").$Enums.PaymentMethod;
         amount: import("@prisma/client-runtime-utils").Decimal;
         paidAt: Date | null;
-        orderId: bigint;
     }>;
     process(body: {
         orderId: string;
@@ -22,10 +22,10 @@ export declare class PaymentsController {
     }): Promise<{
         id: bigint;
         status: import("@prisma/client").$Enums.PaymentStatus;
+        orderId: bigint;
         method: import("@prisma/client").$Enums.PaymentMethod;
         amount: import("@prisma/client-runtime-utils").Decimal;
         paidAt: Date | null;
-        orderId: bigint;
     }>;
     findByOrder(orderId: string): Promise<{
         id: string;
@@ -35,14 +35,14 @@ export declare class PaymentsController {
             createdAt: Date;
             updatedAt: Date;
             status: import("@prisma/client").$Enums.OrderStatus;
-            tableId: bigint | null;
             userId: bigint | null;
-            guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
             orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
             isReceived: boolean;
+            tableId: bigint | null;
+            guestSessionId: bigint | null;
         };
         status: import("@prisma/client").$Enums.PaymentStatus;
         method: import("@prisma/client").$Enums.PaymentMethod;
@@ -68,12 +68,12 @@ export declare class PaymentsController {
             createdAt: Date;
             updatedAt: Date;
             status: import("@prisma/client").$Enums.OrderStatus;
-            guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
             orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
             isReceived: boolean;
+            guestSessionId: bigint | null;
         };
         status: import("@prisma/client").$Enums.PaymentStatus;
         method: import("@prisma/client").$Enums.PaymentMethod;
@@ -83,9 +83,9 @@ export declare class PaymentsController {
     updateStatus(id: string, status: PaymentStatus): Promise<{
         id: bigint;
         status: import("@prisma/client").$Enums.PaymentStatus;
+        orderId: bigint;
         method: import("@prisma/client").$Enums.PaymentMethod;
         amount: import("@prisma/client-runtime-utils").Decimal;
         paidAt: Date | null;
-        orderId: bigint;
     }>;
 }

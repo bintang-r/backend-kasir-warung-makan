@@ -10,4 +10,8 @@ export declare class CategoriesController {
         id: bigint;
         name: string;
     }>;
+    remove(id: string): Promise<{
+        id: bigint;
+        name: string;
+    }>;
 }

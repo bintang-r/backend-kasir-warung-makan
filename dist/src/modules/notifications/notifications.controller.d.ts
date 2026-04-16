@@ -5,18 +5,18 @@ export declare class NotificationsController {
     getNotifications(req: any): Promise<{
         id: bigint;
         createdAt: Date;
-        message: string;
         userId: bigint | null;
         guestSessionId: bigint | null;
+        message: string;
         title: string;
         isRead: boolean;
     }[]>;
     markAsRead(id: string): Promise<{
         id: bigint;
         createdAt: Date;
-        message: string;
         userId: bigint | null;
         guestSessionId: bigint | null;
+        message: string;
         title: string;
         isRead: boolean;
     }>;
@@ -31,9 +31,9 @@ export declare class NotificationsController {
         guestSession: {
             id: bigint;
             createdAt: Date;
+            tableId: bigint | null;
             token: string;
             expiresAt: Date;
-            tableId: bigint | null;
         } | null;
         createdAt: Date;
         message: string;

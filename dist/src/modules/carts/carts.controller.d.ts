@@ -18,8 +18,8 @@ export declare class CartsController {
             };
         } & {
             id: bigint;
-            cartId: bigint;
             menuId: bigint;
+            cartId: bigint;
             qty: number;
         })[];
     } & {
@@ -34,22 +34,22 @@ export declare class CartsController {
         qty: number;
     }): Promise<{
         id: bigint;
-        cartId: bigint;
         menuId: bigint;
+        cartId: bigint;
         qty: number;
     }>;
     removeItem(itemId: string): Promise<{
         id: bigint;
-        cartId: bigint;
         menuId: bigint;
+        cartId: bigint;
         qty: number;
     }>;
     updateQuantity(itemId: string, body: {
         qty: number;
     }): Promise<{
         id: bigint;
-        cartId: bigint;
         menuId: bigint;
+        cartId: bigint;
         qty: number;
     }>;
 }

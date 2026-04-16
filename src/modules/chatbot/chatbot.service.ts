@@ -84,4 +84,22 @@ export class ChatbotService {
 
     return "Maaf, saya belum paham apa maksud Anda. Coba tanya soal menu, rekomendasi, atau harga makanan.";
   }
+
+  async removeLog(id: bigint) {
+    return this.prisma.chatbotLog.delete({ where: { id } });
+  }
+
+  async removeSession(id: bigint) {
+    // Delete related logs first
+    const session = await this.prisma.chatbotSession.findUnique({ where: { id } });
+    if (session) {
+       // ChatbotSession doesn't have direct logs relation in schema, but usually we clear them by userId if it's a user's session
+       // Actually user wants to clear logs. Let's just implement individual log deletion for now as requested.
+    }
+    return this.prisma.chatbotSession.delete({ where: { id } });
+  }
+
+  async clearAllLogs() {
+    return this.prisma.chatbotLog.deleteMany({});
+  }
 }

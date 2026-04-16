@@ -33,6 +33,9 @@ let TablesController = class TablesController {
     async getQr(id) {
         return { qr: await this.tablesService.generateQr(BigInt(id)) };
     }
+    async remove(id) {
+        return this.tablesService.remove(BigInt(id));
+    }
 };
 exports.TablesController = TablesController;
 __decorate([
@@ -57,6 +60,15 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], TablesController.prototype, "getQr", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], TablesController.prototype, "remove", null);
 exports.TablesController = TablesController = __decorate([
     (0, common_1.Controller)('tables'),
     __metadata("design:paramtypes", [tables_service_1.TablesService])

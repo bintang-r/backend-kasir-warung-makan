@@ -11,14 +11,14 @@ export declare class GuestController {
             createdAt: Date;
             updatedAt: Date;
             status: import("@prisma/client").$Enums.OrderStatus;
-            tableId: bigint | null;
             userId: bigint | null;
-            guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
             orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
             isReceived: boolean;
+            tableId: bigint | null;
+            guestSessionId: bigint | null;
         }[];
         table: {
             id: bigint;
@@ -47,13 +47,20 @@ export declare class GuestController {
     } & {
         id: bigint;
         createdAt: Date;
+        tableId: bigint | null;
         token: string;
         expiresAt: Date;
-        tableId: bigint | null;
     }) | null>;
     handleQrScan(tableId: string): Promise<{
         guest_token: string;
         table_id: string | null;
         session_id: string;
+    }>;
+    remove(id: string): Promise<{
+        id: bigint;
+        createdAt: Date;
+        tableId: bigint | null;
+        token: string;
+        expiresAt: Date;
     }>;
 }
