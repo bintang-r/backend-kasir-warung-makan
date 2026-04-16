@@ -48,4 +48,12 @@ export class NotificationsService {
       data: { isRead: true },
     });
   }
+
+  async findAllAdmin() {
+    return this.prisma.notification.findMany({
+      include: { user: { select: { name: true } }, guestSession: true },
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+    });
+  }
 }

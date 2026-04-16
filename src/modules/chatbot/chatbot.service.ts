@@ -22,7 +22,19 @@ export class ChatbotService {
     });
   }
 
-  async createSession(userId: bigint, sessionId: string) {
+  async getAllLogs() {
+    return this.prisma.chatbotLog.findMany({
+      include: { user: { select: { name: true } } },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async getAllSessions() {
+    return this.prisma.chatbotSession.findMany({
+      include: { user: { select: { name: true } } },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
     return this.prisma.chatbotSession.create({
       data: {
         userId,

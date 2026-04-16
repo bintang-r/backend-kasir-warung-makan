@@ -25,6 +25,33 @@ export class PaymentsController {
   @Get(':orderId')
   @UseGuards(JwtAuthGuard)
   async findByOrder(@Param('orderId') orderId: string) {
-    return this.paymentsService.getPaymentByOrder(BigInt(orderId));
+    const payment = await this.paymentsService.getPaymentByOrder(BigInt(orderId));
+    if (!payment) return null;
+    return { ...payment, id: payment.id.toString(), orderId: payment.orderId.toString() };
+  }
+
+  @Get()
+  @Roles(Role.ADMIN, Role.KASIR)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async findAll() {
+    const payments = await this.paymentsService.findAll();
+    return payments.map(p => ({
+      ...p,
+      id: p.id.toString(),
+      orderId: p.orderId.toString(),
+      order: {
+        ...p.order,
+        id: p.order.id.toString(),
+        userId: p.order.userId?.toString(),
+        tableId: p.order.tableId?.toString()
+      }
+    }));
+  }
+
+  @Patch(':id/status')
+  @Roles(Role.ADMIN, Role.KASIR)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async updateStatus(@Param('id') id: string, @Body('status') status: PaymentStatus) {
+    return this.paymentsService.updateStatus(BigInt(id), status);
   }
 }

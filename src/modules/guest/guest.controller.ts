@@ -1,9 +1,26 @@
-import { Controller, Post, Get, Param, Body } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, UseGuards } from '@nestjs/common';
 import { GuestService } from './guest.service';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '@prisma/client';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @Controller('guest')
 export class GuestController {
-  constructor(private guestService: GuestService) {}
+  constructor(private readonly guestService: GuestService) {}
+
+  @Get('admin')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async findAll() {
+    const sessions = await this.guestService.findAll();
+    return sessions.map(s => ({
+      ...s,
+      id: s.id.toString(),
+      tableId: s.tableId?.toString(),
+      ordersCount: s.orders.length
+    }));
+  }
 
   @Post('session')
   async createSession(@Body() body: { tableId?: string }) {

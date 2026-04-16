@@ -48,4 +48,28 @@ export class PaymentsService {
       include: { order: true }
     });
   }
+
+  async findAll() {
+    return this.prisma.payment.findMany({
+      include: { 
+        order: { 
+          include: { 
+            user: { select: { name: true } },
+            table: true 
+          } 
+        } 
+      },
+      orderBy: { paidAt: 'desc' },
+    });
+  }
+
+  async updateStatus(id: bigint, status: PaymentStatus) {
+    return this.prisma.payment.update({
+      where: { id },
+      data: { 
+        status,
+        paidAt: status === PaymentStatus.PAID ? new Date() : null
+      },
+    });
+  }
 }

@@ -182,4 +182,12 @@ export class OrdersService {
       },
     });
   }
+
+  async deleteOrder(id: bigint) {
+    // Delete items and payments first (or use cascade if set up, but let's be explicit)
+    await this.prisma.orderItem.deleteMany({ where: { orderId: id } });
+    await this.prisma.payment.deleteMany({ where: { orderId: id } });
+    await this.prisma.review.deleteMany({ where: { orderId: id } });
+    return this.prisma.order.delete({ where: { id } });
+  }
 }

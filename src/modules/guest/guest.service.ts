@@ -51,4 +51,11 @@ export class GuestService {
       include: { table: true },
     });
   }
+
+  async findAll() {
+    return this.prisma.guestSession.findMany({
+      include: { table: true, orders: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
 }

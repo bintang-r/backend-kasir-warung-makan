@@ -21,4 +21,20 @@ export class ChatbotController {
     const userId = BigInt(req.user.id);
     return this.chatbotService.getHistory(userId);
   }
+
+  @Get('logs')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getAllLogs() {
+    const logs = await this.chatbotService.getAllLogs();
+    return logs.map(l => ({ ...l, id: l.id.toString(), userId: l.userId?.toString() }));
+  }
+
+  @Get('sessions')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getAllSessions() {
+    const sessions = await this.chatbotService.getAllSessions();
+    return sessions.map(s => ({ ...s, id: s.id.toString(), userId: s.userId?.toString() }));
+  }
 }

@@ -1,6 +1,10 @@
-import { Controller, Get, Post, Patch, Param, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Request, UseGuards, Body } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '@prisma/client';
+import { GuestService } from '../guest/guest.service';
 
 @Controller('notifications')
 export class NotificationsController {
@@ -26,5 +30,18 @@ export class NotificationsController {
     const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : undefined;
     const guestSessionId = req.user.role === 'GUEST' ? BigInt(req.user.id) : undefined;
     return this.notificationsService.markAllAsRead(userId, guestSessionId);
+  }
+
+  @Get('admin')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async getAllForAdmin() {
+    const notifications = await this.notificationsService.findAllAdmin();
+    return notifications.map(n => ({
+      ...n,
+      id: n.id.toString(),
+      userId: n.userId?.toString(),
+      guestSessionId: n.guestSessionId?.toString()
+    }));
   }
 }

@@ -56,14 +56,51 @@ export class OrdersController {
       throw new ForbiddenException('You do not have permission to view this order');
     }
 
-    return order;
+    return {
+      ...order,
+      id: order.id.toString(),
+      userId: order.userId?.toString(),
+      tableId: order.tableId?.toString(),
+      guestSessionId: order.guestSessionId?.toString(),
+      items: order.items.map(i => ({
+        ...i,
+        id: i.id.toString(),
+        orderId: i.orderId.toString(),
+        menuId: i.menuId.toString()
+      })),
+      payments: order.payments.map(p => ({
+        ...p,
+        id: p.id.toString(),
+        orderId: p.orderId.toString()
+      }))
+    };
   }
 
   @Get('all')
   @Roles(Role.ADMIN, Role.KITCHEN, Role.KASIR)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async findAllStaff() {
-    return this.ordersService.getAllOrders();
+    const orders = await this.ordersService.getAllOrders();
+    return orders.map(order => ({
+      ...order,
+      id: order.id.toString(),
+      userId: order.userId?.toString(),
+      tableId: order.tableId?.toString(),
+      guestSessionId: order.guestSessionId?.toString(),
+      items: order.items.map(i => ({
+        ...i,
+        id: i.id.toString(),
+        orderId: i.orderId.toString(),
+        menuId: i.menuId.toString()
+      }))
+    }));
+  }
+
+  @Delete(':id')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async remove(@Param('id') id: string) {
+    return this.ordersService.deleteOrder(BigInt(id));
   }
 
   @Put(':id/status')
