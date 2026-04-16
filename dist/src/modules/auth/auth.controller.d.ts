@@ -19,8 +19,6 @@ export declare class AuthController {
             email: any;
             role: any;
         };
-    } | {
-        message: string;
     }>;
     getProfile(req: any): Promise<any>;
 }

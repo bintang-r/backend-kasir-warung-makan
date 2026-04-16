@@ -26,7 +26,7 @@ let AuthController = class AuthController {
     async login(body) {
         const user = await this.authService.validateUser(body.email, body.password);
         if (!user) {
-            return { message: 'Invalid credentials' };
+            throw new common_1.UnauthorizedException('Invalid email or password');
         }
         return this.authService.login(user);
     }
