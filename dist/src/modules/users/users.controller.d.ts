@@ -11,6 +11,15 @@ export declare class UsersController {
         createdAt: Date;
         updatedAt: Date;
     }[]>;
+    create(body: any): Promise<{
+        id: string;
+        email: string;
+        name: string;
+        password: string;
+        role: import("@prisma/client").$Enums.Role;
+        createdAt: Date;
+        updatedAt: Date;
+    }>;
     getMe(req: any): Promise<{
         id: string;
         email: string;

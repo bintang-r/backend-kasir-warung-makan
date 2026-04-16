@@ -8,9 +8,7 @@ export declare class TablesController {
         qrCode: string | null;
         status: import("@prisma/client").$Enums.TableStatus;
     }[]>;
-    create(body: {
-        name: string;
-    }): Promise<{
+    create(body: any): Promise<{
         id: bigint;
         name: string;
         qrCode: string | null;
@@ -20,6 +18,12 @@ export declare class TablesController {
         qr: any;
     }>;
     remove(id: string): Promise<{
+        id: bigint;
+        name: string;
+        qrCode: string | null;
+        status: import("@prisma/client").$Enums.TableStatus;
+    }>;
+    update(id: string, body: any): Promise<{
         id: bigint;
         name: string;
         qrCode: string | null;

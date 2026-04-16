@@ -170,6 +170,7 @@ let OrdersService = class OrdersService {
         await this.prisma.orderItem.deleteMany({ where: { orderId: id } });
         await this.prisma.payment.deleteMany({ where: { orderId: id } });
         await this.prisma.review.deleteMany({ where: { orderId: id } });
+        await this.prisma.delivery.deleteMany({ where: { orderId: id } });
         return this.prisma.order.delete({ where: { id } });
     }
 };

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -18,7 +18,8 @@ export class CategoriesController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async create(@Body() body: any) {
-    return this.categoriesService.create({ name: body.name });
+    const { name } = body;
+    return this.categoriesService.create({ name });
   }
 
   @Delete(':id')
@@ -26,5 +27,12 @@ export class CategoriesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async remove(@Param('id') id: string) {
     return this.categoriesService.remove(BigInt(id));
+  }
+
+  @Put(':id')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async update(@Param('id') id: string, @Body('name') name: string) {
+    return this.categoriesService.update(BigInt(id), { name });
   }
 }

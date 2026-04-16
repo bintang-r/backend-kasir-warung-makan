@@ -31,10 +31,12 @@ let PromosController = class PromosController {
         return this.promosService.findAllPromos();
     }
     async createPromo(body) {
-        return this.promosService.createPromo(body);
+        const { title, description, image, isActive } = body;
+        return this.promosService.createPromo({ title, description, image, isActive });
     }
     async updatePromo(id, body) {
-        return this.promosService.updatePromo(BigInt(id), body);
+        const { title, description, image, isActive } = body;
+        return this.promosService.updatePromo(BigInt(id), { title, description, image, isActive });
     }
     async deletePromo(id) {
         return this.promosService.deletePromo(BigInt(id));
@@ -43,10 +45,12 @@ let PromosController = class PromosController {
         return this.promosService.findAllVouchers();
     }
     async createVoucher(body) {
-        return this.promosService.createVoucher(body);
+        const { code, discount, expiredAt } = body;
+        return this.promosService.createVoucher({ code, discount, expiredAt });
     }
     async updateVoucher(id, body) {
-        return this.promosService.updateVoucher(BigInt(id), body);
+        const { code, discount, expiredAt } = body;
+        return this.promosService.updateVoucher(BigInt(id), { code, discount, expiredAt });
     }
     async deleteVoucher(id) {
         return this.promosService.deleteVoucher(BigInt(id));

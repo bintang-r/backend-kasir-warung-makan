@@ -42,6 +42,12 @@ let CategoriesService = class CategoriesService {
             where: { id },
         });
     }
+    async update(id, data) {
+        return this.prisma.category.update({
+            where: { id },
+            data,
+        });
+    }
 };
 exports.CategoriesService = CategoriesService;
 exports.CategoriesService = CategoriesService = __decorate([

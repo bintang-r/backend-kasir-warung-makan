@@ -87,6 +87,12 @@ let TablesService = class TablesService {
             where: { id },
         });
     }
+    async update(id, data) {
+        return this.prisma.table.update({
+            where: { id },
+            data,
+        });
+    }
 };
 exports.TablesService = TablesService;
 exports.TablesService = TablesService = __decorate([

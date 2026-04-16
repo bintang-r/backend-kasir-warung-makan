@@ -26,14 +26,16 @@ export class PromosController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async createPromo(@Body() body: any) {
-    return this.promosService.createPromo(body);
+    const { title, description, image, isActive } = body;
+    return this.promosService.createPromo({ title, description, image, isActive });
   }
 
   @Put('admin/:id')
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updatePromo(@Param('id') id: string, @Body() body: any) {
-    return this.promosService.updatePromo(BigInt(id), body);
+    const { title, description, image, isActive } = body;
+    return this.promosService.updatePromo(BigInt(id), { title, description, image, isActive });
   }
 
   @Delete('admin/:id')
@@ -55,14 +57,16 @@ export class PromosController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async createVoucher(@Body() body: any) {
-    return this.promosService.createVoucher(body);
+    const { code, discount, expiredAt } = body;
+    return this.promosService.createVoucher({ code, discount, expiredAt });
   }
 
   @Put('vouchers/admin/:id')
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateVoucher(@Param('id') id: string, @Body() body: any) {
-    return this.promosService.updateVoucher(BigInt(id), body);
+    const { code, discount, expiredAt } = body;
+    return this.promosService.updateVoucher(BigInt(id), { code, discount, expiredAt });
   }
 
   @Delete('vouchers/admin/:id')

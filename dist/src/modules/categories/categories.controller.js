@@ -28,10 +28,14 @@ let CategoriesController = class CategoriesController {
         return this.categoriesService.findAll();
     }
     async create(body) {
-        return this.categoriesService.create({ name: body.name });
+        const { name } = body;
+        return this.categoriesService.create({ name });
     }
     async remove(id) {
         return this.categoriesService.remove(BigInt(id));
+    }
+    async update(id, name) {
+        return this.categoriesService.update(BigInt(id), { name });
     }
 };
 exports.CategoriesController = CategoriesController;
@@ -59,6 +63,16 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], CategoriesController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('name')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], CategoriesController.prototype, "update", null);
 exports.CategoriesController = CategoriesController = __decorate([
     (0, common_1.Controller)('categories'),
     __metadata("design:paramtypes", [categories_service_1.CategoriesService])

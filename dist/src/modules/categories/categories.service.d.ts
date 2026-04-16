@@ -20,4 +20,10 @@ export declare class CategoriesService {
         id: bigint;
         name: string;
     }>;
+    update(id: bigint, data: {
+        name: string;
+    }): Promise<{
+        id: bigint;
+        name: string;
+    }>;
 }

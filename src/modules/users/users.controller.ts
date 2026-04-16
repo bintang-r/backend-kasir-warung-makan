@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Body, Request, UseGuards, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Patch, Post, Body, Request, UseGuards, Param, Delete } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -9,10 +9,20 @@ import { Role } from '@prisma/client';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Get()
+  @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async findAll() {
     const users = await this.usersService.findAll();
     return users.map(u => ({ ...u, id: u.id.toString() }));
+  }
+
+  @Post()
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async create(@Body() body: any) {
+    const user = await this.usersService.create(body);
+    return { ...user, id: user.id.toString() };
   }
 
   @Get('me')
@@ -35,7 +45,8 @@ export class UsersController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async update(@Param('id') id: string, @Body() body: any) {
-    const updated = await this.usersService.updateUser(BigInt(id), body);
+    const { role } = body;
+    const updated = await this.usersService.updateUser(BigInt(id), { role });
     return { ...updated, id: updated.id.toString() };
   }
 

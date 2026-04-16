@@ -38,10 +38,15 @@ let MenusController = class MenusController {
         });
     }
     async update(id, body) {
-        const { id: _id, ...rest } = body;
+        const { name, description, price, image, isAvailable, isPopular, categoryId } = body;
         return this.menusService.update(BigInt(id), {
-            ...rest,
-            categoryId: rest.categoryId ? BigInt(rest.categoryId) : undefined,
+            name,
+            description,
+            price,
+            image,
+            isAvailable,
+            isPopular,
+            categoryId: categoryId ? BigInt(categoryId) : undefined,
         });
     }
     async remove(id) {

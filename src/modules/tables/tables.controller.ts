@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
 import { TablesService } from './tables.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -17,8 +17,9 @@ export class TablesController {
   @Post()
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async create(@Body() body: { name: string }) {
-    return this.tablesService.create(body);
+  async create(@Body() body: any) {
+    const { name } = body;
+    return this.tablesService.create({ name });
   }
 
   @Get(':id/qr')
@@ -31,5 +32,13 @@ export class TablesController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async remove(@Param('id') id: string) {
     return this.tablesService.remove(BigInt(id));
+  }
+
+  @Put(':id')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async update(@Param('id') id: string, @Body() body: any) {
+    const { name, status } = body;
+    return this.tablesService.update(BigInt(id), { name, status });
   }
 }

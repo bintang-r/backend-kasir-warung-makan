@@ -54,4 +54,11 @@ export class TablesService {
       where: { id },
     });
   }
+
+  async update(id: bigint, data: { name?: string; status?: import('@prisma/client').TableStatus }) {
+    return this.prisma.table.update({
+      where: { id },
+      data,
+    });
+  }
 }

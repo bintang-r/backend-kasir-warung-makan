@@ -14,4 +14,8 @@ export declare class CategoriesController {
         id: bigint;
         name: string;
     }>;
+    update(id: string, name: string): Promise<{
+        id: bigint;
+        name: string;
+    }>;
 }

@@ -35,4 +35,11 @@ export class CategoriesService {
       where: { id },
     });
   }
+
+  async update(id: bigint, data: { name: string }) {
+    return this.prisma.category.update({
+      where: { id },
+      data,
+    });
+  }
 }

@@ -34,10 +34,15 @@ export class MenusController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async update(@Param('id') id: string, @Body() body: any) {
-    const { id: _id, ...rest } = body;
+    const { name, description, price, image, isAvailable, isPopular, categoryId } = body;
     return this.menusService.update(BigInt(id), {
-      ...rest,
-      categoryId: rest.categoryId ? BigInt(rest.categoryId) : undefined,
+      name,
+      description,
+      price,
+      image,
+      isAvailable,
+      isPopular,
+      categoryId: categoryId ? BigInt(categoryId) : undefined,
     });
   }
 
