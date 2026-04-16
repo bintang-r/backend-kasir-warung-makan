@@ -108,6 +108,18 @@ export class OrdersService {
     });
   }
 
+  async getOrderById(id: bigint) {
+    return this.prisma.order.findUnique({
+      where: { id },
+      include: {
+        items: {
+          include: { menu: true },
+        },
+        payments: true,
+      },
+    });
+  }
+
   async getAllOrders() {
     return this.prisma.order.findMany({
       include: {

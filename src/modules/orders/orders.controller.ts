@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Request, UseGuards, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -36,6 +36,27 @@ export class OrdersController {
     const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : undefined;
     const guestSessionId = req.user.role === 'GUEST' ? BigInt(req.user.id) : undefined;
     return this.ordersService.getOrders(userId, guestSessionId);
+  }
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  async findOne(@Param('id') id: string, @Request() req: any) {
+    const order = await this.ordersService.getOrderById(BigInt(id));
+    if (!order) throw new NotFoundException('Order not found');
+
+    // Check ownership or staff role
+    const isStaff = [Role.ADMIN, Role.KITCHEN, Role.KASIR].includes(req.user.role);
+    const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : null;
+    const guestSessionId = req.user.role === 'GUEST' ? BigInt(req.user.id) : null;
+
+    const isOwner = (userId && order.userId === userId) || 
+                    (guestSessionId && order.guestSessionId === guestSessionId);
+
+    if (!isStaff && !isOwner) {
+      throw new ForbiddenException('You do not have permission to view this order');
+    }
+
+    return order;
   }
 
   @Get('all')
