@@ -16,6 +16,7 @@ import { DeliveriesModule } from './modules/deliveries/deliveries.module';
 import { ChatbotModule } from './modules/chatbot/chatbot.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { PromosModule } from './modules/promos/promos.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { PromosModule } from './modules/promos/promos.module';
     ChatbotModule,
     NotificationsModule,
     PromosModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

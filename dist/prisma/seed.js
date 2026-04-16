@@ -53,6 +53,30 @@ async function main() {
         },
     });
     console.log('Admin user seeded.');
+    const kitchenPassword = await bcrypt.hash('kitchen123', 10);
+    await prisma.user.upsert({
+        where: { email: 'kitchen@rmsiantar.com' },
+        update: {},
+        create: {
+            email: 'kitchen@rmsiantar.com',
+            password: kitchenPassword,
+            name: 'Kitchen Staff',
+            role: client_1.Role.KITCHEN,
+        },
+    });
+    console.log('Kitchen user seeded.');
+    const cashierPassword = await bcrypt.hash('kasir123', 10);
+    await prisma.user.upsert({
+        where: { email: 'kasir@rmsiantar.com' },
+        update: {},
+        create: {
+            email: 'kasir@rmsiantar.com',
+            password: cashierPassword,
+            name: 'Kasir Staff',
+            role: client_1.Role.KASIR,
+        },
+    });
+    console.log('Kasir user seeded.');
     const createOrGetCategory = async (name) => {
         let cat = await prisma.category.findFirst({ where: { name } });
         if (!cat) {

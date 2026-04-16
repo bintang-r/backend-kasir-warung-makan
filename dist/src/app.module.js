@@ -25,6 +25,7 @@ const deliveries_module_1 = require("./modules/deliveries/deliveries.module");
 const chatbot_module_1 = require("./modules/chatbot/chatbot.module");
 const notifications_module_1 = require("./modules/notifications/notifications.module");
 const promos_module_1 = require("./modules/promos/promos.module");
+const dashboard_module_1 = require("./modules/dashboard/dashboard.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -46,6 +47,7 @@ exports.AppModule = AppModule = __decorate([
             chatbot_module_1.ChatbotModule,
             notifications_module_1.NotificationsModule,
             promos_module_1.PromosModule,
+            dashboard_module_1.DashboardModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Body, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Patch, Body, Request, UseGuards, Param } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -21,5 +21,12 @@ export class UsersController {
   async updateMe(@Request() req: any, @Body() body: any) {
     const userId = BigInt(req.user.id);
     return this.usersService.updateUser(userId, body);
+  }
+
+  @Patch(':id')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async update(@Param('id') id: string, @Body() body: any) {
+    return this.usersService.updateUser(BigInt(id), body);
   }
 }
