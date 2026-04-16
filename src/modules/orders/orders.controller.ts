@@ -52,11 +52,7 @@ export class OrdersController {
     return this.ordersService.updateStatus(BigInt(id), status);
   }
 
-  @Put(':id/received')
-  @UseGuards(JwtAuthGuard)
-  async confirmReceived(@Param('id') id: string) {
-    return this.ordersService.confirmReceived(BigInt(id));
-  }
+
 
   @Post(':id/review')
   @UseGuards(JwtAuthGuard)

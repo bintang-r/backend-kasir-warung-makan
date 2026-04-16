@@ -133,16 +133,13 @@ export class OrdersService {
 
     if (status === OrderStatus.CONFIRMED) {
       title = 'Pesanan Dikonfirmasi ✅';
-      message = `Pesanan dunsanak #${orderId.toString()} alah dikonfirmasi.`;
+      message = `Pesanan dunsanak #${orderId.toString()} alah dikonfirmasi dan masuak antrian dapua.`;
     } else if (status === OrderStatus.COOKING) {
-      title = 'Sadang Dimasak 👨‍🍳';
-      message = `Siap-siap! Pesanan dunsanak #${orderId.toString()} sadang dimasak di dapua.`;
+      title = 'Sedang Dimasak 👨‍🍳';
+      message = `Siap-siap! Koki kami sadang mamasak pesanan dunsanak #${orderId.toString()}.`;
     } else if (status === OrderStatus.READY) {
-      title = 'Pesanan Siap! 🍽️';
-      message = `Pesanan dunsanak #${orderId.toString()} alah masak dan siap dihidangkan.`;
-    } else if (status === OrderStatus.DELIVERING) {
-      title = 'Sadang Dianta 🛵';
-      message = `Pembalap kami sadang mangantaan pesanan #${orderId.toString()} ka tampek dunsanak.`;
+      title = 'Hore, Pesanan Siap! 🍽️';
+      message = `Pesanan dunsanak #${orderId.toString()} alah masak dan siap dihidangkan. Silekan dinikmati!`;
     }
 
     await this.notificationsService.create({
@@ -155,24 +152,7 @@ export class OrdersService {
     return order;
   }
 
-  async confirmReceived(orderId: bigint) {
-    const order = await this.prisma.order.update({
-      where: { id: orderId },
-      data: { 
-        isReceived: true,
-        status: OrderStatus.COMPLETED
-      },
-    });
 
-    await this.notificationsService.create({
-      userId: order.userId || undefined,
-      guestSessionId: order.guestSessionId || undefined,
-      title: 'Pesanan Salasai! ✨',
-      message: `Tarimo kasih dunsanak! Pesanan #${orderId.toString()} alah ditarimo. Silekan agiah ulasan untuak kami.`,
-    });
-
-    return order;
-  }
 
   async addReview(orderId: bigint, userId: bigint | null, rating: number, comment: string) {
     // Check if order is completed
