@@ -124,10 +124,11 @@ export class OrdersService {
     return this.prisma.order.findMany({
       include: {
         items: {
-          include: { menu: true },
+          include: { menu: { include: { category: true } } },
         },
-        user: { select: { name: true } },
+        user: { select: { id: true, name: true, email: true } },
         table: true,
+        payments: true,
       },
       orderBy: { createdAt: 'desc' },
     });
