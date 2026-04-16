@@ -19,6 +19,10 @@ const roles_decorator_1 = require("../../common/decorators/roles.decorator");
 const roles_guard_1 = require("../../common/guards/roles.guard");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const client_1 = require("@prisma/client");
+const platform_express_1 = require("@nestjs/platform-express");
+const multer_1 = require("multer");
+const path_1 = require("path");
+const uuid_1 = require("uuid");
 let MenusController = class MenusController {
     menusService;
     constructor(menusService) {
@@ -30,22 +34,28 @@ let MenusController = class MenusController {
     async findOne(id) {
         return this.menusService.findOne(BigInt(id));
     }
-    async create(body) {
-        const { id, ...rest } = body;
+    async create(file, body) {
+        const { ...rest } = body;
+        const imagePath = file ? `/uploads/menus/${file.filename}` : rest.image;
         return this.menusService.create({
             ...rest,
+            price: Number(rest.price),
+            isAvailable: rest.isAvailable === 'true' || rest.isAvailable === true,
+            isPopular: rest.isPopular === 'true' || rest.isPopular === true,
             categoryId: BigInt(rest.categoryId),
+            image: imagePath,
         });
     }
-    async update(id, body) {
-        const { name, description, price, image, isAvailable, isPopular, categoryId } = body;
+    async update(id, file, body) {
+        const { name, description, price, isAvailable, isPopular, categoryId, image } = body;
+        const imagePath = file ? `/uploads/menus/${file.filename}` : image;
         return this.menusService.update(BigInt(id), {
             name,
             description,
-            price,
-            image,
-            isAvailable,
-            isPopular,
+            price: price ? Number(price) : undefined,
+            image: imagePath,
+            isAvailable: isAvailable !== undefined ? (isAvailable === 'true' || isAvailable === true) : undefined,
+            isPopular: isPopular !== undefined ? (isPopular === 'true' || isPopular === true) : undefined,
             categoryId: categoryId ? BigInt(categoryId) : undefined,
         });
     }
@@ -71,19 +81,39 @@ __decorate([
     (0, common_1.Post)(),
     (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image', {
+        storage: (0, multer_1.diskStorage)({
+            destination: './uploads/menus',
+            filename: (req, file, cb) => {
+                const uniqueSuffix = (0, uuid_1.v4)();
+                cb(null, `${uniqueSuffix}${(0, path_1.extname)(file.originalname)}`);
+            },
+        }),
+    })),
+    __param(0, (0, common_1.UploadedFile)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], MenusController.prototype, "create", null);
 __decorate([
     (0, common_1.Put)(':id'),
     (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image', {
+        storage: (0, multer_1.diskStorage)({
+            destination: './uploads/menus',
+            filename: (req, file, cb) => {
+                const uniqueSuffix = (0, uuid_1.v4)();
+                cb(null, `${uniqueSuffix}${(0, path_1.extname)(file.originalname)}`);
+            },
+        }),
+    })),
     __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
+    __param(1, (0, common_1.UploadedFile)()),
+    __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], MenusController.prototype, "update", null);
 __decorate([

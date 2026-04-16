@@ -36,7 +36,7 @@ export declare class MenusController {
         image: string | null;
         isAvailable: boolean;
     }) | null>;
-    create(body: any): Promise<{
+    create(file: Express.Multer.File, body: any): Promise<{
         id: bigint;
         name: string;
         createdAt: Date;
@@ -48,7 +48,7 @@ export declare class MenusController {
         image: string | null;
         isAvailable: boolean;
     }>;
-    update(id: string, body: any): Promise<{
+    update(id: string, file: Express.Multer.File, body: any): Promise<{
         id: bigint;
         name: string;
         createdAt: Date;

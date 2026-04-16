@@ -20,7 +20,7 @@ export declare class PromosController {
         title: string;
         isActive: boolean;
     }[]>;
-    createPromo(body: any): Promise<{
+    createPromo(file: Express.Multer.File, body: any): Promise<{
         id: bigint;
         createdAt: Date;
         updatedAt: Date;
@@ -29,7 +29,7 @@ export declare class PromosController {
         title: string;
         isActive: boolean;
     }>;
-    updatePromo(id: string, body: any): Promise<{
+    updatePromo(id: string, file: Express.Multer.File, body: any): Promise<{
         id: bigint;
         createdAt: Date;
         updatedAt: Date;

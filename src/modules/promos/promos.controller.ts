@@ -1,9 +1,13 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { PromosService } from './promos.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { v4 as uuidv4 } from 'uuid';
 
 @Controller('promos')
 export class PromosController {
@@ -25,17 +29,47 @@ export class PromosController {
   @Post('admin')
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async createPromo(@Body() body: any) {
-    const { title, description, image, isActive } = body;
-    return this.promosService.createPromo({ title, description, image, isActive });
+  @UseInterceptors(FileInterceptor('image', {
+    storage: diskStorage({
+      destination: './uploads/promos',
+      filename: (req, file, cb) => {
+        const uniqueSuffix = uuidv4();
+        cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+      },
+    }),
+  }))
+  async createPromo(@UploadedFile() file: Express.Multer.File, @Body() body: any) {
+    const { title, description, isActive } = body;
+    const imagePath = file ? `/uploads/promos/${file.filename}` : body.image;
+    return this.promosService.createPromo({ 
+      title, 
+      description, 
+      image: imagePath, 
+      isActive: isActive === 'true' || isActive === true 
+    });
   }
 
   @Put('admin/:id')
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async updatePromo(@Param('id') id: string, @Body() body: any) {
-    const { title, description, image, isActive } = body;
-    return this.promosService.updatePromo(BigInt(id), { title, description, image, isActive });
+  @UseInterceptors(FileInterceptor('image', {
+    storage: diskStorage({
+      destination: './uploads/promos',
+      filename: (req, file, cb) => {
+        const uniqueSuffix = uuidv4();
+        cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
+      },
+    }),
+  }))
+  async updatePromo(@Param('id') id: string, @UploadedFile() file: Express.Multer.File, @Body() body: any) {
+    const { title, description, isActive, image } = body;
+    const imagePath = file ? `/uploads/promos/${file.filename}` : image;
+    return this.promosService.updatePromo(BigInt(id), { 
+      title, 
+      description, 
+      image: imagePath, 
+      isActive: isActive !== undefined ? (isActive === 'true' || isActive === true) : undefined 
+    });
   }
 
   @Delete('admin/:id')

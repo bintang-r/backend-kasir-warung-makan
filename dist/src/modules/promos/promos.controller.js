@@ -19,6 +19,10 @@ const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_guard_1 = require("../../common/guards/roles.guard");
 const roles_decorator_1 = require("../../common/decorators/roles.decorator");
 const client_1 = require("@prisma/client");
+const platform_express_1 = require("@nestjs/platform-express");
+const multer_1 = require("multer");
+const path_1 = require("path");
+const uuid_1 = require("uuid");
 let PromosController = class PromosController {
     promosService;
     constructor(promosService) {
@@ -30,13 +34,25 @@ let PromosController = class PromosController {
     async findAllPromos() {
         return this.promosService.findAllPromos();
     }
-    async createPromo(body) {
-        const { title, description, image, isActive } = body;
-        return this.promosService.createPromo({ title, description, image, isActive });
+    async createPromo(file, body) {
+        const { title, description, isActive } = body;
+        const imagePath = file ? `/uploads/promos/${file.filename}` : body.image;
+        return this.promosService.createPromo({
+            title,
+            description,
+            image: imagePath,
+            isActive: isActive === 'true' || isActive === true
+        });
     }
-    async updatePromo(id, body) {
-        const { title, description, image, isActive } = body;
-        return this.promosService.updatePromo(BigInt(id), { title, description, image, isActive });
+    async updatePromo(id, file, body) {
+        const { title, description, isActive, image } = body;
+        const imagePath = file ? `/uploads/promos/${file.filename}` : image;
+        return this.promosService.updatePromo(BigInt(id), {
+            title,
+            description,
+            image: imagePath,
+            isActive: isActive !== undefined ? (isActive === 'true' || isActive === true) : undefined
+        });
     }
     async deletePromo(id) {
         return this.promosService.deletePromo(BigInt(id));
@@ -78,19 +94,39 @@ __decorate([
     (0, common_1.Post)('admin'),
     (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image', {
+        storage: (0, multer_1.diskStorage)({
+            destination: './uploads/promos',
+            filename: (req, file, cb) => {
+                const uniqueSuffix = (0, uuid_1.v4)();
+                cb(null, `${uniqueSuffix}${(0, path_1.extname)(file.originalname)}`);
+            },
+        }),
+    })),
+    __param(0, (0, common_1.UploadedFile)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], PromosController.prototype, "createPromo", null);
 __decorate([
     (0, common_1.Put)('admin/:id'),
     (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image', {
+        storage: (0, multer_1.diskStorage)({
+            destination: './uploads/promos',
+            filename: (req, file, cb) => {
+                const uniqueSuffix = (0, uuid_1.v4)();
+                cb(null, `${uniqueSuffix}${(0, path_1.extname)(file.originalname)}`);
+            },
+        }),
+    })),
     __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
+    __param(1, (0, common_1.UploadedFile)()),
+    __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], PromosController.prototype, "updatePromo", null);
 __decorate([

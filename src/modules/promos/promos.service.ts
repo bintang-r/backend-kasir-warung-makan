@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class PromosService {
@@ -26,6 +28,16 @@ export class PromosService {
   }
 
   async updatePromo(id: bigint, data: any) {
+    if (data.image) {
+      const oldPromo = await this.prisma.promo.findUnique({ where: { id } });
+      if (oldPromo?.image && oldPromo.image.startsWith('/uploads/')) {
+        const oldPath = path.join(process.cwd(), oldPromo.image);
+        if (fs.existsSync(oldPath)) {
+          fs.unlinkSync(oldPath);
+        }
+      }
+    }
+
     return this.prisma.promo.update({
       where: { id },
       data,
@@ -33,6 +45,14 @@ export class PromosService {
   }
 
   async deletePromo(id: bigint) {
+    const promo = await this.prisma.promo.findUnique({ where: { id } });
+    if (promo?.image && promo.image.startsWith('/uploads/')) {
+      const oldPath = path.join(process.cwd(), promo.image);
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
+      }
+    }
+
     return this.prisma.promo.delete({ where: { id } });
   }
 

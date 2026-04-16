@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class MenusService {
@@ -25,6 +27,16 @@ export class MenusService {
   }
 
   async update(id: bigint, data: any) {
+    if (data.image) {
+      const oldMenu = await this.prisma.menu.findUnique({ where: { id } });
+      if (oldMenu?.image && oldMenu.image.startsWith('/uploads/')) {
+        const oldPath = path.join(process.cwd(), oldMenu.image);
+        if (fs.existsSync(oldPath)) {
+          fs.unlinkSync(oldPath);
+        }
+      }
+    }
+
     return this.prisma.menu.update({
       where: { id },
       data,
@@ -32,6 +44,14 @@ export class MenusService {
   }
 
   async remove(id: bigint) {
+    const menu = await this.prisma.menu.findUnique({ where: { id } });
+    if (menu?.image && menu.image.startsWith('/uploads/')) {
+      const oldPath = path.join(process.cwd(), menu.image);
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
+      }
+    }
+
     // Menghapus dari keranjang terlebih dahulu (karena keranjang sifatnya sementara)
     await this.prisma.cartItem.deleteMany({
       where: { menuId: id },
