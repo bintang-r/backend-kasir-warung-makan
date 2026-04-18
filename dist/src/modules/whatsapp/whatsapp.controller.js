@@ -17,8 +17,8 @@ const common_1 = require("@nestjs/common");
 const whatsapp_service_1 = require("./whatsapp.service");
 const prisma_service_1 = require("../../prisma/prisma.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
-const roles_guard_1 = require("../auth/guards/roles.guard");
-const roles_decorator_1 = require("../auth/decorators/roles.decorator");
+const roles_guard_1 = require("../../common/guards/roles.guard");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
 let WhatsappController = class WhatsappController {
     whatsappService;
     prisma;
@@ -31,7 +31,11 @@ let WhatsappController = class WhatsappController {
     }
     async getSettings() {
         const number = await this.whatsappService.getAdminNumber();
-        return { admin_whatsapp_number: number };
+        const envNum = this.whatsappService.configService.get('WHATSAPP_SENDING_NUMBER');
+        return {
+            admin_whatsapp_number: number,
+            is_env_fixed: !!envNum
+        };
     }
     async updateSettings(body) {
         if (!body.number) {

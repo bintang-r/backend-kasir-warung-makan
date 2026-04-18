@@ -26,8 +26,6 @@ async function cleanDatabase() {
     await prisma.table.deleteMany();
     await prisma.voucher.deleteMany();
     await prisma.promo.deleteMany();
-    await prisma.chatbotLog.deleteMany();
-    await prisma.chatbotSession.deleteMany();
     await prisma.guestSession.deleteMany();
     await prisma.user.deleteMany();
     console.log('✨ Database cleaned');

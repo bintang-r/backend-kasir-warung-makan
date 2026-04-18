@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, UseGuards, BadRequestException } from '@ne
 import { WhatsappService } from './whatsapp.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../auth/guards/roles.guard';
-import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
 
 @Controller('whatsapp')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -22,7 +22,11 @@ export class WhatsappController {
   @Get('settings')
   async getSettings() {
     const number = await this.whatsappService.getAdminNumber();
-    return { admin_whatsapp_number: number };
+    const envNum = (this as any).whatsappService.configService.get('WHATSAPP_SENDING_NUMBER');
+    return { 
+      admin_whatsapp_number: number,
+      is_env_fixed: !!envNum 
+    };
   }
 
   @Post('settings')

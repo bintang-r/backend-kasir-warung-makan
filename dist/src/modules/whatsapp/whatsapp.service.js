@@ -45,17 +45,20 @@ var WhatsappService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WhatsappService = void 0;
 const common_1 = require("@nestjs/common");
+const config_1 = require("@nestjs/config");
 const whatsapp_web_js_1 = require("whatsapp-web.js");
 const qrcode = __importStar(require("qrcode"));
 const prisma_service_1 = require("../../prisma/prisma.service");
 let WhatsappService = WhatsappService_1 = class WhatsappService {
     prisma;
+    configService;
     client;
     qrCode = null;
     isReady = false;
     logger = new common_1.Logger(WhatsappService_1.name);
-    constructor(prisma) {
+    constructor(prisma, configService) {
         this.prisma = prisma;
+        this.configService = configService;
         this.client = new whatsapp_web_js_1.Client({
             authStrategy: new whatsapp_web_js_1.LocalAuth({
                 dataPath: './.wwebjs_auth'
@@ -139,6 +142,9 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
         }
     }
     async getAdminNumber() {
+        const envNum = this.configService.get('WHATSAPP_SENDING_NUMBER');
+        if (envNum)
+            return envNum;
         const setting = await this.prisma.systemSetting.findUnique({
             where: { key: 'admin_whatsapp_number' }
         });
@@ -149,6 +155,7 @@ exports.WhatsappService = WhatsappService;
 exports.WhatsappService = WhatsappService = WhatsappService_1 = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        config_1.ConfigService])
 ], WhatsappService);
 //# sourceMappingURL=whatsapp.service.js.map

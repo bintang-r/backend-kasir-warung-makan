@@ -10,6 +10,7 @@ export declare class WhatsappController {
     }>;
     getSettings(): Promise<{
         admin_whatsapp_number: string | null;
+        is_env_fixed: boolean;
     }>;
     updateSettings(body: {
         number: string;

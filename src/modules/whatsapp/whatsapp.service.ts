@@ -1,5 +1,6 @@
 import { Injectable, OnModuleInit, Logger, Global } from '@nestjs/common';
-import { Client, LocalAuth, Events } from 'whatsapp-web.js';
+import { ConfigService } from '@nestjs/config';
+import { Client, LocalAuth } from 'whatsapp-web.js';
 import * as qrcode from 'qrcode';
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -11,7 +12,10 @@ export class WhatsappService implements OnModuleInit {
   private isReady = false;
   private readonly logger = new Logger(WhatsappService.name);
 
-  constructor(private prisma: PrismaService) {
+  constructor(
+    private prisma: PrismaService,
+    private configService: ConfigService,
+  ) {
     this.client = new Client({
       authStrategy: new LocalAuth({
         dataPath: './.wwebjs_auth'
@@ -109,6 +113,11 @@ export class WhatsappService implements OnModuleInit {
   }
 
   async getAdminNumber() {
+    // Priority 1: Environment Variable
+    const envNum = this.configService.get<string>('WHATSAPP_SENDING_NUMBER');
+    if (envNum) return envNum;
+
+    // Priority 2: Database Setting
     const setting = await this.prisma.systemSetting.findUnique({
       where: { key: 'admin_whatsapp_number' }
     });
