@@ -172,6 +172,12 @@ export declare class OrdersController {
             method: import("@prisma/client").$Enums.PaymentMethod;
             paidAt: Date | null;
         }[];
+        table: {
+            id: bigint;
+            name: string;
+            qrCode: string | null;
+            status: import("@prisma/client").$Enums.TableStatus;
+        } | null;
         status: import("@prisma/client").$Enums.OrderStatus;
         createdAt: Date;
         updatedAt: Date;

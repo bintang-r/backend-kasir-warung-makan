@@ -94,6 +94,12 @@ export declare class OrdersService {
         tableId: bigint | null;
     })[]>;
     getOrderById(id: bigint): Promise<({
+        table: {
+            id: bigint;
+            name: string;
+            qrCode: string | null;
+            status: import("@prisma/client").$Enums.TableStatus;
+        } | null;
         items: ({
             menu: {
                 id: bigint;

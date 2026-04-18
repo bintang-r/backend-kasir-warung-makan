@@ -109,6 +109,7 @@ let OrdersService = class OrdersService {
                 items: {
                     include: { menu: true },
                 },
+                table: true,
                 payments: true,
             },
         });

@@ -115,6 +115,7 @@ export class OrdersService {
         items: {
           include: { menu: true },
         },
+        table: true,
         payments: true,
       },
     });
