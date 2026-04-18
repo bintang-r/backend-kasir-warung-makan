@@ -56,6 +56,13 @@ export class UsersController {
     return this.usersService.removeBulk(ids.map(id => BigInt(id)), BigInt(req.user.id));
   }
 
+  @Post('bulk-import')
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async importBulk(@Request() req: any, @Body('data') data: any[]) {
+    return this.usersService.importBulk(data, BigInt(req.user.id));
+  }
+
   @Delete(':id')
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)

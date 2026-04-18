@@ -145,4 +145,31 @@ export class MenusService {
 
     return result;
   }
+
+  async importBulk(data: any[], actorId?: bigint) {
+    const createdCount = await this.prisma.menu.createMany({
+      data: data.map(item => ({
+        name: item.name,
+        description: item.description || '',
+        price: Number(item.price),
+        image: item.image || null,
+        categoryId: BigInt(item.categoryId),
+        isAvailable: item.isAvailable === undefined ? true : item.isAvailable,
+        isPopular: item.isPopular === undefined ? false : item.isPopular,
+      })),
+      skipDuplicates: true,
+    });
+
+    if (actorId && createdCount.count > 0) {
+      await this.auditLogsService.log(
+        actorId,
+        `Mengimpor ${createdCount.count} menu baru via Excel`,
+        'Kelola Menu',
+        'Import Excel',
+        LogType.success
+      );
+    }
+
+    return createdCount;
+  }
 }

@@ -164,4 +164,38 @@ export class UsersService {
 
     return result;
   }
+
+  async importBulk(data: any[], actorId?: bigint) {
+    const saltRounds = 10;
+    
+    // Hash passwords concurrently
+    const processedData = await Promise.all(
+      data.map(async (item) => {
+        const hashedPassword = await bcrypt.hash(item.password || '123456', saltRounds);
+        return {
+          name: item.name,
+          email: item.email,
+          password: hashedPassword,
+          role: item.role || 'CUSTOMER',
+        };
+      })
+    );
+
+    const createdCount = await this.prisma.user.createMany({
+      data: processedData,
+      skipDuplicates: true, // prevent crash on duplicate emails
+    });
+
+    if (actorId && createdCount.count > 0) {
+      await this.auditLogsService.log(
+        actorId,
+        `Mengimpor ${createdCount.count} user baru via Excel`,
+        'Manajemen User',
+        'Import Excel',
+        LogType.success
+      );
+    }
+
+    return createdCount;
+  }
 }
