@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Post, Body, UseGuards, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Patch, Post, Body, UseGuards, UseInterceptors, UploadedFile, BadRequestException, Req } from '@nestjs/common';
 import { InfrastructureService } from './infrastructure.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -21,9 +21,9 @@ export class InfrastructureController {
   @Patch('branding')
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async updateBrandingName(@Body('name') name: string) {
+  async updateBrandingName(@Body('name') name: string, @Req() req: any) {
     if (!name) throw new BadRequestException('Nama restoran harus diisi');
-    return this.infraService.updateBrandingName(name);
+    return this.infraService.updateBrandingName(name, BigInt(req.user.id));
   }
 
   @Post('logo')
@@ -45,8 +45,8 @@ export class InfrastructureController {
     },
     limits: { fileSize: 2 * 1024 * 1024 } // 2MB
   }))
-  async uploadLogo(@UploadedFile() file: Express.Multer.File) {
+  async uploadLogo(@UploadedFile() file: Express.Multer.File, @Req() req: any) {
     if (!file) throw new BadRequestException('File logo tidak ditemukan');
-    return this.infraService.updateLogo(file);
+    return this.infraService.updateLogo(file, BigInt(req.user.id));
   }
 }
