@@ -267,3 +267,21 @@ enum TableStatus {
   AKTIF
   NONAKTIF
 }
+
+model SystemSetting {
+  id    Int    @id @default(1)
+  key   String @unique @db.VarChar(100)
+  value String @db.Text
+
+  @@map("system_settings")
+}
+
+model WhatsappLog {
+  id        BigInt   @id @default(autoincrement())
+  message   String   @db.Text
+  recipient String   @db.VarChar(50)
+  status    String   @db.VarChar(20)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("whatsapp_logs")
+}

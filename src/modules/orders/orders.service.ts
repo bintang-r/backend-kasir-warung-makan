@@ -1,8 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { CartsService } from '../carts/carts.service';
-import { NotificationsService } from '../notifications/notifications.service';
-import { OrderSource, OrderStatus, OrderType } from '@prisma/client';
+import { WhatsappService } from '../whatsapp/whatsapp.service';
 
 @Injectable()
 export class OrdersService {
@@ -10,6 +6,7 @@ export class OrdersService {
     private prisma: PrismaService,
     private cartsService: CartsService,
     private notificationsService: NotificationsService,
+    private whatsappService: WhatsappService,
   ) {}
 
   async createOrder(
@@ -163,7 +160,36 @@ export class OrdersService {
       message,
     });
 
+    // WhatsApp Notification for COMPLETED orders
+    if (status === OrderStatus.COMPLETED) {
+      this.sendWhatsAppNotification(order.id);
+    }
+
     return order;
+  }
+
+  private async sendWhatsAppNotification(orderId: bigint) {
+    try {
+      const adminNum = await this.whatsappService.getAdminNumber();
+      if (!adminNum) return;
+
+      const order = await this.getOrderById(orderId);
+      if (!order) return;
+
+      const itemsStr = order.items.map(i => `- ${i.menu.name} (x${i.qty})`).join('\n');
+      
+      const whatsappMessage = `*✅ PESANAN SELESAI*\n` +
+                              `----------------------------------\n` +
+                              `*Order ID:* #${orderId.toString()}\n` +
+                              `*Total:* Rp ${new Intl.NumberFormat('id-ID').format(Number(order.totalPrice))}\n` +
+                              `*Detail Menu:*\n${itemsStr}\n` +
+                              `----------------------------------\n` +
+                              `Pesanan telah ditandai selesai oleh staff.`;
+
+      await this.whatsappService.sendMessage(adminNum, whatsappMessage);
+    } catch (err) {
+      console.error('Failed to send WhatsApp completion note', err);
+    }
   }
 
 

@@ -20,10 +20,13 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { PromosModule } from './modules/promos/promos.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { WhatsappModule } from './modules/whatsapp/whatsapp.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'uploads'),
       serveRoot: '/uploads',
@@ -44,6 +47,7 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
     PromosModule,
     DashboardModule,
     ReviewsModule,
+    WhatsappModule,
   ],
   controllers: [AppController],
   providers: [AppService],
