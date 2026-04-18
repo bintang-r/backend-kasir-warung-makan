@@ -15,9 +15,6 @@ model User {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   carts           Cart[]
-  chatbotLogs     ChatbotLog[]
-  chatbotSessions ChatbotSession[]
-  deliveries      Delivery[]       @relation("DriverDeliveries")
   notifications   Notification[]
   orders          Order[]
   reviews         Review[]
@@ -190,28 +187,7 @@ model GuestSession {
   @@map("guest_sessions")
 }
 
-model ChatbotLog {
-  id        BigInt   @id @default(autoincrement())
-  userId    BigInt?  @map("user_id")
-  message   String   @db.Text
-  response  String   @db.Text
-  createdAt DateTime @default(now())
-  user      User?    @relation(fields: [userId], references: [id])
 
-  @@index([userId], map: "chatbot_logs_user_id_fkey")
-  @@map("chatbot_logs")
-}
-
-model ChatbotSession {
-  id        BigInt   @id @default(autoincrement())
-  userId    BigInt?  @map("user_id")
-  sessionId String   @unique @map("session_id") @db.VarChar(255)
-  createdAt DateTime @default(now())
-  user      User?    @relation(fields: [userId], references: [id])
-
-  @@index([userId], map: "chatbot_sessions_user_id_fkey")
-  @@map("chatbot_sessions")
-}
 
 model Voucher {
   id        BigInt   @id @default(autoincrement())
@@ -272,7 +248,6 @@ enum OrderType {
 
 enum OrderSource {
   APP
-  CHATBOT
   QR
 }
 

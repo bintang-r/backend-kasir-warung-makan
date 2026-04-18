@@ -70,8 +70,6 @@ export class UsersService {
     // Delete temporary/personal data
     await this.prisma.notification.deleteMany({ where: { userId: id } });
     await this.prisma.review.deleteMany({ where: { userId: id } });
-    await this.prisma.chatbotLog.deleteMany({ where: { userId: id } });
-    await this.prisma.chatbotSession.deleteMany({ where: { userId: id } });
 
     const carts = await this.prisma.cart.findMany({ where: { userId: id } });
     const cartIds = carts.map(c => c.id);

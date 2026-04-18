@@ -15,7 +15,7 @@ import { CartsModule } from './modules/carts/carts.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { DeliveriesModule } from './modules/deliveries/deliveries.module';
-import { ChatbotModule } from './modules/chatbot/chatbot.module';
+
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { PromosModule } from './modules/promos/promos.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
@@ -39,7 +39,7 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
     OrdersModule,
     PaymentsModule,
     DeliveriesModule,
-    ChatbotModule,
+
     NotificationsModule,
     PromosModule,
     DashboardModule,
