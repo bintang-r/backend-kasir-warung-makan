@@ -1,1 +1,17 @@
-const { PrismaClient } = require('@prisma/client'); const { PrismaMariaDb } = require('@prisma/adapter-mariadb'); async function main() { const prisma = new PrismaClient({ adapter: new PrismaMariaDb('mysql://root:@localhost:3306/rm_siantar_minang') }); const orders = await prisma.order.findMany(); console.log('Orders Count:', orders.length); await prisma.$disconnect(); } main().catch(e => console.error(e));
+
+const http = require('http');
+
+const req = http.request({
+  hostname: 'localhost',
+  port: 3001,
+  path: '/orders/all',
+  method: 'GET',
+}, (res) => {
+  let data = '';
+  res.on('data', chunk => data += chunk);
+  res.on('end', () => console.log('STATUS:', res.statusCode));
+});
+
+req.on('error', e => console.error(e));
+req.end();
+
