@@ -2,12 +2,17 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import * as fs from 'fs';
 import * as path from 'path';
+import { AuditLogsService } from '../audit-logs/audit-logs.service';
+import { LogType } from '@prisma/client';
 
 @Injectable()
 export class InfrastructureService {
   private readonly logger = new Logger(InfrastructureService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private auditLogsService: AuditLogsService
+  ) {}
 
   async getBranding() {
     const logo = await this.prisma.systemSetting.findUnique({ where: { key: 'branding_logo' } });
@@ -19,15 +24,27 @@ export class InfrastructureService {
     };
   }
 
-  async updateBrandingName(name: string) {
-    return this.prisma.systemSetting.upsert({
+  async updateBrandingName(name: string, actorId?: bigint) {
+    const result = await this.prisma.systemSetting.upsert({
       where: { key: 'branding_name' },
       update: { value: name },
       create: { key: 'branding_name', value: name },
     });
+
+    if (actorId) {
+      await this.auditLogsService.log(
+        actorId,
+        `Mengubah nama restoran menjadi: ${name}`,
+        'Sistem & Branding',
+        `Nama lama sedang diproses...`,
+        LogType.info
+      );
+    }
+
+    return result;
   }
 
-  async updateLogo(file: Express.Multer.File) {
+  async updateLogo(file: Express.Multer.File, actorId?: bigint) {
     const relativePath = `/uploads/branding/${file.filename}`;
     
     // Cleanup old logo if exists
@@ -44,10 +61,22 @@ export class InfrastructureService {
     }
 
     // Save new logo path
-    return this.prisma.systemSetting.upsert({
+    const result = await this.prisma.systemSetting.upsert({
       where: { key: 'branding_logo' },
       update: { value: relativePath },
       create: { key: 'branding_logo', value: relativePath },
     });
+
+    if (actorId) {
+      await this.auditLogsService.log(
+        actorId,
+        `Memperbarui logo restoran`,
+        'Sistem & Branding',
+        `File: ${file.filename}`,
+        LogType.success
+      );
+    }
+
+    return result;
   }
 }
