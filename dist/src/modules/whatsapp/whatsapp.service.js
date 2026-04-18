@@ -63,8 +63,20 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
             authStrategy: new whatsapp_web_js_1.LocalAuth({
                 dataPath: './.wwebjs_auth'
             }),
+            webVersionCache: {
+                type: 'remote',
+                remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.3000.1018908151-alpha.html',
+            },
             puppeteer: {
-                args: ['--no-sandbox', '--disable-setuid-sandbox'],
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                    '--disable-accelerated-2d-canvas',
+                    '--no-first-run',
+                    '--no-zygote',
+                    '--disable-gpu'
+                ],
                 headless: true,
             }
         });
