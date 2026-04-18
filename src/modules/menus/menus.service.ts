@@ -160,7 +160,7 @@ export class MenusService {
 
       const createdCount = await this.prisma.menu.createMany({
         data: processedData,
-        skipDuplicates: true,
+        // no skipDuplicates here so MySQL throws actual Foreign Key errors instead of silently skipping
       });
 
       if (actorId && createdCount.count > 0) {
