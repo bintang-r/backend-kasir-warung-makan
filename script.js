@@ -1,1 +1,1 @@
-const { PrismaClient } = require('@prisma/client'); const prisma = new PrismaClient(); async function main() { console.log(await prisma.category.findMany()); } main();
+const { PrismaClient } = require('@prisma/client'); const { PrismaMariaDb } = require('@prisma/adapter-mariadb'); async function main() { const prisma = new PrismaClient({ adapter: new PrismaMariaDb('mysql://root:@localhost:3306/rm_siantar_minang') }); const orders = await prisma.order.findMany(); console.log('Orders Count:', orders.length); await prisma.$disconnect(); } main().catch(e => console.error(e));
