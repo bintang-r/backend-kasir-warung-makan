@@ -15,6 +15,7 @@ model User {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   carts           Cart[]
+  deliveries      Delivery[]       @relation("DriverDeliveries")
   notifications   Notification[]
   orders          Order[]
   reviews         Review[]
