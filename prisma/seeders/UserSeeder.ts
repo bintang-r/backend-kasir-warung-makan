@@ -5,6 +5,26 @@ import { faker } from '@faker-js/faker';
 export async function seedUsers(prisma: PrismaClient) {
   const password = await bcrypt.hash('password123', 10);
 
+  // 0. Seed Superadmins (3)
+  const superadmins = [
+    { email: 'muhbintang650@gmail.com', name: 'Muhammad Bintang' },
+    { email: 'superadmin2@rmsiantar.com', name: 'Superadmin 2' },
+    { email: 'superadmin3@rmsiantar.com', name: 'Superadmin 3' },
+  ];
+
+  for (const sa of superadmins) {
+    await prisma.user.upsert({
+      where: { email: sa.email },
+      update: {},
+      create: {
+        email: sa.email,
+        password,
+        name: sa.name,
+        role: Role.SUPERADMIN,
+      }
+    });
+  }
+
   // 1. Seed Staff (3 of each)
   const roles = [Role.ADMIN, Role.KASIR, Role.KITCHEN, Role.DRIVER];
   

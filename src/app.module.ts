@@ -22,6 +22,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { WhatsappModule } from './modules/whatsapp/whatsapp.module';
+import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { WhatsappModule } from './modules/whatsapp/whatsapp.module';
     DashboardModule,
     ReviewsModule,
     WhatsappModule,
+    AuditLogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

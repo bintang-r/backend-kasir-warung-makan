@@ -8,6 +8,15 @@ Dokumentasi ini berisi panduan untuk menjalankan aplikasi backend, daftar akun d
 
 Semua akun di bawah ini menggunakan password default: `password123`
 
+### 0. Akun Superadmin (Special Access)
+Digunakan untuk konfigurasi bot tingkat tinggi dan audit sistem.
+
+| Nama | Email | Role | Password |
+| :--- | :--- | :--- | :--- |
+| Muhammad Bintang | `muhbintang650@gmail.com` | SUPERADMIN | `password123` |
+| Superadmin 2 | `superadmin2@rmsiantar.com` | SUPERADMIN | `password123` |
+| Superadmin 3 | `superadmin3@rmsiantar.com` | SUPERADMIN | `password123` |
+
 ### 1. Akun Staff & Operasional
 Digunakan untuk menguji berbagai modul manajemen aplikasi.
 

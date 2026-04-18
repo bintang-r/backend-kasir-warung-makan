@@ -1,2 +1,3 @@
-2026/04/18-19:51:13.738 3994 Creating DB C:\laragon\www\backend-rm-siantar-minang\.wwebjs_auth\session\Default\Sync Data\LevelDB since it was missing.
-2026/04/18-19:51:13.759 3994 Reusing MANIFEST C:\laragon\www\backend-rm-siantar-minang\.wwebjs_auth\session\Default\Sync Data\LevelDB/MANIFEST-000001
+2026/04/18-20:01:20.522 14ec Reusing MANIFEST C:\laragon\www\backend-rm-siantar-minang\.wwebjs_auth\session\Default\Sync Data\LevelDB/MANIFEST-000001
+2026/04/18-20:01:20.522 14ec Recovering log #3
+2026/04/18-20:01:20.523 14ec Reusing old log C:\laragon\www\backend-rm-siantar-minang\.wwebjs_auth\session\Default\Sync Data\LevelDB/000003.log 

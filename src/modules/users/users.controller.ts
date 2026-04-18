@@ -10,7 +10,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async findAll() {
     const users = await this.usersService.findAll();
@@ -18,10 +18,10 @@ export class UsersController {
   }
 
   @Post()
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async create(@Body() body: any) {
-    const user = await this.usersService.create(body);
+  async create(@Request() req: any, @Body() body: any) {
+    const user = await this.usersService.create(body, BigInt(req.user.id));
     return { ...user, id: user.id.toString() };
   }
 
@@ -42,18 +42,17 @@ export class UsersController {
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async update(@Param('id') id: string, @Body() body: any) {
-    const { role } = body;
-    const updated = await this.usersService.updateUser(BigInt(id), { role });
+  async update(@Request() req: any, @Param('id') id: string, @Body() body: any) {
+    const updated = await this.usersService.updateUser(BigInt(id), body, BigInt(req.user.id));
     return { ...updated, id: updated.id.toString() };
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async remove(@Param('id') id: string) {
-    return this.usersService.remove(BigInt(id));
+  async remove(@Request() req: any, @Param('id') id: string) {
+    return this.usersService.remove(BigInt(id), BigInt(req.user.id));
   }
 }

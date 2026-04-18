@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { Role } from '@prisma/client';
-import * as bcrypt from 'bcryptjs';
+import { AuditLogsService } from '../audit-logs/audit-logs.service';
+import { LogType } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private auditLogsService: AuditLogsService,
+  ) {}
 
   async findByEmail(email: string) {
     return this.prisma.user.findUnique({
@@ -19,21 +20,33 @@ export class UsersService {
     });
   }
 
-  async create(data: any) {
+  async create(data: any, actorId?: bigint) {
     const hashedPassword = await bcrypt.hash(data.password, 10);
-    return this.prisma.user.create({
+    const user = await this.prisma.user.create({
       data: {
         ...data,
         password: hashedPassword,
       },
     });
+
+    if (actorId) {
+      await this.auditLogsService.log(
+        actorId,
+        `Membuat user baru: ${user.name} (${user.role})`,
+        'Manajemen User',
+        `Email: ${user.email}`,
+        LogType.success
+      );
+    }
+
+    return user;
   }
 
   async findAll() {
     return this.prisma.user.findMany();
   }
 
-  async updateUser(id: bigint, data: any) {
+  async updateUser(id: bigint, data: any, actorId?: bigint) {
     const updateData = { ...data };
     if (updateData.password) {
       updateData.password = await bcrypt.hash(updateData.password, 10);
@@ -41,7 +54,7 @@ export class UsersService {
       delete updateData.password;
     }
 
-    return this.prisma.user.update({
+    const user = await this.prisma.user.update({
       where: { id },
       data: updateData,
       select: {
@@ -53,6 +66,18 @@ export class UsersService {
         updatedAt: true,
       }
     });
+
+    if (actorId) {
+      await this.auditLogsService.log(
+        actorId,
+        `Memperbarui user: ${user.name}`,
+        'Manajemen User',
+        `Role: ${user.role}, Email: ${user.email}`,
+        LogType.info
+      );
+    }
+
+    return user;
   }
 
   async remove(id: bigint) {
@@ -78,8 +103,22 @@ export class UsersService {
       await this.prisma.cart.deleteMany({ where: { userId: id } });
     }
 
-    return this.prisma.user.delete({
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    
+    const deletedUser = await this.prisma.user.delete({
       where: { id },
     });
+
+    if (actorId && user) {
+      await this.auditLogsService.log(
+        actorId,
+        `Menghapus user: ${user.name}`,
+        'Manajemen User',
+        `Role sebelumnya: ${user.role}`,
+        LogType.warning
+      );
+    }
+
+    return deletedUser;
   }
 }

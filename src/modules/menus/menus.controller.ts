@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, UseInterceptors, UploadedFile, Request } from '@nestjs/common';
 import { MenusService } from './menus.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -24,7 +24,7 @@ export class MenusController {
   }
 
   @Post()
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('image', {
     storage: diskStorage({
@@ -35,7 +35,7 @@ export class MenusController {
       },
     }),
   }))
-  async create(@UploadedFile() file: Express.Multer.File, @Body() body: any) {
+  async create(@Request() req: any, @UploadedFile() file: Express.Multer.File, @Body() body: any) {
     const { ...rest } = body;
     const imagePath = file ? `/uploads/menus/${file.filename}` : rest.image;
     
@@ -46,11 +46,11 @@ export class MenusController {
       isPopular: rest.isPopular === 'true' || rest.isPopular === true,
       categoryId: BigInt(rest.categoryId),
       image: imagePath,
-    });
+    }, BigInt(req.user.id));
   }
 
   @Put(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('image', {
     storage: diskStorage({
@@ -61,7 +61,7 @@ export class MenusController {
       },
     }),
   }))
-  async update(@Param('id') id: string, @UploadedFile() file: Express.Multer.File, @Body() body: any) {
+  async update(@Request() req: any, @Param('id') id: string, @UploadedFile() file: Express.Multer.File, @Body() body: any) {
     const { name, description, price, isAvailable, isPopular, categoryId, image } = body;
     const imagePath = file ? `/uploads/menus/${file.filename}` : image;
 
@@ -73,13 +73,13 @@ export class MenusController {
       isAvailable: isAvailable !== undefined ? (isAvailable === 'true' || isAvailable === true) : undefined,
       isPopular: isPopular !== undefined ? (isPopular === 'true' || isPopular === true) : undefined,
       categoryId: categoryId ? BigInt(categoryId) : undefined,
-    });
+    }, BigInt(req.user.id));
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async remove(@Param('id') id: string) {
-    return this.menusService.remove(BigInt(id));
+  async remove(@Request() req: any, @Param('id') id: string) {
+    return this.menusService.remove(BigInt(id), BigInt(req.user.id));
   }
 }
