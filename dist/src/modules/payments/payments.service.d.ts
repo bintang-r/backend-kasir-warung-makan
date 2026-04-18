@@ -1,8 +1,10 @@
 import { PrismaService } from '../../prisma/prisma.service';
 import { PaymentMethod, PaymentStatus } from '@prisma/client';
+import { WhatsappService } from '../whatsapp/whatsapp.service';
 export declare class PaymentsService {
     private prisma;
-    constructor(prisma: PrismaService);
+    private whatsappService;
+    constructor(prisma: PrismaService, whatsappService: WhatsappService);
     processPayment(orderId: bigint, method: PaymentMethod, amount: number): Promise<{
         id: bigint;
         status: import("@prisma/client").$Enums.PaymentStatus;
@@ -11,6 +13,7 @@ export declare class PaymentsService {
         paidAt: Date | null;
         orderId: bigint;
     }>;
+    private sendWhatsAppPaymentNotification;
     getPaymentByOrder(orderId: bigint): Promise<({
         order: {
             id: bigint;

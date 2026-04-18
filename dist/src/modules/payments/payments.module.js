@@ -10,11 +10,13 @@ exports.PaymentsModule = void 0;
 const common_1 = require("@nestjs/common");
 const payments_service_1 = require("./payments.service");
 const payments_controller_1 = require("./payments.controller");
+const whatsapp_module_1 = require("../whatsapp/whatsapp.module");
 let PaymentsModule = class PaymentsModule {
 };
 exports.PaymentsModule = PaymentsModule;
 exports.PaymentsModule = PaymentsModule = __decorate([
     (0, common_1.Module)({
+        imports: [whatsapp_module_1.WhatsappModule],
         controllers: [payments_controller_1.PaymentsController],
         providers: [payments_service_1.PaymentsService],
         exports: [payments_service_1.PaymentsService],

@@ -13,10 +13,13 @@ exports.PaymentsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../../prisma/prisma.service");
 const client_1 = require("@prisma/client");
+const whatsapp_service_1 = require("../whatsapp/whatsapp.service");
 let PaymentsService = class PaymentsService {
     prisma;
-    constructor(prisma) {
+    whatsappService;
+    constructor(prisma, whatsappService) {
         this.prisma = prisma;
+        this.whatsappService = whatsappService;
     }
     async processPayment(orderId, method, amount) {
         const order = await this.prisma.order.findUnique({
@@ -28,7 +31,7 @@ let PaymentsService = class PaymentsService {
         }
         const existingPayment = order.payments.find(p => p.status === client_1.PaymentStatus.UNPAID);
         if (existingPayment) {
-            return this.prisma.payment.update({
+            const payment = await this.prisma.payment.update({
                 where: { id: existingPayment.id },
                 data: {
                     method,
@@ -36,8 +39,10 @@ let PaymentsService = class PaymentsService {
                     paidAt: new Date(),
                 },
             });
+            this.sendWhatsAppPaymentNotification(orderId, amount, method);
+            return payment;
         }
-        return this.prisma.payment.create({
+        const payment = await this.prisma.payment.create({
             data: {
                 orderId,
                 method,
@@ -46,6 +51,27 @@ let PaymentsService = class PaymentsService {
                 paidAt: new Date(),
             },
         });
+        this.sendWhatsAppPaymentNotification(orderId, amount, method);
+        return payment;
+    }
+    async sendWhatsAppPaymentNotification(orderId, amount, method) {
+        try {
+            const adminNum = await this.whatsappService.getAdminNumber();
+            if (!adminNum)
+                return;
+            const whatsappMessage = `*💰 PEMBAYARAN DITERIMA*\n` +
+                `----------------------------------\n` +
+                `*Order ID:* #${orderId.toString()}\n` +
+                `*Jumlah:* Rp ${new Intl.NumberFormat('id-ID').format(amount)}\n` +
+                `*Metode:* ${method}\n` +
+                `*Status:* LUNAS ✅\n` +
+                `----------------------------------\n` +
+                `Transaksi telah berhasil diverifikasi oleh sistem.`;
+            await this.whatsappService.sendMessage(adminNum, whatsappMessage);
+        }
+        catch (err) {
+            console.error('Failed to send WhatsApp payment note', err);
+        }
     }
     async getPaymentByOrder(orderId) {
         return this.prisma.payment.findFirst({
@@ -67,18 +93,23 @@ let PaymentsService = class PaymentsService {
         });
     }
     async updateStatus(id, status) {
-        return this.prisma.payment.update({
+        const payment = await this.prisma.payment.update({
             where: { id },
             data: {
                 status,
                 paidAt: status === client_1.PaymentStatus.PAID ? new Date() : null
             },
         });
+        if (status === client_1.PaymentStatus.PAID) {
+            this.sendWhatsAppPaymentNotification(payment.orderId, Number(payment.amount), payment.method);
+        }
+        return payment;
     }
 };
 exports.PaymentsService = PaymentsService;
 exports.PaymentsService = PaymentsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        whatsapp_service_1.WhatsappService])
 ], PaymentsService);
 //# sourceMappingURL=payments.service.js.map
