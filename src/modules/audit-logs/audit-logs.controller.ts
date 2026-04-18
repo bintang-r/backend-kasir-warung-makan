@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, UseGuards, Request } from '@nestjs/common';
 import { AuditLogsService } from './audit-logs.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -18,5 +18,11 @@ export class AuditLogsController {
     @Query('search') search?: string,
   ) {
     return this.auditLogsService.findAll({ module, type, search });
+  }
+
+  @Post('bulk-delete')
+  @Roles(Role.SUPERADMIN)
+  async deleteBulk(@Body('ids') ids: string[]) {
+    return this.auditLogsService.deleteBulk(ids.map(id => BigInt(id)));
   }
 }
