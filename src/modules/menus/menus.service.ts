@@ -107,4 +107,42 @@ export class MenusService {
 
     return deletedMenu;
   }
+
+  async removeBulk(ids: bigint[], actorId?: bigint) {
+    const menus = await this.prisma.menu.findMany({
+      where: { id: { in: ids } }
+    });
+
+    for (const menu of menus) {
+      if (menu.image && menu.image.startsWith('/uploads/')) {
+        const oldPath = path.join(process.cwd(), menu.image);
+        if (fs.existsSync(oldPath)) {
+          try {
+            fs.unlinkSync(oldPath);
+          } catch (e) {
+            console.error('Failed to delete image:', oldPath);
+          }
+        }
+      }
+    }
+
+    await this.prisma.cartItem.deleteMany({ where: { menuId: { in: ids } } });
+    await this.prisma.orderItem.deleteMany({ where: { menuId: { in: ids } } });
+
+    const result = await this.prisma.menu.deleteMany({
+      where: { id: { in: ids } }
+    });
+
+    if (actorId) {
+      await this.auditLogsService.log(
+        actorId,
+        `Menghapus ${result.count} menu secara masal`,
+        'Kelola Menu',
+        `ID: ${ids.map(id => id.toString()).join(', ')}`,
+        LogType.danger
+      );
+    }
+
+    return result;
+  }
 }

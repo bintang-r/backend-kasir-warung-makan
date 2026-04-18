@@ -124,4 +124,44 @@ export class UsersService {
 
     return deletedUser;
   }
+
+  async removeBulk(ids: bigint[], actorId?: bigint) {
+    // Unlink records to preserve financial/business history
+    await this.prisma.order.updateMany({
+      where: { userId: { in: ids } },
+      data: { userId: null },
+    });
+
+    await this.prisma.delivery.updateMany({
+      where: { driverId: { in: ids } },
+      data: { driverId: null },
+    });
+
+    // Delete temporary/personal data
+    await this.prisma.notification.deleteMany({ where: { userId: { in: ids } } });
+    await this.prisma.review.deleteMany({ where: { userId: { in: ids } } });
+
+    const carts = await this.prisma.cart.findMany({ where: { userId: { in: ids } } });
+    const cartIds = carts.map(c => c.id);
+    if (cartIds.length > 0) {
+      await this.prisma.cartItem.deleteMany({ where: { cartId: { in: cartIds } } });
+      await this.prisma.cart.deleteMany({ where: { userId: { in: ids } } });
+    }
+
+    const result = await this.prisma.user.deleteMany({
+      where: { id: { in: ids } }
+    });
+
+    if (actorId) {
+      await this.auditLogsService.log(
+        actorId,
+        `Menghapus ${result.count} user secara masal`,
+        'Manajemen User',
+        `ID: ${ids.map(id => id.toString()).join(', ')}`,
+        LogType.warning
+      );
+    }
+
+    return result;
+  }
 }

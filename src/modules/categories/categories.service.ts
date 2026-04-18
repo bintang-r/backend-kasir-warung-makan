@@ -42,4 +42,22 @@ export class CategoriesService {
       data,
     });
   }
+
+  async removeBulk(ids: bigint[]) {
+    const menus = await this.prisma.menu.findMany({ 
+      where: { categoryId: { in: ids } }, 
+      select: { id: true } 
+    });
+    const menuIds = menus.map(m => m.id);
+
+    if (menuIds.length > 0) {
+      await this.prisma.cartItem.deleteMany({ where: { menuId: { in: menuIds } } });
+      await this.prisma.orderItem.deleteMany({ where: { menuId: { in: menuIds } } });
+      await this.prisma.menu.deleteMany({ where: { categoryId: { in: ids } } });
+    }
+
+    return this.prisma.category.deleteMany({
+      where: { id: { in: ids } },
+    });
+  }
 }

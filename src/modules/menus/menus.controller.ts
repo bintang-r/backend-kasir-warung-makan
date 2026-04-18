@@ -76,6 +76,13 @@ export class MenusController {
     }, BigInt(req.user.id));
   }
 
+  @Post('bulk-delete')
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async removeBulk(@Request() req: any, @Body('ids') ids: string[]) {
+    return this.menusService.removeBulk(ids.map(id => BigInt(id)), BigInt(req.user.id));
+  }
+
   @Delete(':id')
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)

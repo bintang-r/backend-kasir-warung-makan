@@ -22,6 +22,13 @@ export class CategoriesController {
     return this.categoriesService.create({ name });
   }
 
+  @Post('bulk-delete')
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async removeBulk(@Body('ids') ids: string[]) {
+    return this.categoriesService.removeBulk(ids.map(id => BigInt(id)));
+  }
+
   @Delete(':id')
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
