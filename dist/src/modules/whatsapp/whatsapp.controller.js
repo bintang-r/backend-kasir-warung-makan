@@ -70,7 +70,7 @@ let WhatsappController = class WhatsappController {
 exports.WhatsappController = WhatsappController;
 __decorate([
     (0, common_1.Get)('status'),
-    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)

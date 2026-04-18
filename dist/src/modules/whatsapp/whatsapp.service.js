@@ -52,16 +52,22 @@ const prisma_service_1 = require("../../prisma/prisma.service");
 let WhatsappService = WhatsappService_1 = class WhatsappService {
     prisma;
     configService;
-    client;
-    qrCode = null;
-    isReady = false;
+    senderClient;
+    receiverClient;
+    senderState = { isReady: false, qrCode: null };
+    receiverState = { isReady: false, qrCode: null };
     logger = new common_1.Logger(WhatsappService_1.name);
     constructor(prisma, configService) {
         this.prisma = prisma;
         this.configService = configService;
-        this.client = new whatsapp_web_js_1.Client({
+        this.senderClient = this.createClientInstance('sender', './.wwebjs_auth_sender');
+        this.receiverClient = this.createClientInstance('receiver', './.wwebjs_auth_receiver');
+    }
+    createClientInstance(id, dataPath) {
+        return new whatsapp_web_js_1.Client({
             authStrategy: new whatsapp_web_js_1.LocalAuth({
-                dataPath: './.wwebjs_auth'
+                clientId: id,
+                dataPath: dataPath
             }),
             webVersionCache: {
                 type: 'remote',
@@ -82,54 +88,93 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
         });
     }
     onModuleInit() {
-        this.initialize();
+        this.initializeClient(this.senderClient, 'sender');
+        this.initializeClient(this.receiverClient, 'receiver');
     }
-    initialize() {
-        this.client.on('qr', (qr) => {
-            this.logger.log('WhatsApp QR Code received');
+    initializeClient(client, type) {
+        client.on('qr', (qr) => {
+            this.logger.log(`WhatsApp QR Code received for ${type}`);
             qrcode.toDataURL(qr, (err, url) => {
-                this.qrCode = url;
+                if (type === 'sender')
+                    this.senderState.qrCode = url;
+                else
+                    this.receiverState.qrCode = url;
             });
-            this.isReady = false;
+            if (type === 'sender')
+                this.senderState.isReady = false;
+            else
+                this.receiverState.isReady = false;
         });
-        this.client.on('ready', () => {
-            this.logger.log('WhatsApp Client is ready!');
-            this.qrCode = null;
-            this.isReady = true;
+        client.on('ready', async () => {
+            this.logger.log(`WhatsApp Client (${type}) is ready!`);
+            if (type === 'sender') {
+                this.senderState.qrCode = null;
+                this.senderState.isReady = true;
+            }
+            else {
+                this.receiverState.qrCode = null;
+                this.receiverState.isReady = true;
+                const number = client.info.wid.user;
+                if (number) {
+                    this.logger.log(`Detected Receiver Number: ${number}`);
+                    await this.updateAdminNumber(number);
+                }
+            }
         });
-        this.client.on('authenticated', () => {
-            this.logger.log('WhatsApp Client authenticated');
+        client.on('authenticated', () => {
+            this.logger.log(`WhatsApp Client (${type}) authenticated`);
         });
-        this.client.on('auth_failure', (msg) => {
-            this.logger.error('WhatsApp Auth failure', msg);
-            this.isReady = false;
+        client.on('auth_failure', (msg) => {
+            this.logger.error(`WhatsApp Auth failure for ${type}`, msg);
+            if (type === 'sender')
+                this.senderState.isReady = false;
+            else
+                this.receiverState.isReady = false;
         });
-        this.client.on('disconnected', (reason) => {
-            this.logger.warn('WhatsApp Client disconnected', reason);
-            this.isReady = false;
-            this.qrCode = null;
-            setTimeout(() => this.client.initialize(), 5000);
+        client.on('disconnected', (reason) => {
+            this.logger.warn(`WhatsApp Client (${type}) disconnected`, reason);
+            if (type === 'sender') {
+                this.senderState.isReady = false;
+                this.senderState.qrCode = null;
+            }
+            else {
+                this.receiverState.isReady = false;
+                this.receiverState.qrCode = null;
+            }
+            setTimeout(() => client.initialize(), 5000);
         });
-        this.client.initialize().catch(err => {
-            this.logger.error('Failed to initialize WhatsApp client', err);
+        client.initialize().catch(err => {
+            this.logger.error(`Failed to initialize WhatsApp client (${type})`, err);
         });
+    }
+    async updateAdminNumber(number) {
+        try {
+            await this.prisma.systemSetting.upsert({
+                where: { key: 'admin_whatsapp_number' },
+                update: { value: number },
+                create: { key: 'admin_whatsapp_number', value: number },
+            });
+        }
+        catch (err) {
+            this.logger.error('Failed to auto-update admin number', err);
+        }
     }
     getStatus() {
         return {
-            isReady: this.isReady,
-            qrCode: this.qrCode,
+            sender: this.senderState,
+            receiver: this.receiverState,
         };
     }
     async sendMessage(to, message) {
-        if (!this.isReady) {
-            this.logger.warn('Cannot send message, WhatsApp client not ready');
-            await this.logMessage(to, message, 'FAILED (Client Not Ready)');
+        if (!this.senderState.isReady) {
+            this.logger.warn('Cannot send message, Sender Bot not ready');
+            await this.logMessage(to, message, 'FAILED (Sender Not Ready)');
             return false;
         }
         try {
             const cleanedNum = to.replace(/\D/g, '');
             const finalNum = cleanedNum.includes('@c.us') ? cleanedNum : `${cleanedNum}@c.us`;
-            await this.client.sendMessage(finalNum, message);
+            await this.senderClient.sendMessage(finalNum, message);
             await this.logMessage(to, message, 'SENT');
             return true;
         }

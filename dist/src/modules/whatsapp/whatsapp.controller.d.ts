@@ -5,8 +5,14 @@ export declare class WhatsappController {
     private prisma;
     constructor(whatsappService: WhatsappService, prisma: PrismaService);
     getStatus(): Promise<{
-        isReady: boolean;
-        qrCode: string | null;
+        sender: {
+            isReady: boolean;
+            qrCode: string | null;
+        };
+        receiver: {
+            isReady: boolean;
+            qrCode: string | null;
+        };
     }>;
     getSettings(): Promise<{
         admin_whatsapp_number: string | null;
