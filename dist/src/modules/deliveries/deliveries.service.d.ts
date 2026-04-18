@@ -27,9 +27,9 @@ export declare class DeliveriesService {
             userId: bigint | null;
             guestSessionId: bigint | null;
             orderSource: import("@prisma/client").$Enums.OrderSource;
-            orderType: import("@prisma/client").$Enums.OrderType;
             totalPrice: import("@prisma/client-runtime-utils").Decimal;
             address: string | null;
+            orderType: import("@prisma/client").$Enums.OrderType;
             isReceived: boolean;
             tableId: bigint | null;
         };

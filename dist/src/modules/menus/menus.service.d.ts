@@ -15,8 +15,8 @@ export declare class MenusService {
         price: import("@prisma/client-runtime-utils").Decimal;
         description: string | null;
         image: string | null;
-        isPopular: boolean;
         isAvailable: boolean;
+        isPopular: boolean;
         categoryId: bigint;
     })[]>;
     findOne(id: bigint): Promise<({
@@ -32,8 +32,8 @@ export declare class MenusService {
         price: import("@prisma/client-runtime-utils").Decimal;
         description: string | null;
         image: string | null;
-        isPopular: boolean;
         isAvailable: boolean;
+        isPopular: boolean;
         categoryId: bigint;
     }) | null>;
     create(data: any): Promise<{
@@ -44,8 +44,8 @@ export declare class MenusService {
         price: import("@prisma/client-runtime-utils").Decimal;
         description: string | null;
         image: string | null;
-        isPopular: boolean;
         isAvailable: boolean;
+        isPopular: boolean;
         categoryId: bigint;
     }>;
     update(id: bigint, data: any): Promise<{
@@ -56,8 +56,8 @@ export declare class MenusService {
         price: import("@prisma/client-runtime-utils").Decimal;
         description: string | null;
         image: string | null;
-        isPopular: boolean;
         isAvailable: boolean;
+        isPopular: boolean;
         categoryId: bigint;
     }>;
     remove(id: bigint): Promise<{
@@ -68,8 +68,8 @@ export declare class MenusService {
         price: import("@prisma/client-runtime-utils").Decimal;
         description: string | null;
         image: string | null;
-        isPopular: boolean;
         isAvailable: boolean;
+        isPopular: boolean;
         categoryId: bigint;
     }>;
 }

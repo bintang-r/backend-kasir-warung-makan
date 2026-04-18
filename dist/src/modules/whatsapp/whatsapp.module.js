@@ -6,18 +6,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChatbotModule = void 0;
+exports.WhatsappModule = void 0;
 const common_1 = require("@nestjs/common");
-const chatbot_service_1 = require("./chatbot.service");
-const chatbot_controller_1 = require("./chatbot.controller");
-let ChatbotModule = class ChatbotModule {
+const whatsapp_service_1 = require("./whatsapp.service");
+const whatsapp_controller_1 = require("./whatsapp.controller");
+const whatsapp_tasks_service_1 = require("./whatsapp-tasks.service");
+let WhatsappModule = class WhatsappModule {
 };
-exports.ChatbotModule = ChatbotModule;
-exports.ChatbotModule = ChatbotModule = __decorate([
+exports.WhatsappModule = WhatsappModule;
+exports.WhatsappModule = WhatsappModule = __decorate([
     (0, common_1.Module)({
-        controllers: [chatbot_controller_1.ChatbotController],
-        providers: [chatbot_service_1.ChatbotService],
-        exports: [chatbot_service_1.ChatbotService],
+        providers: [whatsapp_service_1.WhatsappService, whatsapp_tasks_service_1.WhatsappTasksService],
+        controllers: [whatsapp_controller_1.WhatsappController],
+        exports: [whatsapp_service_1.WhatsappService],
     })
-], ChatbotModule);
-//# sourceMappingURL=chatbot.module.js.map
+], WhatsappModule);
+//# sourceMappingURL=whatsapp.module.js.map

@@ -15,8 +15,8 @@ export declare class MenusController {
         price: import("@prisma/client-runtime-utils").Decimal;
         description: string | null;
         image: string | null;
-        isPopular: boolean;
         isAvailable: boolean;
+        isPopular: boolean;
         categoryId: bigint;
     })[]>;
     findOne(id: string): Promise<({
@@ -32,8 +32,8 @@ export declare class MenusController {
         price: import("@prisma/client-runtime-utils").Decimal;
         description: string | null;
         image: string | null;
-        isPopular: boolean;
         isAvailable: boolean;
+        isPopular: boolean;
         categoryId: bigint;
     }) | null>;
     create(file: Express.Multer.File, body: any): Promise<{
@@ -44,8 +44,8 @@ export declare class MenusController {
         price: import("@prisma/client-runtime-utils").Decimal;
         description: string | null;
         image: string | null;
-        isPopular: boolean;
         isAvailable: boolean;
+        isPopular: boolean;
         categoryId: bigint;
     }>;
     update(id: string, file: Express.Multer.File, body: any): Promise<{
@@ -56,8 +56,8 @@ export declare class MenusController {
         price: import("@prisma/client-runtime-utils").Decimal;
         description: string | null;
         image: string | null;
-        isPopular: boolean;
         isAvailable: boolean;
+        isPopular: boolean;
         categoryId: bigint;
     }>;
     remove(id: string): Promise<{
@@ -68,8 +68,8 @@ export declare class MenusController {
         price: import("@prisma/client-runtime-utils").Decimal;
         description: string | null;
         image: string | null;
-        isPopular: boolean;
         isAvailable: boolean;
+        isPopular: boolean;
         categoryId: bigint;
     }>;
 }

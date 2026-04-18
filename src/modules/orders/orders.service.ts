@@ -1,3 +1,8 @@
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+import { CartsService } from '../carts/carts.service';
+import { NotificationsService } from '../notifications/notifications.service';
+import { OrderSource, OrderStatus, OrderType } from '@prisma/client';
 import { WhatsappService } from '../whatsapp/whatsapp.service';
 
 @Injectable()
@@ -191,8 +196,6 @@ export class OrdersService {
       console.error('Failed to send WhatsApp completion note', err);
     }
   }
-
-
 
   async addReview(orderId: bigint, userId: bigint | null, rating: number, comment: string) {
     // Check if order is completed

@@ -24,11 +24,12 @@ const carts_module_1 = require("./modules/carts/carts.module");
 const orders_module_1 = require("./modules/orders/orders.module");
 const payments_module_1 = require("./modules/payments/payments.module");
 const deliveries_module_1 = require("./modules/deliveries/deliveries.module");
-const chatbot_module_1 = require("./modules/chatbot/chatbot.module");
 const notifications_module_1 = require("./modules/notifications/notifications.module");
 const promos_module_1 = require("./modules/promos/promos.module");
 const dashboard_module_1 = require("./modules/dashboard/dashboard.module");
 const reviews_module_1 = require("./modules/reviews/reviews.module");
+const schedule_1 = require("@nestjs/schedule");
+const whatsapp_module_1 = require("./modules/whatsapp/whatsapp.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -36,6 +37,7 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot({ isGlobal: true }),
+            schedule_1.ScheduleModule.forRoot(),
             serve_static_1.ServeStaticModule.forRoot({
                 rootPath: (0, path_1.join)(process.cwd(), 'uploads'),
                 serveRoot: '/uploads',
@@ -51,11 +53,11 @@ exports.AppModule = AppModule = __decorate([
             orders_module_1.OrdersModule,
             payments_module_1.PaymentsModule,
             deliveries_module_1.DeliveriesModule,
-            chatbot_module_1.ChatbotModule,
             notifications_module_1.NotificationsModule,
             promos_module_1.PromosModule,
             dashboard_module_1.DashboardModule,
             reviews_module_1.ReviewsModule,
+            whatsapp_module_1.WhatsappModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

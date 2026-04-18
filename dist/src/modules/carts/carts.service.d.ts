@@ -12,8 +12,8 @@ export declare class CartsService {
                 price: import("@prisma/client-runtime-utils").Decimal;
                 description: string | null;
                 image: string | null;
-                isPopular: boolean;
                 isAvailable: boolean;
+                isPopular: boolean;
                 categoryId: bigint;
             };
         } & {
