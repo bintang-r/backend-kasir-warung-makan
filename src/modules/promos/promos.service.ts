@@ -93,4 +93,23 @@ export class PromosService {
   async deleteVoucher(id: bigint) {
     return this.prisma.voucher.delete({ where: { id } });
   }
+
+  async deletePromosBulk(ids: bigint[]) {
+    const promos = await this.prisma.promo.findMany({
+      where: { id: { in: ids } },
+    });
+    for (const promo of promos) {
+      if (promo.image && promo.image.startsWith('/uploads/')) {
+        const oldPath = path.join(process.cwd(), promo.image);
+        if (fs.existsSync(oldPath)) {
+          try { fs.unlinkSync(oldPath); } catch (e) {}
+        }
+      }
+    }
+    return this.prisma.promo.deleteMany({ where: { id: { in: ids } } });
+  }
+
+  async deleteVouchersBulk(ids: bigint[]) {
+    return this.prisma.voucher.deleteMany({ where: { id: { in: ids } } });
+  }
 }

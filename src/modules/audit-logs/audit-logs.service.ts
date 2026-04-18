@@ -53,4 +53,10 @@ export class AuditLogsService {
       }
     });
   }
+
+  async deleteBulk(ids: bigint[]) {
+    return this.prisma.logHistory.deleteMany({
+      where: { id: { in: ids } },
+    });
+  }
 }

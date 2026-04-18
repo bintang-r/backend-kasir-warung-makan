@@ -30,4 +30,10 @@ export class ReviewsService {
       where: { id },
     });
   }
+
+  async deleteBulk(ids: bigint[]) {
+    return this.prisma.review.deleteMany({
+      where: { id: { in: ids } },
+    });
+  }
 }

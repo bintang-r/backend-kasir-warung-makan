@@ -1,4 +1,4 @@
-import { Controller, Get, Delete, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Delete, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -20,6 +20,12 @@ export class ReviewsController {
       orderId: r.orderId.toString(),
       userId: r.userId?.toString(),
     }));
+  }
+
+  @Post('bulk-delete')
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  async removeBulk(@Body('ids') ids: string[]) {
+    return this.reviewsService.deleteBulk(ids.map(id => BigInt(id)));
   }
 
   @Delete(':id')

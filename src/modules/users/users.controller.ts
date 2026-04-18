@@ -49,6 +49,13 @@ export class UsersController {
     return { ...updated, id: updated.id.toString() };
   }
 
+  @Post('bulk-delete')
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async removeBulk(@Request() req: any, @Body('ids') ids: string[]) {
+    return this.usersService.removeBulk(ids.map(id => BigInt(id)), BigInt(req.user.id));
+  }
+
   @Delete(':id')
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)

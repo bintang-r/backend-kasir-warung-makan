@@ -79,6 +79,13 @@ export class PromosController {
     return this.promosService.deletePromo(BigInt(id));
   }
 
+  @Post('admin/bulk-delete')
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async deletePromosBulk(@Body('ids') ids: string[]) {
+    return this.promosService.deletePromosBulk(ids.map(id => BigInt(id)));
+  }
+
   // --- Admin Endpoints for Vouchers ---
   @Get('vouchers/admin/all')
   @Roles(Role.SUPERADMIN, Role.ADMIN)
@@ -108,6 +115,13 @@ export class PromosController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async deleteVoucher(@Param('id') id: string) {
     return this.promosService.deleteVoucher(BigInt(id));
+  }
+
+  @Post('vouchers/admin/bulk-delete')
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async deleteVouchersBulk(@Body('ids') ids: string[]) {
+    return this.promosService.deleteVouchersBulk(ids.map(id => BigInt(id)));
   }
 
   @Get('vouchers/verify/:code')
