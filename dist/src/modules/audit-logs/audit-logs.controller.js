@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuditLogsController = void 0;
 const common_1 = require("@nestjs/common");
 const audit_logs_service_1 = require("./audit-logs.service");
-const jwt_auth_guard_1 = require("../../common/guards/jwt-auth.guard");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_guard_1 = require("../../common/guards/roles.guard");
 const roles_decorator_1 = require("../../common/decorators/roles.decorator");
 const client_1 = require("@prisma/client");

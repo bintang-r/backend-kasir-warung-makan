@@ -18,6 +18,7 @@ const whatsapp_service_1 = require("./whatsapp.service");
 const prisma_service_1 = require("../../prisma/prisma.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_guard_1 = require("../../common/guards/roles.guard");
+const roles_decorator_1 = require("../../common/decorators/roles.decorator");
 const client_1 = require("@prisma/client");
 let WhatsappController = class WhatsappController {
     whatsappService;
@@ -69,21 +70,21 @@ let WhatsappController = class WhatsappController {
 exports.WhatsappController = WhatsappController;
 __decorate([
     (0, common_1.Get)('status'),
-    Roles(client_1.Role.SUPERADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], WhatsappController.prototype, "getStatus", null);
 __decorate([
     (0, common_1.Get)('settings'),
-    Roles(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], WhatsappController.prototype, "getSettings", null);
 __decorate([
     (0, common_1.Post)('settings'),
-    Roles(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -91,14 +92,14 @@ __decorate([
 ], WhatsappController.prototype, "updateSettings", null);
 __decorate([
     (0, common_1.Get)('logs'),
-    Roles(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], WhatsappController.prototype, "getLogs", null);
 __decorate([
     (0, common_1.Post)('test'),
-    Roles(client_1.Role.SUPERADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
