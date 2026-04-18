@@ -9,6 +9,11 @@ import { Role, OrderStatus, OrderSource } from '@prisma/client';
 export class OrdersController {
   constructor(private ordersService: OrdersService) {}
 
+  @Get('debug-all')
+  async debugGetAll() {
+    return this.findAllStaff();
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard)
   async create(@Request() req: any, @Body() body: any) {
