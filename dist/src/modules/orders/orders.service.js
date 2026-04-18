@@ -8,9 +8,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var _a, _b, _c;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OrdersService = void 0;
+const common_1 = require("@nestjs/common");
+const prisma_service_1 = require("../../prisma/prisma.service");
+const carts_service_1 = require("../carts/carts.service");
+const notifications_service_1 = require("../notifications/notifications.service");
+const client_1 = require("@prisma/client");
 const whatsapp_service_1 = require("../whatsapp/whatsapp.service");
 let OrdersService = class OrdersService {
     prisma;
@@ -23,7 +27,7 @@ let OrdersService = class OrdersService {
         this.notificationsService = notificationsService;
         this.whatsappService = whatsappService;
     }
-    async createOrder(cartId, userId, guestSessionId, tableId, source = OrderSource.APP, orderType = OrderType.DINE_IN, address) {
+    async createOrder(cartId, userId, guestSessionId, tableId, source = client_1.OrderSource.APP, orderType = client_1.OrderType.DINE_IN, address) {
         const cart = await this.prisma.cart.findUnique({
             where: { id: cartId },
             include: {
@@ -31,7 +35,7 @@ let OrdersService = class OrdersService {
             }
         });
         if (!cart || cart.items.length === 0) {
-            throw new BadRequestException('Cart is empty or not found');
+            throw new common_1.BadRequestException('Cart is empty or not found');
         }
         let totalPrice = 0;
         const orderItemsData = cart.items.map((item) => {
@@ -52,7 +56,7 @@ let OrdersService = class OrdersService {
                 orderType,
                 address: address || null,
                 totalPrice: totalPrice.toFixed(2),
-                status: OrderStatus.PENDING,
+                status: client_1.OrderStatus.PENDING,
                 items: {
                     create: orderItemsData,
                 },
@@ -133,15 +137,15 @@ let OrdersService = class OrdersService {
         });
         let title = 'Update Pesanan 🔔';
         let message = `Status pesanan #${orderId.toString()} kini berubah menjadi ${status}.`;
-        if (status === OrderStatus.CONFIRMED) {
+        if (status === client_1.OrderStatus.CONFIRMED) {
             title = 'Pesanan Dikonfirmasi ✅';
             message = `Pesanan Anda #${orderId.toString()} telah dikonfirmasi dan masuk antrean dapur.`;
         }
-        else if (status === OrderStatus.COOKING) {
+        else if (status === client_1.OrderStatus.COOKING) {
             title = 'Sedang Dimasak 👨‍🍳';
             message = `Siap-siap! Koki kami sedang memasak pesanan Anda #${orderId.toString()}.`;
         }
-        else if (status === OrderStatus.READY) {
+        else if (status === client_1.OrderStatus.READY) {
             title = 'Hore, Pesanan Siap! 🍽️';
             message = `Pesanan Anda #${orderId.toString()} telah matang dan siap dihidangkan. Silakan dinikmati!`;
         }
@@ -151,7 +155,7 @@ let OrdersService = class OrdersService {
             title,
             message,
         });
-        if (status === OrderStatus.COMPLETED) {
+        if (status === client_1.OrderStatus.COMPLETED) {
             this.sendWhatsAppNotification(order.id);
         }
         return order;
@@ -180,8 +184,8 @@ let OrdersService = class OrdersService {
     }
     async addReview(orderId, userId, rating, comment) {
         const order = await this.prisma.order.findUnique({ where: { id: orderId } });
-        if (!order || order.status !== OrderStatus.COMPLETED) {
-            throw new BadRequestException('Order must be completed before leaving a review');
+        if (!order || order.status !== client_1.OrderStatus.COMPLETED) {
+            throw new common_1.BadRequestException('Order must be completed before leaving a review');
         }
         return this.prisma.review.create({
             data: {
@@ -202,7 +206,10 @@ let OrdersService = class OrdersService {
 };
 exports.OrdersService = OrdersService;
 exports.OrdersService = OrdersService = __decorate([
-    Injectable(),
-    __metadata("design:paramtypes", [typeof (_a = typeof PrismaService !== "undefined" && PrismaService) === "function" ? _a : Object, typeof (_b = typeof CartsService !== "undefined" && CartsService) === "function" ? _b : Object, typeof (_c = typeof NotificationsService !== "undefined" && NotificationsService) === "function" ? _c : Object, whatsapp_service_1.WhatsappService])
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        carts_service_1.CartsService,
+        notifications_service_1.NotificationsService,
+        whatsapp_service_1.WhatsappService])
 ], OrdersService);
 //# sourceMappingURL=orders.service.js.map
