@@ -7,7 +7,11 @@ export class TablesService {
   constructor(private prisma: PrismaService) {}
 
   async findAll() {
-    return this.prisma.table.findMany();
+    const tables = await this.prisma.table.findMany();
+    return tables.map(t => ({
+      ...t,
+      id: t.id.toString()
+    }));
   }
 
   async findOne(id: bigint) {
