@@ -33,7 +33,7 @@ export class NotificationsController {
   }
 
   @Get('admin')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async getAllForAdmin() {
     const notifications = await this.notificationsService.findAllAdmin();

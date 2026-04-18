@@ -10,7 +10,7 @@ export class GuestController {
   constructor(private readonly guestService: GuestService) {}
 
   @Get('admin')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async findAll() {
     const sessions = await this.guestService.findAll();

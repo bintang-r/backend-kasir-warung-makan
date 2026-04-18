@@ -15,7 +15,7 @@ export class TablesController {
   }
 
   @Post()
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async create(@Body() body: any) {
     const { name } = body;
@@ -28,14 +28,14 @@ export class TablesController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async remove(@Param('id') id: string) {
     return this.tablesService.remove(BigInt(id));
   }
 
   @Put(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async update(@Param('id') id: string, @Body() body: any) {
     const { name, status } = body;

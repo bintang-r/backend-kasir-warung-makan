@@ -20,14 +20,14 @@ export class PromosController {
 
   // --- Admin Endpoints for Promos ---
   @Get('admin/all')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async findAllPromos() {
     return this.promosService.findAllPromos();
   }
 
   @Post('admin')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('image', {
     storage: diskStorage({
@@ -50,7 +50,7 @@ export class PromosController {
   }
 
   @Put('admin/:id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @UseInterceptors(FileInterceptor('image', {
     storage: diskStorage({
@@ -73,7 +73,7 @@ export class PromosController {
   }
 
   @Delete('admin/:id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async deletePromo(@Param('id') id: string) {
     return this.promosService.deletePromo(BigInt(id));
@@ -81,14 +81,14 @@ export class PromosController {
 
   // --- Admin Endpoints for Vouchers ---
   @Get('vouchers/admin/all')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async findAllVouchers() {
     return this.promosService.findAllVouchers();
   }
 
   @Post('vouchers/admin')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async createVoucher(@Body() body: any) {
     const { code, discount, expiredAt } = body;
@@ -96,7 +96,7 @@ export class PromosController {
   }
 
   @Put('vouchers/admin/:id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateVoucher(@Param('id') id: string, @Body() body: any) {
     const { code, discount, expiredAt } = body;
@@ -104,7 +104,7 @@ export class PromosController {
   }
 
   @Delete('vouchers/admin/:id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async deleteVoucher(@Param('id') id: string) {
     return this.promosService.deleteVoucher(BigInt(id));

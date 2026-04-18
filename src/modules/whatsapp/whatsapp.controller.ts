@@ -15,7 +15,7 @@ export class WhatsappController {
   ) {}
 
   @Get('status')
-  @Roles(Role.SUPERADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   async getStatus() {
     return this.whatsappService.getStatus();
   }
@@ -24,7 +24,7 @@ export class WhatsappController {
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   async getSettings() {
     const number = await this.whatsappService.getAdminNumber();
-    const envNum = (this as any).whatsappService.configService.get('WHATSAPP_SENDING_NUMBER');
+    const envNum = (this.whatsappService as any).configService.get('WHATSAPP_SENDING_NUMBER');
     return { 
       admin_whatsapp_number: number,
       is_env_fixed: !!envNum 

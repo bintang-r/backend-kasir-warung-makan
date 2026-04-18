@@ -15,7 +15,7 @@ export class CategoriesController {
   }
 
   @Post()
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async create(@Body() body: any) {
     const { name } = body;
@@ -23,14 +23,14 @@ export class CategoriesController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async remove(@Param('id') id: string) {
     return this.categoriesService.remove(BigInt(id));
   }
 
   @Put(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async update(@Param('id') id: string, @Body('name') name: string) {
     return this.categoriesService.update(BigInt(id), { name });

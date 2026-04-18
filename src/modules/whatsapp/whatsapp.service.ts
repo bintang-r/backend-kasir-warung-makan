@@ -7,18 +7,27 @@ import { PrismaService } from '../../prisma/prisma.service';
 @Global()
 @Injectable()
 export class WhatsappService implements OnModuleInit {
-  private client: Client;
-  private qrCode: string | null = null;
-  private isReady = false;
+  private senderClient: Client;
+  private receiverClient: Client;
+  
+  private senderState = { isReady: false, qrCode: null as string | null };
+  private receiverState = { isReady: false, qrCode: null as string | null };
+
   private readonly logger = new Logger(WhatsappService.name);
 
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
   ) {
-    this.client = new Client({
+    this.senderClient = this.createClientInstance('sender', './.wwebjs_auth_sender');
+    this.receiverClient = this.createClientInstance('receiver', './.wwebjs_auth_receiver');
+  }
+
+  private createClientInstance(id: string, dataPath: string) {
+    return new Client({
       authStrategy: new LocalAuth({
-        dataPath: './.wwebjs_auth'
+        clientId: id,
+        dataPath: dataPath
       }),
       webVersionCache: {
         type: 'remote',
@@ -40,67 +49,97 @@ export class WhatsappService implements OnModuleInit {
   }
 
   onModuleInit() {
-    this.initialize();
+    this.initializeClient(this.senderClient, 'sender');
+    this.initializeClient(this.receiverClient, 'receiver');
   }
 
-  private initialize() {
-    this.client.on('qr', (qr) => {
-      this.logger.log('WhatsApp QR Code received');
-      // Convert QR to base64 for frontend
+  private initializeClient(client: Client, type: 'sender' | 'receiver') {
+    client.on('qr', (qr) => {
+      this.logger.log(`WhatsApp QR Code received for ${type}`);
       qrcode.toDataURL(qr, (err, url) => {
-        this.qrCode = url;
+        if (type === 'sender') this.senderState.qrCode = url;
+        else this.receiverState.qrCode = url;
       });
-      this.isReady = false;
+      if (type === 'sender') this.senderState.isReady = false;
+      else this.receiverState.isReady = false;
     });
 
-    this.client.on('ready', () => {
-      this.logger.log('WhatsApp Client is ready!');
-      this.qrCode = null;
-      this.isReady = true;
+    client.on('ready', async () => {
+      this.logger.log(`WhatsApp Client (${type}) is ready!`);
+      if (type === 'sender') {
+        this.senderState.qrCode = null;
+        this.senderState.isReady = true;
+      } else {
+        this.receiverState.qrCode = null;
+        this.receiverState.isReady = true;
+
+        // Auto-detect number for receiver
+        const number = client.info.wid.user;
+        if (number) {
+          this.logger.log(`Detected Receiver Number: ${number}`);
+          await this.updateAdminNumber(number);
+        }
+      }
     });
 
-    this.client.on('authenticated', () => {
-      this.logger.log('WhatsApp Client authenticated');
+    client.on('authenticated', () => {
+      this.logger.log(`WhatsApp Client (${type}) authenticated`);
     });
 
-    this.client.on('auth_failure', (msg) => {
-      this.logger.error('WhatsApp Auth failure', msg);
-      this.isReady = false;
+    client.on('auth_failure', (msg) => {
+      this.logger.error(`WhatsApp Auth failure for ${type}`, msg);
+      if (type === 'sender') this.senderState.isReady = false;
+      else this.receiverState.isReady = false;
     });
 
-    this.client.on('disconnected', (reason) => {
-      this.logger.warn('WhatsApp Client disconnected', reason);
-      this.isReady = false;
-      this.qrCode = null;
-      // Re-initialize after some delay
-      setTimeout(() => this.client.initialize(), 5000);
+    client.on('disconnected', (reason) => {
+      this.logger.warn(`WhatsApp Client (${type}) disconnected`, reason);
+      if (type === 'sender') {
+        this.senderState.isReady = false;
+        this.senderState.qrCode = null;
+      } else {
+        this.receiverState.isReady = false;
+        this.receiverState.qrCode = null;
+      }
+      setTimeout(() => client.initialize(), 5000);
     });
 
-    this.client.initialize().catch(err => {
-      this.logger.error('Failed to initialize WhatsApp client', err);
+    client.initialize().catch(err => {
+      this.logger.error(`Failed to initialize WhatsApp client (${type})`, err);
     });
+  }
+
+  private async updateAdminNumber(number: string) {
+    try {
+      await this.prisma.systemSetting.upsert({
+        where: { key: 'admin_whatsapp_number' },
+        update: { value: number },
+        create: { key: 'admin_whatsapp_number', value: number },
+      });
+    } catch (err) {
+      this.logger.error('Failed to auto-update admin number', err);
+    }
   }
 
   getStatus() {
     return {
-      isReady: this.isReady,
-      qrCode: this.qrCode,
+      sender: this.senderState,
+      receiver: this.receiverState,
     };
   }
 
   async sendMessage(to: string, message: string) {
-    if (!this.isReady) {
-      this.logger.warn('Cannot send message, WhatsApp client not ready');
-      await this.logMessage(to, message, 'FAILED (Client Not Ready)');
+    if (!this.senderState.isReady) {
+      this.logger.warn('Cannot send message, Sender Bot not ready');
+      await this.logMessage(to, message, 'FAILED (Sender Not Ready)');
       return false;
     }
 
     try {
-      // Clean the phone number: remove non-numeric
       const cleanedNum = to.replace(/\D/g, '');
       const finalNum = cleanedNum.includes('@c.us') ? cleanedNum : `${cleanedNum}@c.us`;
       
-      await this.client.sendMessage(finalNum, message);
+      await this.senderClient.sendMessage(finalNum, message);
       await this.logMessage(to, message, 'SENT');
       return true;
     } catch (error) {
@@ -125,11 +164,9 @@ export class WhatsappService implements OnModuleInit {
   }
 
   async getAdminNumber() {
-    // Priority 1: Environment Variable
     const envNum = this.configService.get<string>('WHATSAPP_SENDING_NUMBER');
     if (envNum) return envNum;
 
-    // Priority 2: Database Setting
     const setting = await this.prisma.systemSetting.findUnique({
       where: { key: 'admin_whatsapp_number' }
     });

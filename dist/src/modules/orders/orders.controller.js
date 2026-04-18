@@ -65,7 +65,7 @@ let OrdersController = class OrdersController {
         const order = await this.ordersService.getOrderById(BigInt(id));
         if (!order)
             throw new common_1.NotFoundException('Order not found');
-        const isStaff = [client_1.Role.ADMIN, client_1.Role.KITCHEN, client_1.Role.KASIR].includes(req.user.role);
+        const isStaff = [client_1.Role.SUPERADMIN, client_1.Role.ADMIN, client_1.Role.KITCHEN, client_1.Role.KASIR].includes(req.user.role);
         const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : null;
         const guestSessionId = req.user.role === 'GUEST' ? BigInt(req.user.id) : null;
         const isOwner = (userId && order.userId === userId) ||
@@ -126,7 +126,7 @@ __decorate([
 ], OrdersController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('all'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.KITCHEN, client_1.Role.KASIR),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN, client_1.Role.KITCHEN, client_1.Role.KASIR),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -143,7 +143,7 @@ __decorate([
 ], OrdersController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -152,7 +152,7 @@ __decorate([
 ], OrdersController.prototype, "remove", null);
 __decorate([
     (0, common_1.Put)(':id/status'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN, client_1.Role.KITCHEN, client_1.Role.KASIR),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN, client_1.Role.KITCHEN, client_1.Role.KASIR),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('status')),

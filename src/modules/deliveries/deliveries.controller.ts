@@ -10,7 +10,7 @@ export class DeliveriesController {
   constructor(private deliveriesService: DeliveriesService) {}
 
   @Post('assign')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async assign(@Body() body: { orderId: string; driverId: string }) {
     return this.deliveriesService.assignDriver(BigInt(body.orderId), BigInt(body.driverId));

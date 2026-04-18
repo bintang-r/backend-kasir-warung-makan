@@ -11,7 +11,7 @@ export class DashboardController {
   constructor(private dashboardService: DashboardService) {}
 
   @Get('stats')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   async getStats() {
     const stats = await this.dashboardService.getStats();
     return {

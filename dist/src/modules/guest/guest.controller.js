@@ -50,7 +50,7 @@ let GuestController = class GuestController {
 exports.GuestController = GuestController;
 __decorate([
     (0, common_1.Get)('admin'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),

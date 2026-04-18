@@ -10,7 +10,7 @@ export class PaymentsController {
   constructor(private paymentsService: PaymentsService) {}
 
   @Post()
-  @Roles(Role.ADMIN, Role.KASIR)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.KASIR)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async createAdmin(@Body() body: { orderId: string; method: PaymentMethod; amount: number }) {
     return this.paymentsService.processPayment(BigInt(body.orderId), body.method, body.amount);
@@ -31,7 +31,7 @@ export class PaymentsController {
   }
 
   @Get()
-  @Roles(Role.ADMIN, Role.KASIR)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.KASIR)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async findAll() {
     const payments = await this.paymentsService.findAll();
@@ -49,7 +49,7 @@ export class PaymentsController {
   }
 
   @Patch(':id/status')
-  @Roles(Role.ADMIN, Role.KASIR)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.KASIR)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateStatus(@Param('id') id: string, @Body('status') status: PaymentStatus) {
     return this.paymentsService.updateStatus(BigInt(id), status);

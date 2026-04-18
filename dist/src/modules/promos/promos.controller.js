@@ -84,7 +84,7 @@ __decorate([
 ], PromosController.prototype, "getActivePromos", null);
 __decorate([
     (0, common_1.Get)('admin/all'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -92,7 +92,7 @@ __decorate([
 ], PromosController.prototype, "findAllPromos", null);
 __decorate([
     (0, common_1.Post)('admin'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image', {
         storage: (0, multer_1.diskStorage)({
@@ -111,7 +111,7 @@ __decorate([
 ], PromosController.prototype, "createPromo", null);
 __decorate([
     (0, common_1.Put)('admin/:id'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image', {
         storage: (0, multer_1.diskStorage)({
@@ -131,7 +131,7 @@ __decorate([
 ], PromosController.prototype, "updatePromo", null);
 __decorate([
     (0, common_1.Delete)('admin/:id'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -140,7 +140,7 @@ __decorate([
 ], PromosController.prototype, "deletePromo", null);
 __decorate([
     (0, common_1.Get)('vouchers/admin/all'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -148,7 +148,7 @@ __decorate([
 ], PromosController.prototype, "findAllVouchers", null);
 __decorate([
     (0, common_1.Post)('vouchers/admin'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -157,7 +157,7 @@ __decorate([
 ], PromosController.prototype, "createVoucher", null);
 __decorate([
     (0, common_1.Put)('vouchers/admin/:id'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -167,7 +167,7 @@ __decorate([
 ], PromosController.prototype, "updateVoucher", null);
 __decorate([
     (0, common_1.Delete)('vouchers/admin/:id'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),

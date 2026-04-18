@@ -37,7 +37,7 @@ let DeliveriesController = class DeliveriesController {
 exports.DeliveriesController = DeliveriesController;
 __decorate([
     (0, common_1.Post)('assign'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),

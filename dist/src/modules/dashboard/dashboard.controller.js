@@ -43,7 +43,7 @@ let DashboardController = class DashboardController {
 exports.DashboardController = DashboardController;
 __decorate([
     (0, common_1.Get)('stats'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)

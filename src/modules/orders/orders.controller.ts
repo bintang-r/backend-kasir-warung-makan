@@ -39,7 +39,7 @@ export class OrdersController {
   }
 
   @Get('all')
-  @Roles(Role.ADMIN, Role.KITCHEN, Role.KASIR)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.KITCHEN, Role.KASIR)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async findAllStaff() {
     const orders = await this.ordersService.getAllOrders();
@@ -73,7 +73,7 @@ export class OrdersController {
     if (!order) throw new NotFoundException('Order not found');
 
     // Check ownership or staff role
-    const isStaff = [Role.ADMIN, Role.KITCHEN, Role.KASIR].includes(req.user.role);
+    const isStaff = ([Role.SUPERADMIN, Role.ADMIN, Role.KITCHEN, Role.KASIR] as Role[]).includes(req.user.role as Role);
     const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : null;
     const guestSessionId = req.user.role === 'GUEST' ? BigInt(req.user.id) : null;
 
@@ -108,14 +108,14 @@ export class OrdersController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async remove(@Param('id') id: string) {
     return this.ordersService.deleteOrder(BigInt(id));
   }
 
   @Put(':id/status')
-  @Roles(Role.ADMIN, Role.KITCHEN, Role.KASIR)
+  @Roles(Role.SUPERADMIN, Role.ADMIN, Role.KITCHEN, Role.KASIR)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateStatus(@Param('id') id: string, @Body('status') status: OrderStatus) {
     return this.ordersService.updateStatus(BigInt(id), status);

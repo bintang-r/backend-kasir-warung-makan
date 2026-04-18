@@ -24,6 +24,8 @@ pids/
 # WhatsApp Web Session Data (Private)
 .wwebjs_auth/
 .wwebjs_cache/
+.wwebjs_auth_sender/
+.wwebjs_auth_receiver/
 
 # User Uploads (Menu images, etc.)
 uploads/

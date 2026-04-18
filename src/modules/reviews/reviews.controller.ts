@@ -11,7 +11,7 @@ export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
   @Get()
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
   async findAll() {
     const reviews = await this.reviewsService.findAll();
     return reviews.map(r => ({
