@@ -34,7 +34,7 @@ let MenusController = class MenusController {
     async findOne(id) {
         return this.menusService.findOne(BigInt(id));
     }
-    async create(file, body) {
+    async create(req, file, body) {
         const { ...rest } = body;
         const imagePath = file ? `/uploads/menus/${file.filename}` : rest.image;
         return this.menusService.create({
@@ -44,9 +44,9 @@ let MenusController = class MenusController {
             isPopular: rest.isPopular === 'true' || rest.isPopular === true,
             categoryId: BigInt(rest.categoryId),
             image: imagePath,
-        });
+        }, BigInt(req.user.id));
     }
-    async update(id, file, body) {
+    async update(req, id, file, body) {
         const { name, description, price, isAvailable, isPopular, categoryId, image } = body;
         const imagePath = file ? `/uploads/menus/${file.filename}` : image;
         return this.menusService.update(BigInt(id), {
@@ -57,10 +57,10 @@ let MenusController = class MenusController {
             isAvailable: isAvailable !== undefined ? (isAvailable === 'true' || isAvailable === true) : undefined,
             isPopular: isPopular !== undefined ? (isPopular === 'true' || isPopular === true) : undefined,
             categoryId: categoryId ? BigInt(categoryId) : undefined,
-        });
+        }, BigInt(req.user.id));
     }
-    async remove(id) {
-        return this.menusService.remove(BigInt(id));
+    async remove(req, id) {
+        return this.menusService.remove(BigInt(id), BigInt(req.user.id));
     }
 };
 exports.MenusController = MenusController;
@@ -79,7 +79,7 @@ __decorate([
 ], MenusController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)(),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image', {
         storage: (0, multer_1.diskStorage)({
@@ -90,15 +90,16 @@ __decorate([
             },
         }),
     })),
-    __param(0, (0, common_1.UploadedFile)()),
-    __param(1, (0, common_1.Body)()),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.UploadedFile)()),
+    __param(2, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object, Object, Object]),
     __metadata("design:returntype", Promise)
 ], MenusController.prototype, "create", null);
 __decorate([
     (0, common_1.Put)(':id'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('image', {
         storage: (0, multer_1.diskStorage)({
@@ -109,20 +110,22 @@ __decorate([
             },
         }),
     })),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.UploadedFile)()),
-    __param(2, (0, common_1.Body)()),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.UploadedFile)()),
+    __param(3, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:paramtypes", [Object, String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], MenusController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    (0, roles_decorator_1.Roles)(client_1.Role.ADMIN),
+    (0, roles_decorator_1.Roles)(client_1.Role.SUPERADMIN, client_1.Role.ADMIN),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], MenusController.prototype, "remove", null);
 exports.MenusController = MenusController = __decorate([

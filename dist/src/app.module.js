@@ -30,6 +30,7 @@ const dashboard_module_1 = require("./modules/dashboard/dashboard.module");
 const reviews_module_1 = require("./modules/reviews/reviews.module");
 const schedule_1 = require("@nestjs/schedule");
 const whatsapp_module_1 = require("./modules/whatsapp/whatsapp.module");
+const audit_logs_module_1 = require("./modules/audit-logs/audit-logs.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -58,6 +59,7 @@ exports.AppModule = AppModule = __decorate([
             dashboard_module_1.DashboardModule,
             reviews_module_1.ReviewsModule,
             whatsapp_module_1.WhatsappModule,
+            audit_logs_module_1.AuditLogsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

@@ -1,3 +1,7 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+import * as fs from 'fs';
+import * as path from 'path';
 import { AuditLogsService } from '../audit-logs/audit-logs.service';
 import { LogType } from '@prisma/client';
 
@@ -68,7 +72,7 @@ export class MenusService {
     return menu;
   }
 
-  async remove(id: bigint) {
+  async remove(id: bigint, actorId?: bigint) {
     const menu = await this.prisma.menu.findUnique({ where: { id } });
     if (menu?.image && menu.image.startsWith('/uploads/')) {
       const oldPath = path.join(process.cwd(), menu.image);

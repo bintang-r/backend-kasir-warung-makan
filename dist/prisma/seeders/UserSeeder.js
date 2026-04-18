@@ -39,6 +39,23 @@ const bcrypt = __importStar(require("bcryptjs"));
 const faker_1 = require("@faker-js/faker");
 async function seedUsers(prisma) {
     const password = await bcrypt.hash('password123', 10);
+    const superadmins = [
+        { email: 'muhbintang650@gmail.com', name: 'Muhammad Bintang' },
+        { email: 'superadmin2@rmsiantar.com', name: 'Superadmin 2' },
+        { email: 'superadmin3@rmsiantar.com', name: 'Superadmin 3' },
+    ];
+    for (const sa of superadmins) {
+        await prisma.user.upsert({
+            where: { email: sa.email },
+            update: {},
+            create: {
+                email: sa.email,
+                password,
+                name: sa.name,
+                role: client_1.Role.SUPERADMIN,
+            }
+        });
+    }
     const roles = [client_1.Role.ADMIN, client_1.Role.KASIR, client_1.Role.KITCHEN, client_1.Role.DRIVER];
     for (const role of roles) {
         for (let i = 1; i <= 3; i++) {

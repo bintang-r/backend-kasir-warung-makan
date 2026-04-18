@@ -1,5 +1,8 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+import { Role, LogType } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
 import { AuditLogsService } from '../audit-logs/audit-logs.service';
-import { LogType } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -80,7 +83,7 @@ export class UsersService {
     return user;
   }
 
-  async remove(id: bigint) {
+  async remove(id: bigint, actorId?: bigint) {
     // Unlink records to preserve financial/business history
     await this.prisma.order.updateMany({
       where: { userId: id },
