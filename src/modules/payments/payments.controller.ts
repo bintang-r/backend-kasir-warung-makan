@@ -30,6 +30,11 @@ export class PaymentsController {
     return { ...payment, id: payment.id.toString(), orderId: payment.orderId.toString() };
   }
 
+  @Get('debug-all')
+  async debugGetAll() {
+    return this.findAll();
+  }
+
   @Get()
   @Roles(Role.SUPERADMIN, Role.ADMIN, Role.KASIR)
   @UseGuards(JwtAuthGuard, RolesGuard)
