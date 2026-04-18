@@ -41,13 +41,23 @@ async function main() {
     
     await cleanDatabase();
 
-    // Run seeders in order
+    // Eksekusi seeder inti (Production & Development)
     await seedCategories(prisma);
     await seedTables(prisma);
     await seedUsers(prisma);
-    await seedMenus(prisma);
+
+    // Filter seeder berdasarkan environment
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('📦 Development Mode: Seeding example menus...');
+      await seedMenus(prisma);
+    }
+
     await seedPromos(prisma);
-    await seedActiveData(prisma);
+
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('🔄 Development Mode: Seeding active orders & carts...');
+      await seedActiveData(prisma);
+    }
 
     console.log('🏁 Seeding completed successfully!');
   } catch (error) {

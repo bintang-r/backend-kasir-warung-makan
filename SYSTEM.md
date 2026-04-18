@@ -91,10 +91,25 @@ PORT=3001
 ```
 
 ### 3. Setup Prisma
-Generate client dan jalankan migrasi/seeding:
+Generate client dan jalankan pembaruan skema (push) serta seeding:
 ```bash
 npx prisma generate
 npx prisma db push
+npx prisma db seed
+```
+
+### 4. Manajemen & Reset Database (Clear Data)
+Jika Anda ingin **mengosongkan seluruh data aplikasi** (Clear Data) dan meresetnya ke titik awal menggunakan seeder terbaru, jalankan spesifik perintah berikut:
+
+**Untuk mendelete ulang dan reset (Disarankan untuk testing awal):**
+```bash
+npx prisma migrate reset
+```
+*(Perintah di atas akan mendrop seluruh tabel, menjalankan migrasi skema ulang, dan mengeksekusi `npx prisma db seed` secara otomatis)*
+
+**Jika memakai pendekatan db push:**
+```bash
+npx prisma db push --force-reset
 npx prisma db seed
 ```
 
