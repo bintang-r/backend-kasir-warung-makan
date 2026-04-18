@@ -23,6 +23,7 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { WhatsappModule } from './modules/whatsapp/whatsapp.module';
 import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
+import { InfrastructureModule } from './modules/infrastructure/infrastructure.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
     ReviewsModule,
     WhatsappModule,
     AuditLogsModule,
+    InfrastructureModule,
   ],
   controllers: [AppController],
   providers: [AppService],
