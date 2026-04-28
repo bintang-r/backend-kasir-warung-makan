@@ -1,14 +1,21 @@
 import { Injectable, OnModuleInit, Logger, Global } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Client, LocalAuth } from 'whatsapp-web.js';
+import makeWASocket, { 
+  DisconnectReason, 
+  useMultiFileAuthState, 
+  fetchLatestBaileysWebVersion,
+  WASocket,
+} from '@whiskeysockets/baileys';
 import * as qrcode from 'qrcode';
 import { PrismaService } from '../../prisma/prisma.service';
+import pino from 'pino';
+import { Boom } from '@hapi/boom';
 
 @Global()
 @Injectable()
 export class WhatsappService implements OnModuleInit {
-  private senderClient: Client;
-  private receiverClient: Client;
+  private senderClient: WASocket;
+  private receiverClient: WASocket;
   
   private senderState = { isReady: false, qrCode: null as string | null };
   private receiverState = { isReady: false, qrCode: null as string | null };
@@ -18,94 +25,77 @@ export class WhatsappService implements OnModuleInit {
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
-  ) {
-    this.senderClient = this.createClientInstance('sender', './.wwebjs_auth_sender');
-    this.receiverClient = this.createClientInstance('receiver', './.wwebjs_auth_receiver');
+  ) {}
+
+  async onModuleInit() {
+    // We use different session folders to avoid conflicts
+    await this.initializeClient('sender', './.baileys_auth_sender');
+    await this.initializeClient('receiver', './.baileys_auth_receiver');
   }
 
-  private createClientInstance(id: string, dataPath: string) {
-    return new Client({
-      authStrategy: new LocalAuth({
-        clientId: id,
-        dataPath: dataPath
-      }),
-      webVersionCache: {
-        type: 'remote',
-        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.3000.1018908151-alpha.html',
-      },
-      puppeteer: {
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage',
-          '--disable-accelerated-2d-canvas',
-          '--no-first-run',
-          '--no-zygote',
-          '--disable-gpu'
-        ],
-        headless: true,
+  private async initializeClient(type: 'sender' | 'receiver', authPath: string) {
+    const { state, saveCreds } = await useMultiFileAuthState(authPath);
+    const { version, isLatest } = await fetchLatestBaileysWebVersion();
+    
+    this.logger.log(`Using WhatsApp v${version.join('.')} (latest: ${isLatest}) for ${type}`);
+
+    const client = makeWASocket({
+      version,
+      printQRInTerminal: false,
+      auth: state,
+      logger: pino({ level: 'silent' }),
+      browser: ['Siantar Minang', 'Chrome', '1.0.0'],
+    });
+
+    if (type === 'sender') this.senderClient = client;
+    else this.receiverClient = client;
+
+    client.ev.on('creds.update', saveCreds);
+
+    client.ev.on('connection.update', async (update) => {
+      const { connection, lastDisconnect, qr } = update;
+
+      if (qr) {
+        this.logger.log(`WhatsApp QR Code received for ${type}`);
+        qrcode.toDataURL(qr, (err, url) => {
+          if (type === 'sender') this.senderState.qrCode = url;
+          else this.receiverState.qrCode = url;
+        });
       }
-    });
-  }
 
-  onModuleInit() {
-    this.initializeClient(this.senderClient, 'sender');
-    this.initializeClient(this.receiverClient, 'receiver');
-  }
+      if (connection === 'close') {
+        const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut;
+        this.logger.warn(`WhatsApp Client (${type}) closed. Reconnecting: ${shouldReconnect}`);
+        
+        if (type === 'sender') {
+          this.senderState.isReady = false;
+          this.senderState.qrCode = null;
+        } else {
+          this.receiverState.isReady = false;
+          this.receiverState.qrCode = null;
+        }
 
-  private initializeClient(client: Client, type: 'sender' | 'receiver') {
-    client.on('qr', (qr) => {
-      this.logger.log(`WhatsApp QR Code received for ${type}`);
-      qrcode.toDataURL(qr, (err, url) => {
-        if (type === 'sender') this.senderState.qrCode = url;
-        else this.receiverState.qrCode = url;
-      });
-      if (type === 'sender') this.senderState.isReady = false;
-      else this.receiverState.isReady = false;
-    });
+        if (shouldReconnect) {
+          this.initializeClient(type, authPath);
+        }
+      } else if (connection === 'open') {
+        this.logger.log(`WhatsApp Client (${type}) is ready!`);
+        if (type === 'sender') {
+          this.senderState.qrCode = null;
+          this.senderState.isReady = true;
+        } else {
+          this.receiverState.qrCode = null;
+          this.receiverState.isReady = true;
 
-    client.on('ready', async () => {
-      this.logger.log(`WhatsApp Client (${type}) is ready!`);
-      if (type === 'sender') {
-        this.senderState.qrCode = null;
-        this.senderState.isReady = true;
-      } else {
-        this.receiverState.qrCode = null;
-        this.receiverState.isReady = true;
-
-        // Auto-detect number for receiver
-        const number = client.info.wid.user;
-        if (number) {
-          this.logger.log(`Detected Receiver Number: ${number}`);
-          await this.updateAdminNumber(number);
+          // Auto-detect number for receiver
+          const user = client.user?.id;
+          if (user) {
+            const number = user.split(':')[0].split('@')[0];
+            this.logger.log(`Detected Receiver Number: ${number}`);
+            await this.updateAdminNumber(number);
+          }
         }
       }
-    });
-
-    client.on('authenticated', () => {
-      this.logger.log(`WhatsApp Client (${type}) authenticated`);
-    });
-
-    client.on('auth_failure', (msg) => {
-      this.logger.error(`WhatsApp Auth failure for ${type}`, msg);
-      if (type === 'sender') this.senderState.isReady = false;
-      else this.receiverState.isReady = false;
-    });
-
-    client.on('disconnected', (reason) => {
-      this.logger.warn(`WhatsApp Client (${type}) disconnected`, reason);
-      if (type === 'sender') {
-        this.senderState.isReady = false;
-        this.senderState.qrCode = null;
-      } else {
-        this.receiverState.isReady = false;
-        this.receiverState.qrCode = null;
-      }
-      setTimeout(() => client.initialize(), 5000);
-    });
-
-    client.initialize().catch(err => {
-      this.logger.error(`Failed to initialize WhatsApp client (${type})`, err);
     });
   }
 
@@ -137,9 +127,9 @@ export class WhatsappService implements OnModuleInit {
 
     try {
       const cleanedNum = to.replace(/\D/g, '');
-      const finalNum = cleanedNum.includes('@c.us') ? cleanedNum : `${cleanedNum}@c.us`;
+      const jid = cleanedNum.includes('@s.whatsapp.net') ? cleanedNum : `${cleanedNum}@s.whatsapp.net`;
       
-      await this.senderClient.sendMessage(finalNum, message);
+      await this.senderClient.sendMessage(jid, { text: message });
       await this.logMessage(to, message, 'SENT');
       return true;
     } catch (error) {
