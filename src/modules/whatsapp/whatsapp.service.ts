@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import makeWASocket, { 
   DisconnectReason, 
   useMultiFileAuthState, 
-  fetchLatestBaileysWebVersion,
+  fetchLatestBaileysVersion,
   WASocket,
 } from '@whiskeysockets/baileys';
 import * as qrcode from 'qrcode';
@@ -35,7 +35,7 @@ export class WhatsappService implements OnModuleInit {
 
   private async initializeClient(type: 'sender' | 'receiver', authPath: string) {
     const { state, saveCreds } = await useMultiFileAuthState(authPath);
-    const { version, isLatest } = await fetchLatestBaileysWebVersion();
+    const { version, isLatest } = await fetchLatestBaileysVersion();
     
     this.logger.log(`Using WhatsApp v${version.join('.')} (latest: ${isLatest}) for ${type}`);
 
