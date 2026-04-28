@@ -28,6 +28,8 @@ pids/
 .wwebjs_cache/
 .wwebjs_auth_sender/
 .wwebjs_auth_receiver/
+.baileys_auth_sender/
+.baileys_auth_receiver/
 
 # User Uploads (Menu images, etc.)
 uploads/
@@ -64,4 +66,5 @@ desktop.ini
 # Temporary files
 .tmp/
 temp/
+node_modules
 node_modules
