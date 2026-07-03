@@ -41,19 +41,7 @@ export class ReservationsService {
 
         orderId = order.id;
 
-        // DP Payment Handling
-        if (paymentType === 'DP' || paymentType === 'FULL') {
-          const paymentAmount = paymentType === 'DP' ? totalPrice / 2 : totalPrice;
-          await tx.payment.create({
-            data: {
-              orderId: order.id,
-              method: 'EWALLET', // assuming e-wallet or similar for online
-              status: 'PAID',
-              amount: paymentAmount,
-              paidAt: new Date()
-            }
-          });
-        }
+        // DP Payment Handling will now be deferred to when the reservation is approved by the admin.
       }
 
       // 2. Create the Reservation
@@ -66,7 +54,8 @@ export class ReservationsService {
           notes: reservationData.notes,
           userId,
           tableId: tableId ? BigInt(tableId) : null,
-          orderId
+          orderId,
+          paymentType,
         }
       });
     });
@@ -166,7 +155,35 @@ export class ReservationsService {
         status: updateDto.status,
         ...(updateDto.notes && { notes: updateDto.notes }),
       },
+      include: { order: true }
     });
+
+    if (updateDto.status === ReservationStatus.APPROVED && updated.orderId) {
+      await this.prisma.order.update({
+        where: { id: updated.orderId },
+        data: { status: 'CONFIRMED' }
+      });
+
+      // Automatically create PAID payment record when reservation is approved
+      const existingPayments = await this.prisma.payment.findMany({
+        where: { orderId: updated.orderId }
+      });
+
+      if (existingPayments.length === 0 && updated.order) {
+        const totalPrice = Number(updated.order.totalPrice);
+        const paymentAmount = updated.paymentType === 'DP' ? totalPrice / 2 : totalPrice;
+
+        await this.prisma.payment.create({
+          data: {
+            orderId: updated.orderId,
+            method: 'EWALLET', // default for online verifications
+            amount: paymentAmount,
+            status: 'PAID',
+            paidAt: new Date(),
+          }
+        });
+      }
+    }
 
     // Create Notification
     let title = 'Update Reservasi 🔔';
@@ -190,6 +207,17 @@ export class ReservationsService {
     });
 
     return updated;
+  }
+
+  async updateProof(id: bigint, proofPath: string | null) {
+    const reservation = await this.prisma.reservation.findUnique({ where: { id } });
+    if (!reservation) {
+      throw new NotFoundException('Reservation not found');
+    }
+    return this.prisma.reservation.update({
+      where: { id },
+      data: { paymentProof: proofPath }
+    });
   }
 
   async getAvailability(dateString: string) {

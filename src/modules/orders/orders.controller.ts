@@ -62,12 +62,19 @@ export class OrdersController {
         menuId: i.menuId.toString(),
         price: Number(i.price)
       })) || [],
-      payments: (order as any).payments?.map(p => ({
+      payments: (order as any).payments?.map((p: any) => ({
         ...p,
         id: p.id.toString(),
         orderId: p.orderId.toString(),
         amount: Number(p.amount),
       })) || [],
+      reservation: (order as any).reservation ? {
+        ...(order as any).reservation,
+        id: (order as any).reservation.id.toString(),
+        userId: (order as any).reservation.userId?.toString(),
+        tableId: (order as any).reservation.tableId?.toString(),
+        orderId: (order as any).reservation.orderId?.toString(),
+      } : null,
     }));
   }
 
