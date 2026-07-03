@@ -18,6 +18,19 @@ export class InfrastructureController {
     return this.infraService.getBranding();
   }
 
+  @Get('settings')
+  async getSettings() {
+    return this.infraService.getSettings();
+  }
+
+  @Patch('settings')
+  @Roles(Role.SUPERADMIN, Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async updateSetting(@Body('key') key: string, @Body('value') value: string, @Req() req: any) {
+    if (!key || !value) throw new BadRequestException('Key dan value harus diisi');
+    return this.infraService.updateSetting(key, value, BigInt(req.user.id));
+  }
+
   @Patch('branding')
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)

@@ -24,6 +24,38 @@ export class InfrastructureService {
     };
   }
 
+  async getSettings() {
+    const settings = await this.prisma.systemSetting.findMany();
+    const result = {};
+    settings.forEach(s => {
+      result[s.key] = s.value;
+    });
+    // Default DP percentage if not set
+    if (!result['reservation_dp_percent']) {
+      result['reservation_dp_percent'] = '50';
+    }
+    return result;
+  }
+
+  async updateSetting(key: string, value: string, actorId?: bigint) {
+    const result = await this.prisma.systemSetting.upsert({
+      where: { key },
+      update: { value },
+      create: { key, value },
+    });
+
+    if (actorId) {
+      await this.auditLogsService.log(
+        actorId,
+        `Mengubah pengaturan sistem: ${key}`,
+        'Sistem & Infrastruktur',
+        `Nilai baru: ${value}`,
+        LogType.info
+      );
+    }
+    return result;
+  }
+
   async updateBrandingName(name: string, actorId?: bigint) {
     const result = await this.prisma.systemSetting.upsert({
       where: { key: 'branding_name' },

@@ -119,6 +119,7 @@ export class OrdersService {
         },
         table: true,
         payments: true,
+        reservations: true,
       },
     });
   }
@@ -132,6 +133,7 @@ export class OrdersService {
         user: { select: { id: true, name: true, email: true } },
         table: true,
         payments: true,
+        reservations: true,
       },
       orderBy: { createdAt: 'desc' },
     });
