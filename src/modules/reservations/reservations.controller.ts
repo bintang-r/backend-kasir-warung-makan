@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query } from '@nestjs/common';
 import { ReservationsService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationStatusDto } from './dto/update-reservation-status.dto';
@@ -11,6 +11,24 @@ import { Request } from '@nestjs/common';
 @Controller('reservations')
 export class ReservationsController {
   constructor(private readonly reservationsService: ReservationsService) {}
+
+  @Get('availability')
+  async getAvailability(@Query('date') date: string) {
+    if (!date) return [];
+    return this.reservationsService.getAvailability(date);
+  }
+
+  @Get(':id')
+  async getOne(@Param('id') id: string) {
+    return this.reservationsService.getReservationById(BigInt(id));
+  }
+
+  @Post('my-history')
+  async getMyHistory(@Body() body: { ids: string[] }, @Request() req: any) {
+    const userId = req?.user?.id && req?.user?.role !== 'GUEST' ? BigInt(req.user.id) : undefined;
+    const ids = (body.ids || []).map(id => BigInt(id));
+    return this.reservationsService.getMyHistory(userId, ids);
+  }
 
   // Allow guests (no guard) or logged in users to create reservation
   @Post()

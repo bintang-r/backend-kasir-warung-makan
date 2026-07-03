@@ -119,7 +119,7 @@ export class OrdersService {
         },
         table: true,
         payments: true,
-        reservations: true,
+        reservation: true,
       },
     });
   }
@@ -133,7 +133,7 @@ export class OrdersService {
         user: { select: { id: true, name: true, email: true } },
         table: true,
         payments: true,
-        reservations: true,
+        reservation: true,
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -183,7 +183,7 @@ export class OrdersService {
       const order = await this.getOrderById(orderId);
       if (!order) return;
 
-      const itemsStr = order.items.map(i => `- ${i.menu.name} (x${i.qty})`).join('\n');
+      const itemsStr = (order as any).items?.map((i: any) => `- ${i.menu.name} (x${i.qty})`).join('\n') || '';
       
       const whatsappMessage = `*✅ PESANAN SELESAI*\n` +
                               `----------------------------------\n` +

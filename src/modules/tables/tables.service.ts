@@ -16,7 +16,7 @@ export class TablesService {
     });
   }
 
-  async create(data: { name: string }) {
+  async create(data: { name: string, capacity?: number }) {
     const table = await this.prisma.table.create({
       data,
     });
@@ -55,7 +55,7 @@ export class TablesService {
     });
   }
 
-  async update(id: bigint, data: { name?: string; status?: import('@prisma/client').TableStatus }) {
+  async update(id: bigint, data: { name?: string; status?: import('@prisma/client').TableStatus; capacity?: number }) {
     return this.prisma.table.update({
       where: { id },
       data,

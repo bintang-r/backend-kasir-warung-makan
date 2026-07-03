@@ -18,8 +18,8 @@ export class TablesController {
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async create(@Body() body: any) {
-    const { name } = body;
-    return this.tablesService.create({ name });
+    const { name, capacity } = body;
+    return this.tablesService.create({ name, capacity: capacity ? parseInt(capacity) : 4 });
   }
 
   @Get(':id/qr')
@@ -38,7 +38,7 @@ export class TablesController {
   @Roles(Role.SUPERADMIN, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async update(@Param('id') id: string, @Body() body: any) {
-    const { name, status } = body;
-    return this.tablesService.update(BigInt(id), { name, status });
+    const { name, status, capacity } = body;
+    return this.tablesService.update(BigInt(id), { name, status, capacity: capacity ? parseInt(capacity) : undefined });
   }
 }
