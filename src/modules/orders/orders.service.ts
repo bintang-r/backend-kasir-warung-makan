@@ -21,7 +21,8 @@ export class OrdersService {
     tableId?: bigint, 
     source: OrderSource = OrderSource.APP,
     orderType: OrderType = OrderType.DINE_IN,
-    address?: string
+    address?: string,
+    reservationId?: bigint
   ) {
     const cart = await this.prisma.cart.findUnique({
       where: { id: cartId },
@@ -65,7 +66,10 @@ export class OrdersService {
             method: 'CASH', // Default, will be updated during payment flow
             status: 'UNPAID',
           }
-        }
+        },
+        reservation: reservationId ? {
+          connect: { id: reservationId }
+        } : undefined
       },
       include: {
         items: {

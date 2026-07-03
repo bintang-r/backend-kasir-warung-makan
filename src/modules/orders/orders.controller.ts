@@ -20,9 +20,10 @@ export class OrdersController {
     const userId = req.user.role !== 'GUEST' ? BigInt(req.user.id) : undefined;
     const guestSessionId = req.user.role === 'GUEST' ? BigInt(req.user.id) : undefined;
     
-    const { cartId, orderType, address, tableId } = body;
+    const { cartId, orderType, address, tableId, reservationId } = body;
     const parsedCartId = BigInt(cartId);
     const parsedTableId = tableId ? BigInt(tableId) : undefined;
+    const parsedReservationId = reservationId ? BigInt(reservationId) : undefined;
 
     return this.ordersService.createOrder(
       parsedCartId,
@@ -31,7 +32,8 @@ export class OrdersController {
       parsedTableId, 
       req.user.role === 'GUEST' ? OrderSource.QR : OrderSource.APP,
       orderType,
-      address
+      address,
+      parsedReservationId
     );
   }
 
